@@ -1,33 +1,40 @@
+:- use_module(library(lists)).
 board([
 		[nil, nil, nil],
 		[nil, [a, 0, 1, 0], nil],
 		[nil, nil, nil]
 	  ]).
-:- use_module(library(lists)).
 
-% one of many
-patternLetter(a, [[1,1,0],[0,0,0],[1,0,1]]).
-patternLetter(b, [[0,0,0],[0,0,1],[1,1,1]]).
-% ....
-getSymbol(0, 0, 'P'). % peça preta sem quadrado
-getSymbol(0, 1, 'B'). % peça preta com quadrado
-getSymbol(1, 0, 'B'). % peça branca sem quadrado
-getSymbol(1, 1, 'P'). % peça branca com quadrado
-validSymbol(0, 'V'). % válida
-validSymbol(1, 'I'). % inválida
+% Patterns
+patternLetter(a, [[1,1,1],[0,0,1],[0,0,0]]).
+patternLetter(b, [[1,1,1],[0,0,0],[0,0,1]]).
+patternLetter(c, [[1,1,1],[0,0,0],[0,1,0]]).
+patternLetter(d, [[1,1,1],[0,0,0],[1,0,0]]).
+patternLetter(e, [[1,1,1],[1,0,0],[0,0,0]]).
+patternLetter(f, [[1,1,0],[0,0,1],[0,0,1]]).
+patternLetter(g, [[1,1,0],[0,0,1],[0,1,0]]).
+patternLetter(h, [[1,1,0],[0,0,1],[1,0,0]]).
+patternLetter(i, [[1,1,0],[1,0,1],[0,0,0]]).
+patternLetter(j, [[1,1,0],[0,0,0],[1,1,1]]).
+patternLetter(k, [[1,1,0],[0,0,0],[1,0,1]]).
+patternLetter(l, [[1,1,0],[1,0,0],[0,0,1]]).
+patternLetter(m, [[1,1,0],[0,0,0],[1,1,0]]).
+patternLetter(n, [[1,1,0],[1,0,0],[0,1,0]]).
+patternLetter(o, [[1,0,0],[0,0,1],[1,0,1]]).
+patternLetter(p, [[1,0,0],[1,0,1],[0,0,1]]).
+patternLetter(q, [[1,0,0],[0,0,1],[1,1,0]]).
+patternLetter(r, [[1,0,0],[1,0,1],[0,1,0]]).
+patternLetter(s, [[0,1,0],[1,0,1],[0,1,0]]).
+patternLetter(t, [[1,0,1],[0,0,0],[1,0,1]]).
+
+getSymbol(0, 0, 219). % peça preta sem quadrado
+getSymbol(0, 1, 176). % peça preta com quadrado
+getSymbol(1, 0, 176). % peça branca sem quadrado
+getSymbol(1, 1, 219). % peça branca com quadrado
+
+validSymbol(0, 255). % válida
+validSymbol(1, 157). % inválida
 validSymbol([Head | Tail], Valid):- validSymbol(Head, Valid).
-
-/*
-getPiecePatternRow(Count, PieceNum, [Head | Tail], Pattern) :- 
-	Count == PieceNum.
-getPiecePatternRow(Count, PieceNum, [Head | Tail], Pattern):-
-	NewCount is Count + 1,
-	getPiecePatternRow(NewCount, PieceNum, Tail, Head).
-getPiecePattern(Count, PieceNum, Letter, Pattern):-
-	patternLetter(Letter, TempPattern),
-	getPiecePatternRow(-1, PieceNum, TempPattern, Pattern).
-*/
-
 
 % funções que vao rodar a matriz
 /*rotatePattern(0, OldPattern, NewPattern). % acabar
@@ -50,10 +57,12 @@ getPiecePattern(PieceNum, Letter, Pattern):-
 	patternLetter(Letter, TempPattern),
 	nth0(PieceNum, TempPattern, Pattern).
 
+%Prints the 
 printEachSymbol([],_,_).
 printEachSymbol([Head | Tail], Color, Valid):-
 	getSymbol(Head, Color, Char),
-	write(Char),
+	put_code(Char),
+	%write(Char),
 	printEachSymbol(Tail, Color, Valid).
 printPieceSymbols(PieceNum, Letter, Color, Valid):-
 	getPiecePattern(PieceNum, Letter, Pattern),
