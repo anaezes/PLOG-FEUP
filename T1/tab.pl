@@ -12,8 +12,14 @@ colorSymbol(1, 'P'). % preta
 validSymbol(0, ''). % válida
 validSymbol(1, 'I'). % inválida
 
-getPiecePattern(Letter, Pattern):-
-	patternLetter(Letter, Pattern).
+getPiecePatternRow(Count, PieceNum, [Head | Tail], Pattern) :- 
+	Count == PieceNum.
+getPiecePatternRow(Count, PieceNum, [Head | Tail], Pattern):-
+	NewCount is Count + 1,
+	getPiecePatternRow(NewCount, PieceNum, Tail, Head).
+getPiecePattern(Count, PieceNum, Letter, Pattern):-
+	patternLetter(Letter, TempPattern),
+	getPiecePatternRow(-1, PieceNum, TempPattern, Pattern).
 
 % funções que vao rodar a matriz
 /*rotatePattern(0, OldPattern, NewPattern). % acabar
@@ -27,26 +33,34 @@ getSymbols([Head | Tail], Color, Valid):-
 	colorSymbol(Head, Color),
 	validSymbol(Tail, Valid).
 
-printPiece([]).
-printPiece(nil) :- 
-	/*write('|    |'),nl % 4 spaces
-	write('|    |'),nl,		*/		% error with the nl...doesn't make rows
+printEachSymbol([]).
+printEachSymbol([Head | Tail]):-
+	write(Head),
+	printEachSymbol(Tail).
+printPieceSymbols(PieceNum, Letter):-
+	getPiecePattern(0, PieceNum, Letter, Pattern),
+	printEachSymbol(Pattern).
+
+printPiece([], PieceNum).
+printPiece(nil, PieceNum) :- 
 	write('|    |').
-printPiece([Letter, Rotation | Tail]):-
-	/*getPiecePattern(Letter, Pattern),
-	% getPieceRotation(Rotation, Pattern, NewPattern),
+printPiece([Letter, Rotation | Tail], PieceNum):-
+	/*% getPieceRotation(Rotation, Pattern, NewPattern),
 	getSymbols(Tail, Color, Valid),*/
-	write('|  a |').
+	write('|'),
+	printPieceSymbols(PieceNum, Letter),
+	write('|').
 
 
-printRowPieces([]):- nl.
-printRowPieces([Head | Tail]):-
-	printPiece(Head),
-	printRowPieces(Tail).
+printRowPieces([],Num,PieceNum):- nl.
+printRowPieces([Head | Tail], Num, PieceNum):-
+	printPiece(Head, PieceNum),
+	printRowPieces(Tail, Num, PieceNum).
 printRow(0,Row).
 printRow(Num,Row):-
 	NewNum is Num - 1,
-	printRowPieces(Row),
+	PieceNum is 0,
+	printRowPieces(Row, NewNum, PieceNum),
 	printRow(NewNum, Row).
 
 printBoard([]).
