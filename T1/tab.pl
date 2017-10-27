@@ -126,10 +126,48 @@ prepareBoard([Head | Tail]):-
 	write('   '),printTopNumbers(0,ColumnsNum), nl,
 	printBoard([Head | Tail], 0).
 
-teste :- 
+printAvailablePiecesRow(PieceRow, [Head , []]).
+printAvailablePiecesRow(PieceRow, [Head , [Head2 | Tail] ]):- 
+	write('|'),
+	printPieceSymbols(PieceRow, Head2, Head, 1), 
+	write('|'),
+	printAvailablePiecesRow(PieceRow, [Head, Tail]).
+
+printAvailablePiecesAux(3, _).
+printAvailablePiecesAux(PieceRow, List):- 
+	copyList(List, AuxList),
+	printAvailablePiecesRow(PieceRow, List),
+	NewPieceRow is PieceRow + 1, nl,
+	printAvailablePiecesAux(NewPieceRow, AuxList).
+
+copyList(L,R) :- accCp(L,R).
+accCp([],[]).
+accCp([H|T1],[H|T2]) :- accCp(T1,T2).
+
+prepareLegendsPieces(117).
+prepareLegendsPieces(NumLeter):- 
+	put_code(NumLeter),
+	write('    '),
+	NewNumLeter is NumLeter + 1,
+	prepareLegendsPieces(NewNumLeter).
+
+printAvailablePieces(PieceRow, List):- 
+	write('  '),
+	prepareLegendsPieces(97), nl,
+	%length(List,NumPieces), nl,
+	printSeparator(NumPieces), 
+	printAvailablePiecesAux(PieceRow, List).
+
+teste1 :- 
 	prepareBoard([
 					[nil, nil, nil, nil, nil],
 					[nil, nil, [a, 0, 1, 0], [b, 0, 0, 0], nil],
 					[nil, [g, 0, 1, 0], [h, 0, 1, 0], [d, 0, 0, 0], nil],
 					[nil, nil, nil, nil, nil]
 				]).
+
+
+%Test for print all available white pieces.
+teste2 :- printAvailablePieces(0, [1,[a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]]).
+
+
