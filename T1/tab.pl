@@ -1,9 +1,9 @@
 :- use_module(library(lists)).
-board([
+/*board([
 		[nil, nil, nil],
 		[nil, [a, 0, 1, 0], nil],
 		[nil, nil, nil]
-	  ]).
+	  ]).*/
 
 % Patterns
 patternLetter(a, [[1,1,1],[0,0,1],[0,0,0]]).
@@ -151,6 +151,9 @@ prepareBoard([Head | Tail]):-
 	printBoard([Head | Tail], 0).
 
 
+
+/** PRINT AVAILABLE PIECES **/
+
 printAvailablePiecesRow(PieceRow, [Head , []]).
 printAvailablePiecesRow(PieceRow, [Head , [Head2 | Tail] ]):- 
 	write(' |'),
@@ -191,6 +194,39 @@ printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):-
 	printSeparator(NumPieces), 
 	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
+
+
+
+
+
+/**************************
+**** FUNCTIONS TO MOVE ****
+**************************/
+
+%addPiece([], Row, Column, PieceCode, Color, Rotation, [PieceCode,Rotation,Color,0], NewColor).
+
+addSpaceMatrix(Board, Length, NewBoard):-
+	%write('LENGHT::::: '), write(Length), nl,
+	append([Board], [[nil, nil, nil]], AuxNewBoard),
+	append([[nil, nil, nil]], AuxNewBoard, NewBoard).
+
+
+addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard, NewColor):-
+	append([[PieceCode,Rotation,Color,0]], Board, AuxBoard),
+	append([nil], AuxBoard, AuxTwoBoard),
+	length(AuxTwoBoard,Length),
+	addSpaceMatrix(AuxTwoBoard, Length, NewBoard).
+
+
+
+
+
+
+
+/****************
+**** TESTING ****
+*****************/
+
 teste1 :- 
 	prepareBoard([
 					[nil, nil, nil, nil, nil],
@@ -202,3 +238,10 @@ teste1 :-
 
 %Test for print all available white pieces.
 teste2 :- printAvailablePieces(0, [0,[a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]]).
+
+
+%Test for print first move.
+teste3 :- board(Board), 
+	addPiece(Board, 1, 1, a, 0, 0, NewBoard, NewColor), 
+	prepareBoard(NewBoard).
+board([nil]).
