@@ -32,9 +32,33 @@ getSymbol(1, 0, 254). % peça preta com quadrado
 getSymbol(0, 1, 176). % peça branca sem quadrado
 getSymbol(1, 1, 254). % peça branca com quadrado
 
+getCode(a,97).
+getCode(b,98).
+getCode(c,99).
+getCode(d,100).
+getCode(e,101).
+getCode(f,102).
+getCode(g,103).
+getCode(h,104).
+getCode(i,105).
+getCode(j,106).
+getCode(k,107).
+getCode(l,108).
+getCode(m,109).
+getCode(n,110).
+getCode(o,111).
+getCode(p,112).
+getCode(q,113).
+getCode(r,114).
+getCode(s,115).
+getCode(t,116).
+
 validSymbol(0, 255). % válida
 validSymbol(1, 157). % inválida
 validSymbol([Head | Tail], Valid):- validSymbol(Head, Valid).
+
+getColorPlayer(1, 'WHITE').
+getColorPlayer(0, 'BLACK').
 
 % funções que vao rodar a matriz
 /*rotatePattern(0, OldPattern, NewPattern). % acabar
@@ -126,11 +150,12 @@ prepareBoard([Head | Tail]):-
 	write('   '),printTopNumbers(0,ColumnsNum), nl,
 	printBoard([Head | Tail], 0).
 
+
 printAvailablePiecesRow(PieceRow, [Head , []]).
 printAvailablePiecesRow(PieceRow, [Head , [Head2 | Tail] ]):- 
-	write('|'),
+	write(' |'),
 	printPieceSymbols(PieceRow, Head2, Head, 1), 
-	write('|'),
+	write('| '),
 	printAvailablePiecesRow(PieceRow, [Head, Tail]).
 
 printAvailablePiecesAux(3, _).
@@ -140,23 +165,31 @@ printAvailablePiecesAux(PieceRow, List):-
 	NewPieceRow is PieceRow + 1, nl,
 	printAvailablePiecesAux(NewPieceRow, AuxList).
 
+% Clone a list 
 copyList(L,R) :- accCp(L,R).
 accCp([],[]).
 accCp([H|T1],[H|T2]) :- accCp(T1,T2).
 
-prepareLegendsPieces(117).
-prepareLegendsPieces(NumLeter):- 
-	put_code(NumLeter),
-	write('    '),
-	NewNumLeter is NumLeter + 1,
-	prepareLegendsPieces(NewNumLeter).
+prepareLegendsPieces([]).
+prepareLegendsPieces([Head|Tail]):- 
+	getCode(Head, Code),
+	put_code(Code),
+	write('      '),
+	prepareLegendsPieces(Tail).
 
-printAvailablePieces(PieceRow, List):- 
-	write('  '),
-	prepareLegendsPieces(97), nl,
-	%length(List,NumPieces), nl,
+printInfo(Player):-
+	getColorPlayer(Player, Color), nl,
+	write(' **************************'), nl,
+	write(' ******  '), write(Color), write(' TURN'), write('  ******'), nl, 
+	write(' **************************'), nl, nl.
+
+printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):- 
+	printInfo(Head),
+	write('   '),
+	copyList([Head2 | Tail], AuxTail),
+	prepareLegendsPieces(AuxTail), nl,
 	printSeparator(NumPieces), 
-	printAvailablePiecesAux(PieceRow, List).
+	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
 teste1 :- 
 	prepareBoard([
@@ -168,6 +201,4 @@ teste1 :-
 
 
 %Test for print all available white pieces.
-teste2 :- printAvailablePieces(0, [1,[a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]]).
-
-
+teste2 :- printAvailablePieces(0, [0,[a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]]).
