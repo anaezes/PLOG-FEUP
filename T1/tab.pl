@@ -1,4 +1,5 @@
 :- use_module(library(lists)).
+:- use_module(library(clpfd)).
 /*board([
 		[nil, nil, nil],
 		[nil, [a, 0, 1, 0], nil],
@@ -55,7 +56,7 @@ getCode(t,116).
 
 validSymbol(0, 255). % válida
 validSymbol(1, 157). % inválida
-validSymbol([Head | Tail], Valid):- validSymbol(Head, Valid).
+validSymbol([Head | _], Valid):- validSymbol(Head, Valid).
 
 getColorPlayer(1, 'WHITE').
 getColorPlayer(0, 'BLACK').
@@ -66,9 +67,17 @@ rotatePattern(1, OldPattern, NewPattern).
 rotatePattern(2, OldPattern, NewPattern).
 rotatePattern(3, OldPattern, NewPattern).*/
 
-% Get rotation
-getPieceRotation([Head | _], OldPattern, NewPattern):-
-	rotatePattern(Head, OldPattern, NewPattern).
+% Rotates piece
+rotatePattern(0, OldPattern, OldPattern). 
+rotatePattern(1, OldPattern, NewPattern):- % 90 degrees
+	transpose(OldPattern, TempPattern),
+	maplist(reverse, TempPattern, NewPattern).
+rotatePattern(2, OldPattern, NewPattern):- % 180 degrees
+	reverse(OldPattern, TempPattern),
+	maplist(reverse, TempPattern, NewPattern).
+rotatePattern(3, OldPattern, NewPattern):- % 270 degrees
+	transpose(OldPattern, TempPattern),
+	reverse(TempPattern, NewPattern).
 
 % Get color
 getPieceInfo([],_,_).
@@ -77,9 +86,8 @@ getPieceInfo([Head | Tail], Color, Valid):-
 	validSymbol(Tail, Valid).
 
 % Get pattern
-getPiecePattern(PieceNum, Letter, Pattern):-
-	patternLetter(Letter, TempPattern),
-	nth0(PieceNum, TempPattern, Pattern).
+getPiecePattern(PieceNum, Pattern, NewPattern):-
+	nth0(PieceNum, Pattern, NewPattern).
 
 %Prints the 
 printEachSymbol([],_,_).
@@ -87,24 +95,28 @@ printEachSymbol([Head | Tail], Color, Valid):-
 	getSymbol(Head, Color, Char),
 	put_code(Char),
 	printEachSymbol(Tail, Color, Valid).
-printPieceSymbols(PieceNum, Letter, Color, Valid):-
-	getPiecePattern(PieceNum, Letter, Pattern),
-	printEachSymbol(Pattern, Color, Valid).
+printPieceSymbols(PieceNum, Pattern, Color, Valid):-
+	getPiecePattern(PieceNum, Pattern, NewPattern),
+	printEachSymbol(NewPattern, Color, Valid).
 
-printPiece([], PieceNum).
-printPiece(nil, PieceNum) :- 
+printPiece([], _, _).
+printPiece(nil, _, _) :- 
 	write('|   |').
-printPiece([Letter, Rotation | Tail], PieceNum):-
-	% getPieceRotation(Rotation, Pattern, NewPattern),
+printPiece([Letter, Rotation | Tail], Pattern, PieceNum):-
 	getPieceInfo(Tail, Color, Valid),
 	write('|'),
-	printPieceSymbols(PieceNum, Letter, Color, Valid),
+	printPieceSymbols(PieceNum, Pattern, Color, Valid),
 	write('|').
 
+getPiece(nil,nil).
+getPiece([Letter, Rotation | Tail], Piece):-
+	patternLetter(Letter, Pattern),
+	rotatePattern(Rotation, Pattern, Piece).
 
-printRowPieces([],Num,PieceNum):- nl.
+printRowPieces([],_, _):- nl.
 printRowPieces([Head | Tail], Num, PieceNum):-
-	printPiece(Head, PieceNum),
+	getPiece(Head, Piece),
+	printPiece(Head, Piece, PieceNum),
 	printRowPieces(Tail, Num, PieceNum).
 
 printRow(0,_,_,_).
@@ -154,7 +166,7 @@ prepareBoard([Head | Tail]):-
 
 /** PRINT AVAILABLE PIECES **/
 
-printAvailablePiecesRow(PieceRow, [Head , []]).
+printAvailablePiecesRow(_, [_ , []]).
 printAvailablePiecesRow(PieceRow, [Head , [Head2 | Tail] ]):- 
 	write(' |'),
 	printPieceSymbols(PieceRow, Head2, Head, 1), 
@@ -191,7 +203,7 @@ printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):-
 	write('   '),
 	copyList([Head2 | Tail], AuxTail),
 	prepareLegendsPieces(AuxTail), nl,
-	printSeparator(NumPieces), 
+	% printSeparator(NumPieces), 
 	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
 
@@ -230,7 +242,7 @@ addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard, NewColor):-
 teste1 :- 
 	prepareBoard([
 					[nil, nil, nil, nil, nil],
-					[nil, nil, [a, 0, 1, 0], [b, 0, 0, 0], nil],
+					[nil, nil, [a, 3, 1, 0], [b, 1, 0, 0], nil],
 					[nil, [g, 0, 1, 0], [h, 0, 1, 0], [d, 0, 0, 0], nil],
 					[nil, nil, nil, nil, nil]
 				]).
