@@ -215,12 +215,18 @@ printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):-
 **** FUNCTIONS TO MOVE ****
 **************************/
 
-%addPiece([], Row, Column, PieceCode, Color, Rotation, [PieceCode,Rotation,Color,0], NewColor).
+addNilSpaces(0, _, []).
+addNilSpaces(Length, Value, [Value|NewList]):- 
+	NewLength is Length-1,
+  	NewLength @>= 0,
+ 	addNilSpaces(NewLength, Value, NewList).
+
 
 addSpaceMatrix(Board, Length, NewBoard):-
-	%write('LENGHT::::: '), write(Length), nl,
-	append([Board], [[nil, nil, nil]], AuxNewBoard),
-	append([[nil, nil, nil]], AuxNewBoard, NewBoard).
+	addNilSpaces(Length, nil, AuxList1),
+	append([Board], [AuxList1], AuxNewBoard),
+	addNilSpaces(Length, nil, AuxList2),
+	append([AuxList2], AuxNewBoard, NewBoard).
 
 
 addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard, NewColor):-
@@ -232,17 +238,15 @@ addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard, NewColor):-
 
 
 
-
-
-
 /****************
 **** TESTING ****
 *****************/
 
+
 teste1 :- 
 	prepareBoard([
 					[nil, nil, nil, nil, nil],
-					[nil, nil, [a, 3, 1, 0], [b, 1, 0, 0], nil],
+					[nil, nil, [a, 3, 0, 0], [b, 1, 0, 0], nil],
 					[nil, [g, 0, 1, 0], [h, 0, 1, 0], [d, 0, 0, 0], nil],
 					[nil, nil, nil, nil, nil]
 				]).
@@ -254,6 +258,8 @@ teste2 :- printAvailablePieces(0, [0,[a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]])
 
 %Test for print first move.
 teste3 :- board(Board), 
-	addPiece(Board, 1, 1, a, 0, 0, NewBoard, NewColor), 
-	prepareBoard(NewBoard).
+	addPiece(Board, 1, 1, a, 0, 3, NewBoard, NewColor), prepareBoard(NewBoard).
 board([nil]).
+
+%test add multiples nils in a row
+teste4 :- addNilSpaces( 5, nil, List).
