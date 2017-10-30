@@ -2,40 +2,87 @@
 **** FUNCTIONS OF INPUT ****
 **************************/
 
-askBoardPosition([Head | Tail], Letter, Rotation):-
+checkIfMoveIsValid(Board, Letter, Rotation, ColorPlayer, NumRow, NumColumn):-
+	nth1(NumRow, Board, RowChosen),
+	nth1(NumColumn, RowChosen, CellChosen),
+	CellChosen == nil, % cell is free
+	BeforeNumRow is NumRow - 1,
+
+	% Check if there is a piece in the row before
+	nth1(BeforeNumRow, Board, RowBefore),
+	nth1(NumColumn, RowBefore, CellBefore),
+	CellBefore \== nil,
+	write('Valid Move!'),nl
+	% add function to make move
+	.
+checkIfMoveIsValid(Board, Letter, Rotation, ColorPlayer, NumRow, NumColumn):-
+	%Check if there is a piece in the row after
+	AfterNumRow is NumRow + 1,
+	nth1(AfterNumRow, Board, RowAfter),
+	nth1(NumColumn, RowAfter, CellAfter),
+	CellAfter \== nil,
+	write('Valid Move!'),nl
+	% add function to make move
+	.
+checkIfMoveIsValid(Board, Letter, Rotation, ColorPlayer, NumRow, NumColumn):-
+	%Check if there is a piece in the column before
+	BeforeNumColumn is NumColumn - 1,
+	nth1(NumRow, Board, Row),
+	nth1(BeforeNumColumn, Row, CellBefore),
+	CellBefore \== nil,
+	write('Valid Move!'),nl
+	% add function to make move
+	.
+checkIfMoveIsValid(Board, Letter, Rotation, ColorPlayer, NumRow, NumColumn):-
+	%Check if there is a piece in the column after
+	AfterNumColumn is NumColumn + 1,
+	nth1(NumRow, Board, Row),
+	nth1(AfterNumColumn, Row, CellAfter),
+	CellAfter \== nil,
+	write('Valid Move!'),nl
+	% add function to make move
+	.
+	
+checkIfMoveIsValid(Board, Letter, Rotation, ColorPlayer, NumRow, NumColumn):-
+	write('Invalid move, please choose another'), nl,
+	pieces(Pieces),
+	askNextPiece(Board, Pieces, ColorPlayer).
+
+between(Min, Max, Num):-
+	Num >= Min,
+	Num =< Max.
+
+askBoardPosition([Head | Tail], Letter, Rotation, ColorPlayer):-
 	write('Row: '),
-	get_char(Row), nl,
+	read(Row), nl,
 	length([Head | Tail], RowMax),
-	atom_number(Row, NumRow),
-	between(1, RowMax, NumRow),
-	skip(10),
-	!, write('Column: '), get_char(Column), nl,
+	between(1, RowMax, Row),
+	!, write('Column: '), read(Column), nl,
 	length(Head, ColumnMax),
-	atom_number(Column, NumColumn),
-	between(1, ColumnMax, NumColumn),!,
-	write('All went well'). % Insert here the function to check if the move is valid
-askBoardPosition(Board, Letter, Rotation):- askBoardPosition(Board, Letter, Rotation).
+	between(1, ColumnMax, Column),!,
+	checkIfMoveIsValid([Head | Tail], Letter, Rotation, ColorPlayer, Row, Column).
+askBoardPosition(Board, Letter, Rotation):- askBoardPosition(Board, Letter, Rotation, ColorPlayer).
 
 
-askRotation(Board, Letter):-
+askRotation(Board, Letter, ColorPlayer):-
 	write('Rotation (0 - 0 degrees, 1 - 90 degrees, 2 - 180 degrees, 3 - 270 degrees): '),
-	get_char(Rotation), nl,
-	skip(10),
-	atom_number(Rotation, NumRotation),
-	member(NumRotation, [0,1,2,3]),!,
-	askBoardPosition(Board, Letter, Rotation).
+	read(Rotation), nl,
+	member(Rotation, [0,1,2,3]),!,
+	write('HERE'),
+	askBoardPosition(Board, Letter, Rotation, ColorPlayer).
 askRotation(Board, Letter):-
 	write('Wrong rotation number, please try again '), nl,
-	askRotation(Board, Letter).
+	askRotation(Board, Letter, ColorPlayer).
 
-askNextPiece(Board, Pieces):-
+askNextPiece(Board, Pieces, ColorPlayer):-
 	write('Next Piece: '),
-	get_char(Letter), nl,
+	read(Letter), nl,
 	member(Letter, Pieces),!,
-	skip(10), % skips the newline
-	askRotation(Board, Letter).
+	askRotation(Board, Letter, ColorPlayer).
 askNextPiece(Board, Pieces):-
 	write('Wrong piece identifier, please try again '), nl,
-	askNextPiece(Board, Pieces).
+	askNextPiece(Board, Pieces, ColorPlayer).
 
-testeInput :- askNextPiece([[nil, nil, nil]],[a,b,c,d,h,s,t]).
+testeInput :- pieces(Pieces), askNextPiece([[nil, nil, nil],[nil,[a,1,0,0],nil],[nil,nil,nil]],Pieces, 0).
+
+pieces([a,b,c,d,h,s,t]).
