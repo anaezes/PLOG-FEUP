@@ -1,8 +1,7 @@
 :- use_module(library(lists)).
-:- use_module(library(clpfd)).
-
 
 :-include('print.pl').
+:-include('input.pl').
 
 :- dynamic firstMove/1.
 
@@ -48,18 +47,17 @@ append([AuxList2], AuxNewBoard, NewBoard).
 **/
 
 %first move
-addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard, NewColor):-
-firstMove(X), X == 1,
-retract(firstMove(X)),
+addPiece(Board, PieceCode, Color, Rotation, NewBoard, NewColor):-
 append([[PieceCode,Rotation,Color,0]], Board, AuxBoard),
 append([nil], AuxBoard, AuxTwoBoard),
 length(AuxTwoBoard,Length),
-addSpaceMatrix(AuxTwoBoard, Length, NewBoard),
-prepareBoard(NewBoard).
+addSpaceMatrix(AuxTwoBoard, Length, NewBoard).
+%prepareBoard(NewBoard).
 
 addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard, NewColor):-
 %verificar position se é válida (se esta vazia, ou se  está ao de uma peça já colocada)
-replace(Board,Row,Column,[b,3,0,0], AuxBoard),
+write(Row),nl, write(Column),
+replace(Board,Row,Column,[PieceCode,Rotation,Color,0], AuxBoard),
 verifyExpandBoard(Row, Column, AuxBoard, NewBoard).
 
 
@@ -171,6 +169,35 @@ addNilSpaces(Width, nil, AuxList),
 append([H1 | T1], [AuxList], NewBoard).
 
 
+removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces):-
+	delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
+
+game2Players(Board, Pieces, ColorPlayer) :-
+	firstMove(X), X == 1,!,
+	printAvailablePieces(0, [ColorPlayer, Pieces]),
+	askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
+	addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
+	write(NewBoard),
+	NewColorPlayer is mod(ColorPlayer,2),
+	retract(firstMove(X)),
+	% adicionar condição de ganhar jogo
+	game2Players(NewBoard, NewListAvailablePieces, NewColorPlayer).
+game2Players(Board, Pieces, ColorPlayer) :-
+	write('2 turn'),
+	prepareBoard(Board),
+	printAvailablePieces(0, [ColorPlayer, Pieces]),
+	askInput(Board, Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol),
+	write('LEL'),nl,write(NumRow), write(' : '), write(NumCol),nl,
+	addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
+	NewColorPlayer is mod(ColorPlayer,2),
+	% adicionar condição de ganhar jogo
+	game2Players(NewBoard, NewListAvailablePieces, NewColorPlayer).
+	
+
+
+
 /****************
 **** TESTING ****
 *****************/
@@ -212,4 +239,10 @@ board2([
 	[nil, nil, nil ]
 	]).
 
+piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 
+
+teste6 :- 
+	board1(Board),
+	piecesWhite(Pieces),
+	game2Players(Board, Pieces,1).

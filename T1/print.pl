@@ -200,7 +200,7 @@ printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):-
 	prepareLegendsPieces(AuxTail), nl,
 	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
-
+/*
 printMenuScreen :- nl, nl,
 	write('		****************************************************************'),nl,
 	write('		*--------------------------------------------------------------*'),nl,
@@ -225,7 +225,7 @@ printMenuScreen :- nl, nl,
 	write('		*|                                                            |*'),nl,
 	write('		*|                                                            |*'),nl,
 	write('		*--------------------------------------------------------------*'),nl,
-	write('		****************************************************************'),nl.
+	write('		****************************************************************'),nl.*/
 
 
 removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces) :- delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
