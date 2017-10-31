@@ -199,3 +199,33 @@ printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):-
 	copyList([Head2 | Tail], AuxTail),
 	prepareLegendsPieces(AuxTail), nl,
 	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
+
+
+printMenuScreen :- nl, nl,
+	write('		****************************************************************'),nl,
+	write('		*--------------------------------------------------------------*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                ||\\   ||  ||       ||  ||  ||               |*'),nl,
+	write('		*|                || \\  ||  ||       ||  ||  ||               |*'),nl,
+	write('		*|                ||  \\ ||  || ==    ||  ||  ||               |*'),nl,
+	write('		*|                ||   \\||  ||    |\__||  ||__||               |*'),nl,
+	write('		*|                ||    \||  ||    \\___/  |____|               |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                   1 - Two players battle.                  |*'),nl,
+	write('		*|                   2 - Against the computer.                |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                     **** WELCOME ! ****                    |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                   Ana Santos up200700742                   |*'),nl,
+	write('		*|                Margarida Silva up201505505                 |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*|                                                            |*'),nl,
+	write('		*--------------------------------------------------------------*'),nl,
+	write('		****************************************************************'),nl.
+
+
+removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces) :- delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
