@@ -70,7 +70,6 @@ verifyExpandBoard(Row, Column, AuxBoard, NewBoard).
 %(0,0)
 verifyExpandBoard(Row, Column, Board, NewBoard) :- 
 Column == 0, Row == 0, !,
-write('CASO 1'), nl,
 addRowUp(Board, AuxBoard),
 length(AuxBoard,Height),
 addColNilsLeft(AuxBoard, Height, NewBoard). 
@@ -82,7 +81,6 @@ Height is AuxHeight - 1,
 length(H, AuxWidth),
 Width is AuxWidth - 1,
 Column == Width, Row == Height, !,
-write('CASO 2'), nl,
 addRowDown([H | T], AuxBoard),
 length(AuxBoard, NewHeight),
 addColNilsRight(AuxBoard, NewHeight, NewBoard). 
@@ -92,7 +90,6 @@ verifyExpandBoard(Row, Column, [H | T], NewBoard) :-
 length(H, AuxWidth),
 Width is AuxWidth - 1,
 Column == Width, Row == 0, !,
-write('CASO 3'), nl,
 addRowUp([H | T], AuxBoard),
 length(AuxBoard,Height),
 addColNilsRight(AuxBoard, Height, NewBoard). 
@@ -102,7 +99,6 @@ verifyExpandBoard(Row, Column, [H | T], NewBoard) :-
 length([H | T], AuxHeight),
 Height is AuxHeight - 1,
 Row == Height, Column == 0, !,
-write('CASO 4'), nl,
 addRowDown([H | T], AuxBoard),
 length(AuxBoard,NewHeight),
 addColNilsLeft(AuxBoard, NewHeight, NewBoard). 
@@ -110,14 +106,12 @@ addColNilsLeft(AuxBoard, NewHeight, NewBoard).
 % Case (0,-)
 verifyExpandBoard(Row, Column, Board, NewBoard) :- 
 Column == 0, !,
-write('CASO 5'), nl,
 length(Board,Height),
 addColNilsLeft(Board, Height, NewBoard). 
 
 % Case (-,0)
 verifyExpandBoard(Row, Column, Board, NewBoard) :- 
 Row == 0, !,
-write('CASO 6'), nl,
 addRowUp(Board, NewBoard).	
 
 % Case (length, -)
@@ -125,7 +119,6 @@ verifyExpandBoard(Row, Column, [H | T], NewBoard) :-
 length([H | T], AuxHeight),
 Height is AuxHeight - 1,
 Row == Height, !,
-write('CASO 7'), nl,
 addRowDown([H | T], NewBoard).
 
 % Case (-, width)
@@ -133,7 +126,6 @@ verifyExpandBoard(Row, Column, [H | T], NewBoard) :-
 length(H, AuxWidth),
 Width is AuxWidth - 1,
 Column == Width, !,
-write('CASO 8'), nl,
 addColNilsRight([H | T], AuxWidth, NewBoard). 
 
 % Default case
@@ -178,17 +170,14 @@ game2Players(Board, Pieces, ColorPlayer) :-
 	askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
 	addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
 	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
-	write(NewBoard),
 	NewColorPlayer is mod(ColorPlayer,2),
 	retract(firstMove(X)),
 	% adicionar condição de ganhar jogo
 	game2Players(NewBoard, NewListAvailablePieces, NewColorPlayer).
 game2Players(Board, Pieces, ColorPlayer) :-
-	write('2 turn'),
 	prepareBoard(Board),
 	printAvailablePieces(0, [ColorPlayer, Pieces]),
 	askInput(Board, Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol),
-	write('LEL'),nl,write(NumRow), write(' : '), write(NumCol),nl,
 	addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
 	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
 	NewColorPlayer is mod(ColorPlayer,2),
