@@ -136,14 +136,14 @@ verifyExpandBoard(Row, Column, Board, Board).
 
 
 %add col of nils to left
-addColNilsLeft([], 0, T2).
+addColNilsLeft([], 0, []).
 addColNilsLeft([H1 | T1], Height, [H2 | T2]) :-
 append([nil], H1, H2),
 NewHeight is Height - 1,
 addColNilsLeft(T1, NewHeight, T2).
 
 %add col of nils to right
-addColNilsRight([], 0, T2).
+addColNilsRight([], 0, []).
 addColNilsRight([H1 | T1], Width, [H2 | T2]) :-
 length(H1, Pos),
 insertAt(nil, Pos, H1, H2),
@@ -250,7 +250,7 @@ piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 
 teste6 :- 
 board1(Board),
-printMenuScreen(X),
+%printMenuScreen(X),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
 game2Players(Board, PiecesWhite, PiecesBlack, 1).
