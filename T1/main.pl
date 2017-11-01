@@ -196,6 +196,7 @@ addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColo
 removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 NewColorPlayer is ColorPlayer - 1,
 % adicionar condição de ganhar jogo
+%vertifyDraw(NewPiecesWhite, PiecesBlack, Draw), Draw \== 1, !,
 game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
 
 game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
@@ -208,9 +209,10 @@ addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColo
 removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 NewColorPlayer is ColorPlayer + 1,
 % adicionar condição de ganhar jogo
+%vertifyDraw(PiecesWhite, NewPiecesBlack, Draw), Draw \== 1, !,
 game2Players(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer).
 
-
+game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :- write('Draw'), nl.
 
 
 /**
@@ -239,6 +241,7 @@ addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColo
 removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 NewColorPlayer is ColorPlayer - 1,
 % adicionar condição de ganhar jogo
+%vertifyDraw(NewPiecesWhite, PiecesBlack, Draw), Draw \== 1, !,
 gameHumanVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
 
 gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
@@ -251,8 +254,10 @@ addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColo
 prepareBoard(NewBoard), nl, sleep(2),
 removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 NewColorPlayer is ColorPlayer + 1,
+%vertifyDraw(PiecesWhite, NewPiecesBlack, Draw), Draw \== 1, !,
 gameHumanVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer).
 
+gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :- write('Draw'), nl.
 
 computerMove([H|T], Pieces, Letter, ColorPlayer, Rotation) :-
 repeat,
@@ -314,6 +319,7 @@ prepareBoard(NewBoard), nl, sleep(3),
 removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 NewColorPlayer is ColorPlayer - 1,
 % adicionar condição de ganhar jogo
+%vertifyDraw(NewPiecesWhite, PiecesBlack, Draw), Draw \== 1, !,
 gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
 
 gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
@@ -326,8 +332,10 @@ addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColo
 prepareBoard(NewBoard), nl, sleep(3),
 removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 NewColorPlayer is ColorPlayer + 1,
+%vertifyDraw(PiecesWhite, NewPiecesBlack, Draw), Draw \== 1, !,
 gameComputerVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer).
 
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer):- write('Draw'), nl.
 
 
 vertifyDraw(PiecesWhite, PiecesBlack, Draw) :-
@@ -384,7 +392,7 @@ board2([
 
 piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
-options([1, 2, 3]).
+options([1, 2, 3, 4, 5]).
 
 
 
@@ -411,14 +419,28 @@ game2Players(Board, PiecesWhite, PiecesBlack, 1).
 
 initGame(Option):-
 Option == 2, !,
+write('Option 2'), nl,
+write('\33\[2J'),
 board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
 gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, 1).
 
 initGame(Option):-
+Option == 3, !,
+write('Option 3'), nl,
+write('Not Available!!!!'), nl.
+
+initGame(Option):-
+Option == 4, !,
+write('Option 4'), nl,
 write('\33\[2J'),
 board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
 gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 1).
+
+initGame(Option):-
+Option == 5, 
+write('Option 5'), nl,
+write('Not Available!!!!'), nl.
