@@ -144,7 +144,8 @@ addColNilsLeft(T1, NewHeight, T2).
 addColNilsRight([], 0, T2).
 addColNilsRight([H1 | T1], Height, [H2 | T2]) :-
 length(H1, Pos),
-insertAt(nil, Pos, H1, H2),
+NewPos is Pos -1,
+insertAt(nil, NewPos, H1, H2),
 NewHeight is Height - 1,
 addColNilsRight(T1, NewHeight, T2).
 
@@ -220,6 +221,8 @@ teste4 :- addNilSpaces( 5, nil, List).
 %Test for print first move.
 teste5 :- board2(Board), addPiece(Board, 2, 0, b, 1, 3, NewBoard, NewColor), prepareBoard(NewBoard).
 
+teste7 :- board2(Board), addColNilsRight(Board, 3, NewBoard), write(NewBoard). %prepareBoard(NewBoard).
+
 
 board1([nil]).
 board2([
@@ -234,4 +237,4 @@ piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 teste6 :- 
 	board1(Board),
 	piecesWhite(Pieces),
-	game2Players(Board, Pieces,1).
+	game2Players(Board, Pieces, 1).
