@@ -13,7 +13,7 @@ patternLetter(f, [[1,1,0],[0,0,1],[0,0,1]]).
 patternLetter(g, [[1,1,0],[0,0,1],[0,1,0]]).
 patternLetter(h, [[1,1,0],[0,0,1],[1,0,0]]).
 patternLetter(i, [[1,1,0],[1,0,1],[0,0,0]]).
-patternLetter(j, [[1,1,0],[0,0,0],[1,1,1]]).
+patternLetter(j, [[1,1,0],[0,0,0],[0,1,1]]).
 patternLetter(k, [[1,1,0],[0,0,0],[1,0,1]]).
 patternLetter(l, [[1,1,0],[1,0,0],[0,0,1]]).
 patternLetter(m, [[1,1,0],[0,0,0],[1,1,0]]).
