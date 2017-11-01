@@ -167,6 +167,7 @@ removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces):-
 delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
 
 game2Players(Board, Pieces, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
 firstMove(X), X == 1,!,
 printAvailablePieces(0, [ColorPlayer, Pieces]),
 askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
@@ -178,6 +179,7 @@ retract(firstMove(X)),
 game2Players(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer).
 
 game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
 ColorPlayer == 1, !,
 prepareBoard(Board),
 printAvailablePieces(0, [ColorPlayer, PiecesWhite]),
@@ -189,6 +191,7 @@ NewColorPlayer is ColorPlayer - 1,
 game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
 
 game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
 prepareBoard(Board),
 printAvailablePieces(0, [ColorPlayer, PiecesBlack]),
 askInput(Board, PiecesBlack, Letter, ColorPlayer, Rotation, NumRow, NumCol),
@@ -246,11 +249,19 @@ board2([
 
 piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
+options([1, 2]).
 
 
-teste6 :- 
+ni_ju :- 
 board1(Board),
-%printMenuScreen(X),
+write('\33\[2J'),
+printMenuScreen(X),
+options(Options),
+askMenuInput(Options, Option),
+Option == 1, !,
+write('\33\[2J'),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
 game2Players(Board, PiecesWhite, PiecesBlack, 1).
+
+ni_ju :- write('Option not available'), nl.

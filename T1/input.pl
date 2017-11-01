@@ -100,3 +100,8 @@ askInput(Board, Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol):-
 	once(askRotation(Rotation)),
 	once(askBoardPosition(Board, NumRow, NumCol)),
 	once(checkIfMoveIsValid(Board, NumRow, NumCol)).
+
+askMenuInput(Options, Option):-
+	nl, write('Choose option: '),
+	read(Option),
+	member(Option, Options).
