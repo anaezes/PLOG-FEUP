@@ -3,6 +3,7 @@
 
 :-include('print.pl').
 :-include('input.pl').
+:-include('checkGameStatus.pl').
 
 :- dynamic firstMove/1.
 
