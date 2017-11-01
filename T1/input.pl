@@ -78,7 +78,7 @@ askBoardPosition([Head | Tail], NumRow, NumCol):-
 
 askRotation(Rotation):-
 	write('Rotation (0 - 0 degrees, 1 - 90 degrees, 2 - 180 degrees, 3 - 270 degrees): '),
-	read(Rotation),
+	once(read(Rotation)), !,
 	member(Rotation, [0,1,2,3]).
 
 

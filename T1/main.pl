@@ -1,4 +1,5 @@
 :- use_module(library(lists)).
+:- use_module(library(clpfd)).
 
 :-include('print.pl').
 :-include('input.pl').
@@ -42,6 +43,8 @@ append([Board], [AuxList1], AuxNewBoard),
 addNilSpaces(Length, nil, AuxList2),
 append([AuxList2], AuxNewBoard, NewBoard).
 
+
+
 /**
 * Add a piece to the board
 **/
@@ -52,11 +55,9 @@ append([[PieceCode,Rotation,Color,0]], Board, AuxBoard),
 append([nil], AuxBoard, AuxTwoBoard),
 length(AuxTwoBoard,Length),
 addSpaceMatrix(AuxTwoBoard, Length, NewBoard).
-%prepareBoard(NewBoard).
 
 addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard, NewColor):-
 %verificar position se é válida (se esta vazia, ou se  está ao de uma peça já colocada)
-write(Row),nl, write(Column),
 replace(Board,Row,Column,[PieceCode,Rotation,Color,0], AuxBoard),
 verifyExpandBoard(Row, Column, AuxBoard, NewBoard).
 
@@ -126,7 +127,8 @@ verifyExpandBoard(Row, Column, [H | T], NewBoard) :-
 length(H, AuxWidth),
 Width is AuxWidth - 1,
 Column == Width, !,
-addColNilsRight([H | T], AuxWidth, NewBoard). 
+length(Board,Height),
+addColNilsRight([H | T], Height, NewBoard). 
 
 % Default case
 verifyExpandBoard(Row, Column, Board, Board).
@@ -142,12 +144,11 @@ addColNilsLeft(T1, NewHeight, T2).
 
 %add col of nils to right
 addColNilsRight([], 0, T2).
-addColNilsRight([H1 | T1], Height, [H2 | T2]) :-
+addColNilsRight([H1 | T1], Width, [H2 | T2]) :-
 length(H1, Pos),
-NewPos is Pos -1,
-insertAt(nil, NewPos, H1, H2),
-NewHeight is Height - 1,
-addColNilsRight(T1, NewHeight, T2).
+insertAt(nil, Pos, H1, H2),
+NewWidth is Width - 1,
+addColNilsRight(T1, NewWidth, T2).
 
 %add row of nils to up
 addRowUp([H1 | T1], NewBoard) :-
@@ -236,5 +237,6 @@ piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 
 teste6 :- 
 	board1(Board),
+	printMenuScreen(X),
 	piecesWhite(Pieces),
 	game2Players(Board, Pieces, 1).
