@@ -1,5 +1,7 @@
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
+:- use_module(library(random)).
+:- use_module(library(system)).
 
 :-include('print.pl').
 :-include('input.pl').
@@ -167,6 +169,10 @@ append([H1 | T1], [AuxList], NewBoard).
 removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces):-
 delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
 
+
+/**
+* Two players battle
+**/
 game2Players(Board, Pieces, PiecesBlack, ColorPlayer) :-
 write('\33\[2J'),
 firstMove(X), X == 1,!,
@@ -203,6 +209,75 @@ NewColorPlayer is ColorPlayer + 1,
 game2Players(NewBoard, PiecesWhite, NewListAvailablePieces, NewColorPlayer).
 
 
+
+
+/**
+* Human vs Computer
+**/
+gameHumanVsComputer(Board, Pieces, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
+firstMove(X), X == 1,!,
+printAvailablePieces(0, [ColorPlayer, Pieces]),
+askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
+addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
+NewColorPlayer is ColorPlayer - 1,
+retract(firstMove(X)),
+% adicionar condição de ganhar jogo
+gameHumanVsComputer(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer).
+
+gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
+ColorPlayer == 1, !,
+write('HUMAN TURN!!!!!!'), nl,
+prepareBoard(Board),
+printAvailablePieces(0, [ColorPlayer, PiecesWhite]),
+askInput(Board, PiecesWhite, Letter, ColorPlayer, Rotation, NumRow, NumCol),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
+NewColorPlayer is ColorPlayer - 1,
+% adicionar condição de ganhar jogo
+gameHumanVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
+
+gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
+ColorPlayer == 0, !,
+write('COMPUTER TURN!!!!!!'), nl, 
+prepareBoard(Board),
+printAvailablePieces(0, [ColorPlayer, PiecesBlack]),
+computerMove(Board, PiecesWhite, Letter, ColorPlayer, Rotation, NumRow, NumCol),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+prepareBoard(NewBoard), nl, sleep(5),
+removePiecePlayed(PiecesBlack, Letter, NewListAvailablePieces),
+NewColorPlayer is ColorPlayer + 1,
+gameHumanVsComputer(NewBoard, PiecesWhite, NewListAvailablePieces, NewColorPlayer).
+
+
+computerMove([H|T], Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol) :-
+repeat,
+once(getPieceLetter(Pieces, Letter)),
+once(getRotation(Rotation)),
+once(getPosition([H|T], NumRow, NumCol)),
+once(checkIfMoveIsValid([H|T], NumRow, NumCol)), nl,
+write('-> Computer played piece '), write(Letter), write(' in ('),
+	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
+
+getPieceLetter(Pieces, Letter) :- 	
+length(Pieces, AuxNumPieces),
+NumPieces is AuxNumPieces - 1,
+random(0, NumPieces, PosPiece),
+nth0(PosPiece, Pieces, Letter).
+
+getRotation(Rotation) :-
+random(0, 3, Rotation).
+
+getPosition([H|T], NumRow, NumCol) :-
+length([H|T], AuxNumRows),
+NumRows is AuxNumRows - 1,
+random(0, NumRows, NumRow),
+length(H, AuxNumCols),
+NumCols is AuxNumCols - 1,
+random(0, NumCols, NumCol).
 
 
 /****************
@@ -254,15 +329,22 @@ options([1, 2]).
 
 
 ni_ju :- 
-board1(Board),
 write('\33\[2J'),
 printMenuScreen(X),
 options(Options),
 askMenuInput(Options, Option),
 Option == 1, !,
+write('Option 1'), nl,
 write('\33\[2J'),
+board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
 game2Players(Board, PiecesWhite, PiecesBlack, 1).
 
-ni_ju :- write('Option not available'), nl.
+ni_ju :- board1(Board),
+write('Option Computer'), nl,
+write('\33\[2J'),
+board1(Board),
+piecesBlack(PiecesBlack),
+piecesWhite(PiecesWhite),
+gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, 1).

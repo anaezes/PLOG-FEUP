@@ -11,8 +11,7 @@ checkIfMoveIsValid(Board, NumRow, NumCol):-
 	BeforeNumRow is NumRow - 1,
 	nth0(BeforeNumRow, Board, RowBefore),
 	nth0(NumCol, RowBefore, CellBefore),
-	CellBefore \== nil,
-	write('passou 1 : valida'), nl.
+	CellBefore \== nil.
 
 
 
@@ -25,8 +24,7 @@ checkIfMoveIsValid(Board, NumRow, NumCol):-
 	AfterNumRow is NumRow + 1,
 	nth0(AfterNumRow, Board, RowAfter),
 	nth0(NumCol, RowAfter, CellAfter),
-	CellAfter \== nil,
-	write('passou 2 : valida'), nl.
+	CellAfter \== nil.
 
 
 
@@ -39,8 +37,7 @@ checkIfMoveIsValid(Board, NumRow, NumCol):-
 	BeforeNumColumn is NumCol - 1,
 	nth0(NumRow, Board, Row),
 	nth0(BeforeNumColumn, Row, CellBefore),
-	CellBefore \== nil,
-	write('passou 3 : valida'), nl.
+	CellBefore \== nil.
 
 
 checkIfMoveIsValid(Board, NumRow, NumCol):-
@@ -52,8 +49,7 @@ checkIfMoveIsValid(Board, NumRow, NumCol):-
 	AfterNumColumn is NumCol + 1,
 	nth0(NumRow, Board, Row),
 	nth0(AfterNumColumn, Row, CellAfter),
-	CellAfter \== nil,
-	write('passou 4 : valida'), nl.
+	CellAfter \== nil.
 
 
 	
