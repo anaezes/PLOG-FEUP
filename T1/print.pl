@@ -55,8 +55,10 @@ validSymbol(0, 255). % válida
 validSymbol(1, 157). % inválida
 validSymbol([Head | _], Valid):- validSymbol(Head, Valid).
 
-getColorPlayer(1, 'WHITE').
-getColorPlayer(0, 'BLACK').
+getColorPlayer(1,'WHITE').
+getColorPlayer(0,'BLACK').
+getTypePlayer(1, ' HUMAN  ').
+getTypePlayer(0, 'COMPUTER').
 
 % Rotates piece
 rotatePattern(0, OldPattern, OldPattern). 
@@ -155,7 +157,7 @@ printSeparator(ColumnsNum):-
 prepareBoard([Head | Tail]):-
 	nl,length(Head, ColumnsNum),
 	write('   '),printTopNumbers(0,ColumnsNum), nl,
-	printBoard([Head | Tail], 0).
+	printBoard([Head | Tail], 0), nl.
 
 
 
@@ -187,45 +189,63 @@ prepareLegendsPieces([Head|Tail]):-
 	write('      '),
 	prepareLegendsPieces(Tail).
 
-printInfo(Player):-
+printInfoColor(Player):-
 	getColorPlayer(Player, Color), nl,
-	write(' **************************'), nl,
-	write(' ******  '), write(Color), write(' TURN'), write('  ******'), nl, 
-	write(' **************************'), nl, nl.
+	printSpace(50),write('**************************'), nl,
+	printSpace(50),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
+	printSpace(50),write('**************************'), nl, nl.
+
+printInfoType(Player):-
+	getTypePlayer(Player, Color), nl,
+	printSpace(50), write('*****************************'), nl,
+	printSpace(50),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
+	printSpace(50),write('*****************************'), nl, nl.
+
+printInfoColorComputer(Player):-
+	getColorPlayer(Player, Color), nl,
+	printSpace(50), write('***********************************'), nl,
+	printSpace(50), write('******  '), write('COMPUTER '), write(Color), write(' TURN'), write('  ******'), nl, 
+	printSpace(50),write('***********************************'), nl, nl.
 
 printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):- 
-	printInfo(Head),
+	write('  Available pieces: '), nl, nl,
 	write('   '),
 	copyList([Head2 | Tail], AuxTail),
 	prepareLegendsPieces(AuxTail), nl,
 	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
+printSpace(0).
+printSpace(Value):-
+	write(' '),
+	NewValue is Value - 1,
+	printSpace(NewValue).
+
 
 printMenuScreen(X) :- nl, nl,
-	write('          *****************************************************************'),nl,
-	write('          * ------------------------------------------------------------- *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                ||\\\\   ||  ||       ||  ||  ||             | *'),nl,
-	write('          * |                || \\\\  ||  ||       ||  ||  ||             | *'),nl,
-	write('          * |                ||  \\\\ ||  || ==    ||  ||  ||             | *'),nl,
-	write('          * |                ||   \\\\||  ||    |__||  ||__||             | *'),nl,
-	write('          * |                ||    \\||  ||    \\__ /  |____|             | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                   1 - Two players battle.                 | *'),nl,
-	write('          * |                   2 - Against the computer.               | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                     **** WELCOME ! ****                   | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                   Ana Santos up200700742                  | *'),nl,
-	write('          * |                Margarida Silva up201505505                | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * |                                                           | *'),nl,
-	write('          * ------------------------------------------------------------- *'),nl,
-	write('          *****************************************************************'),nl.
+	printSpace(40), write('          *****************************************************************'),nl,
+	printSpace(40), write('          * ------------------------------------------------------------- *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                ||\\\\   ||  ||       ||  ||  ||             | *'),nl,
+	printSpace(40), write('          * |                || \\\\  ||  ||       ||  ||  ||             | *'),nl,
+	printSpace(40), write('          * |                ||  \\\\ ||  || ==    ||  ||  ||             | *'),nl,
+	printSpace(40), write('          * |                ||   \\\\||  ||    |__||  ||__||             | *'),nl,
+	printSpace(40), write('          * |                ||    \\||  ||    \\__ /  |____|             | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                   1 - Human vs Human.                     | *'),nl,
+	printSpace(40), write('          * |                  2 - Human vs Computer.                   | *'),nl,
+	printSpace(40), write('          * |                 3 - Computer vs Computer.                 | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                     **** WELCOME ! ****                   | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                   Ana Santos up200700742                  | *'),nl,
+	printSpace(40), write('          * |                Margarida Silva up201505505                | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * |                                                           | *'),nl,
+	printSpace(40), write('          * ------------------------------------------------------------- *'),nl,
+	printSpace(40), write('          *****************************************************************'),nl.
 
 
 removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces) :- delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).

@@ -5,7 +5,7 @@
 
 :-include('print.pl').
 :-include('input.pl').
-:-include('checkGameStatus.pl').
+%:-include('checkGameStatus.pl').
 
 :- dynamic firstMove/1.
 
@@ -171,25 +171,26 @@ delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
 
 
 /**
-* Two players battle
+* Human vs Human
 **/
-game2Players(Board, Pieces, PiecesBlack, ColorPlayer) :-
+game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
 write('\33\[2J'),
 firstMove(X), X == 1,!,
-printAvailablePieces(0, [ColorPlayer, Pieces]),
-askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
+printInfoColor(ColorPlayer), sleep(1),
+printAvailablePieces(0, [ColorPlayer, PiecesWhite]), sleep(1),
+askInput(Board, PiecesWhite, Letter, ColorPlayer, Rotation),
 addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
-removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
+removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 NewColorPlayer is ColorPlayer - 1,
 retract(firstMove(X)),
-% adicionar condição de ganhar jogo
-game2Players(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer).
+game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
 
 game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
 write('\33\[2J'),
 ColorPlayer == 1, !,
-prepareBoard(Board),
-printAvailablePieces(0, [ColorPlayer, PiecesWhite]),
+printInfoColor(ColorPlayer), sleep(1),
+prepareBoard(Board), sleep(2),
+printAvailablePieces(0, [ColorPlayer, PiecesWhite]), sleep(1),
 askInput(Board, PiecesWhite, Letter, ColorPlayer, Rotation, NumRow, NumCol),
 addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
 removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
@@ -199,14 +200,15 @@ game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
 
 game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
 write('\33\[2J'),
-prepareBoard(Board),
-printAvailablePieces(0, [ColorPlayer, PiecesBlack]),
+printInfoColor(ColorPlayer), sleep(1),
+prepareBoard(Board), sleep(2),
+printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
 askInput(Board, PiecesBlack, Letter, ColorPlayer, Rotation, NumRow, NumCol),
 addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
-removePiecePlayed(PiecesBlack, Letter, NewListAvailablePieces),
+removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 NewColorPlayer is ColorPlayer + 1,
 % adicionar condição de ganhar jogo
-game2Players(NewBoard, PiecesWhite, NewListAvailablePieces, NewColorPlayer).
+game2Players(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer).
 
 
 
@@ -217,23 +219,23 @@ game2Players(NewBoard, PiecesWhite, NewListAvailablePieces, NewColorPlayer).
 gameHumanVsComputer(Board, Pieces, PiecesBlack, ColorPlayer) :-
 write('\33\[2J'),
 firstMove(X), X == 1,!,
-printAvailablePieces(0, [ColorPlayer, Pieces]),
+printInfoType(ColorPlayer), sleep(1),
+printAvailablePieces(0, [ColorPlayer, Pieces]), sleep(1),
 askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
-addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor), sleep(1),
 removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
 NewColorPlayer is ColorPlayer - 1,
 retract(firstMove(X)),
-% adicionar condição de ganhar jogo
 gameHumanVsComputer(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer).
 
 gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
 write('\33\[2J'),
 ColorPlayer == 1, !,
-write('HUMAN TURN!!!!!!'), nl,
-prepareBoard(Board),
-printAvailablePieces(0, [ColorPlayer, PiecesWhite]),
+printInfoType(ColorPlayer), sleep(1),
+prepareBoard(Board), sleep(2),
+printAvailablePieces(0, [ColorPlayer, PiecesWhite]), sleep(1),
 askInput(Board, PiecesWhite, Letter, ColorPlayer, Rotation, NumRow, NumCol),
-addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor), sleep(1),
 removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 NewColorPlayer is ColorPlayer - 1,
 % adicionar condição de ganhar jogo
@@ -242,16 +244,21 @@ gameHumanVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
 gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
 write('\33\[2J'),
 ColorPlayer == 0, !,
-write('COMPUTER TURN!!!!!!'), nl, 
-prepareBoard(Board),
-printAvailablePieces(0, [ColorPlayer, PiecesBlack]),
+printInfoType(ColorPlayer), sleep(1),
+printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
 computerMove(Board, PiecesWhite, Letter, ColorPlayer, Rotation, NumRow, NumCol),
-addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
-prepareBoard(NewBoard), nl, sleep(5),
-removePiecePlayed(PiecesBlack, Letter, NewListAvailablePieces),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor), sleep(1),
+prepareBoard(NewBoard), nl, sleep(2),
+removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 NewColorPlayer is ColorPlayer + 1,
-gameHumanVsComputer(NewBoard, PiecesWhite, NewListAvailablePieces, NewColorPlayer).
+gameHumanVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer).
 
+
+computerMove([H|T], Pieces, Letter, ColorPlayer, Rotation) :-
+repeat,
+once(getPieceLetter(Pieces, Letter)),
+once(getRotation(Rotation)), nl,
+write('-> Computer played piece '), write(Letter), nl, nl.
 
 computerMove([H|T], Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol) :-
 repeat,
@@ -278,6 +285,58 @@ random(0, NumRows, NumRow),
 length(H, AuxNumCols),
 NumCols is AuxNumCols - 1,
 random(0, NumCols, NumCol).
+
+
+/**
+* Computer vs Computer
+**/
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
+firstMove(X), X == 1,!,
+printInfoColorComputer(ColorPlayer), sleep(1),
+printAvailablePieces(0, [ColorPlayer, PiecesWhite]), sleep(1),
+computerMove(Board, PiecesWhite, Letter, ColorPlayer, Rotation),
+addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor), sleep(1),
+prepareBoard(NewBoard), nl, sleep(3),
+removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
+NewColorPlayer is ColorPlayer - 1,
+retract(firstMove(X)),
+gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
+
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
+ColorPlayer == 1, !,
+printInfoColorComputer(ColorPlayer), sleep(1),
+printAvailablePieces(0, [ColorPlayer, PiecesWhite]), sleep(1),
+computerMove(Board, PiecesWhite, Letter, ColorPlayer, Rotation, NumRow, NumCol),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor), sleep(1),
+prepareBoard(NewBoard), nl, sleep(3),
+removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
+NewColorPlayer is ColorPlayer - 1,
+% adicionar condição de ganhar jogo
+gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
+
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+write('\33\[2J'),
+ColorPlayer == 0, !,
+printInfoColorComputer(ColorPlayer), sleep(1),
+printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
+computerMove(Board, PiecesBlack, Letter, ColorPlayer, Rotation, NumRow, NumCol),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor), sleep(1),
+prepareBoard(NewBoard), nl, sleep(3),
+removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
+NewColorPlayer is ColorPlayer + 1,
+gameComputerVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer).
+
+
+
+vertifyDraw(PiecesWhite, PiecesBlack, Draw) :-
+length(PiecesBlack, NumPiecesBlack),
+length(PiecesWhite, NumPiecesWhite),
+NumPiecesWhite == 0,
+NumPiecesBlack == 0, !,
+Draw = 1.
+
 
 
 /****************
@@ -325,14 +384,23 @@ board2([
 
 piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
-options([1, 2]).
+options([1, 2, 3]).
 
+
+
+/***************************
+******** MAIN GAME *********
+***************************/
 
 ni_ju :- 
 write('\33\[2J'),
 printMenuScreen(X),
 options(Options),
 askMenuInput(Options, Option),
+initGame(Option).
+
+
+initGame(Option):-
 Option == 1, !,
 write('Option 1'), nl,
 write('\33\[2J'),
@@ -341,10 +409,16 @@ piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
 game2Players(Board, PiecesWhite, PiecesBlack, 1).
 
-ni_ju :- board1(Board),
-write('Option Computer'), nl,
-write('\33\[2J'),
+initGame(Option):-
+Option == 2, !,
 board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
 gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, 1).
+
+initGame(Option):-
+write('\33\[2J'),
+board1(Board),
+piecesBlack(PiecesBlack),
+piecesWhite(PiecesWhite),
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 1).
