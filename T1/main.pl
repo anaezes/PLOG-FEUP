@@ -164,32 +164,40 @@ append([H1 | T1], [AuxList], NewBoard).
 
 
 removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces):-
-	delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
+delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
 
-game2Players(Board, Pieces, ColorPlayer) :-
-	firstMove(X), X == 1,!,
-	printAvailablePieces(0, [ColorPlayer, Pieces]),
-	askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
-	addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
-	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
-	NewColorPlayer is mod(ColorPlayer,2),
-	retract(firstMove(X)),
-	% adicionar condição de ganhar jogo
-	game2Players(NewBoard, NewListAvailablePieces, NewColorPlayer).
-game2Players(Board, Pieces, ColorPlayer) :-
-	prepareBoard(Board),
-	printAvailablePieces(0, [ColorPlayer, Pieces]),
-	askInput(Board, Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol),
-	addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
-	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
-	write('ColorPlayer: '), write(ColorPlayer), nl,
-	write('NewColorPlayer: '), write(NewColorPlayer), nl,
-	AuxColorPlayer is ColorPlayer + 1,
-	NewColorPlayer is mod(AuxColorPlayer,2),
-	write('NewColorPlayer: '), write(NewColorPlayer), nl,
-	% adicionar condição de ganhar jogo
-	game2Players(NewBoard, NewListAvailablePieces, NewColorPlayer).
-	
+game2Players(Board, Pieces, PiecesBlack, ColorPlayer) :-
+firstMove(X), X == 1,!,
+printAvailablePieces(0, [ColorPlayer, Pieces]),
+askInput(Board, Pieces, Letter, ColorPlayer, Rotation),
+addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
+NewColorPlayer is ColorPlayer - 1,
+retract(firstMove(X)),
+% adicionar condição de ganhar jogo
+game2Players(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer).
+
+game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+ColorPlayer == 1, !,
+prepareBoard(Board),
+printAvailablePieces(0, [ColorPlayer, PiecesWhite]),
+askInput(Board, PiecesWhite, Letter, ColorPlayer, Rotation, NumRow, NumCol),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
+NewColorPlayer is ColorPlayer - 1,
+% adicionar condição de ganhar jogo
+game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer).
+
+game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer) :-
+prepareBoard(Board),
+printAvailablePieces(0, [ColorPlayer, PiecesBlack]),
+askInput(Board, PiecesBlack, Letter, ColorPlayer, Rotation, NumRow, NumCol),
+addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
+removePiecePlayed(PiecesBlack, Letter, NewListAvailablePieces),
+NewColorPlayer is ColorPlayer + 1,
+% adicionar condição de ganhar jogo
+game2Players(NewBoard, PiecesWhite, NewListAvailablePieces, NewColorPlayer).
+
 
 
 
@@ -237,10 +245,12 @@ board2([
 	]).
 
 piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
+piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 
 
 teste6 :- 
-	board1(Board),
-	printMenuScreen(X),
-	piecesWhite(Pieces),
-	game2Players(Board, Pieces, 1).
+board1(Board),
+printMenuScreen(X),
+piecesBlack(PiecesBlack),
+piecesWhite(PiecesWhite),
+game2Players(Board, PiecesWhite, PiecesBlack, 1).
