@@ -182,7 +182,11 @@ game2Players(Board, Pieces, ColorPlayer) :-
 	askInput(Board, Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol),
 	addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoard, NewColor),
 	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
-	NewColorPlayer is mod(ColorPlayer,2),
+	write('ColorPlayer: '), write(ColorPlayer), nl,
+	write('NewColorPlayer: '), write(NewColorPlayer), nl,
+	AuxColorPlayer is ColorPlayer + 1,
+	NewColorPlayer is mod(AuxColorPlayer,2),
+	write('NewColorPlayer: '), write(NewColorPlayer), nl,
 	% adicionar condição de ganhar jogo
 	game2Players(NewBoard, NewListAvailablePieces, NewColorPlayer).
 	
