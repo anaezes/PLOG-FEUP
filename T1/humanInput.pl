@@ -1,6 +1,6 @@
-/**************************
-**** FUNCTIONS OF INPUT ****
-**************************/
+/*********************************
+**** FUNCTIONS OF HUMAN INPUT ****
+*********************************/
 
 checkIfMoveIsValid(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
@@ -58,8 +58,6 @@ betweeMinMax(Min, Max, Num):-
 	Num >= Min,
 	Num =< Max.
 
-askBoardPosition(Board, Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol):-
-	firstMove(X), X == 1.
 askBoardPosition([Head | Tail], NumRow, NumCol):-
 	write('  Row: '),
 	once(read(NumRow)), 
@@ -84,13 +82,13 @@ askNextPiece(Pieces, Letter):-
 	member(Letter, Pieces).
 
 
-askInput(Board, Pieces, Letter, ColorPlayer, Rotation):-
+askInput(_Board, Pieces, Letter, _ColorPlayer, Rotation):-
 	repeat,
 	once(askNextPiece(Pieces, Letter)),
 	once(askRotation(Rotation)).
 
 
-askInput(Board, Pieces, Letter, ColorPlayer, Rotation, NumRow, NumCol):-
+askInput(Board, Pieces, Letter, Rotation, NumRow, NumCol):-
 	repeat,
 	once(askNextPiece(Pieces, Letter)),
 	once(askRotation(Rotation)),

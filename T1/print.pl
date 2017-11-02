@@ -1,3 +1,4 @@
+
 /**************************
 **** FUNCTIONS TO PRINT ****
 **************************/
@@ -99,14 +100,14 @@ printPieceSymbols(PieceNum, Pattern, Color, Valid):-
 printPiece([], _, _).
 printPiece(nil, _, _) :- 
 	write('|   |').
-printPiece([Letter, Rotation | Tail], Pattern, PieceNum):-
+printPiece([_Letter, _Rotation | Tail], Pattern, PieceNum):-
 	getPieceInfo(Tail, Color, Valid),
 	write('|'),
 	printPieceSymbols(PieceNum, Pattern, Color, Valid),
 	write('|').
 
 getPiece(nil,nil).
-getPiece([Letter, Rotation | Tail], Piece):-
+getPiece([Letter, Rotation | _Tail], Piece):-
 	patternLetter(Letter, Pattern),
 	rotatePattern(Rotation, Pattern, Piece).
 
@@ -119,13 +120,19 @@ printRowPieces([Head | Tail], Num, PieceNum):-
 printRow(0,_,_,_).
 printRow(2,PieceNum,Row,RowNumber):-
 	NewPieceNum is PieceNum + 1,
+	RowNumber < 10,
+	write('  '), write(RowNumber), write(' '),
+	printRowPieces(Row, 1, NewPieceNum),
+	printRow(1, NewPieceNum,Row, RowNumber).
+printRow(2,PieceNum,Row,RowNumber):-
+	NewPieceNum is PieceNum + 1,
 	write(' '), write(RowNumber), write(' '),
 	printRowPieces(Row, 1, NewPieceNum),
 	printRow(1, NewPieceNum,Row, RowNumber).
 printRow(Num,PieceNum,Row, RowNumber):-
 	NewNum is Num - 1,
 	NewPieceNum is PieceNum + 1,
-	write('   '),
+	write('    '),
 	printRowPieces(Row, NewNum, NewPieceNum),
 	printRow(NewNum, NewPieceNum,Row,RowNumber).
 
@@ -142,12 +149,18 @@ printBoard([Head | Tail], RowCount) :-
 % Board numbers and separators
 printTopNumbers(_, 0). 
 printTopNumbers(Count, ColumnsNum):-
+	Count == 0,
+	write(' | '), write(Count), write(' |'),
+	NewCount is Count + 1,
+	NewColumnsNum is ColumnsNum - 1,
+	printTopNumbers(NewCount, NewColumnsNum).
+printTopNumbers(Count, ColumnsNum):-
 	write('| '), write(Count), write(' |'),
 	NewCount is Count + 1,
 	NewColumnsNum is ColumnsNum - 1,
 	printTopNumbers(NewCount, NewColumnsNum).
 
-printSeparator(0).
+printSeparator(0):- write('--').
 printSeparator(ColumnsNum):-
 	write('-----'),
 	NewColumnsNum is ColumnsNum - 1,
@@ -177,11 +190,6 @@ printAvailablePiecesAux(PieceRow, List):-
 	NewPieceRow is PieceRow + 1, nl,
 	printAvailablePiecesAux(NewPieceRow, AuxList).
 
-% Clone a list 
-copyList(L,R) :- accCp(L,R).
-accCp([],[]).
-accCp([H|T1],[H|T2]) :- accCp(T1,T2).
-
 prepareLegendsPieces([]).
 prepareLegendsPieces([Head|Tail]):- 
 	getCode(Head, Code),
@@ -207,6 +215,13 @@ printInfoColorComputer(Player):-
 	printSpace(50), write('******  '), write('COMPUTER '), write(Color), write(' TURN'), write('  ******'), nl, 
 	printSpace(50),write('***********************************'), nl, nl.
 
+
+ 
+printInfoDraw :-
+	printSpace(50), write('***********************************'), nl,
+	printSpace(50), write('******  '), write('DRAW! Try Again...'), nl, write('  ******'), nl, 
+	printSpace(50),write('***********************************'), nl, nl, sleep(2).
+
 printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):- 
 	write('  Available pieces: '), nl, nl,
 	write('   '),
@@ -221,7 +236,7 @@ printSpace(Value):-
 	printSpace(NewValue).
 
 
-printMenuScreen(X) :- nl, nl,
+printMenuScreen :- nl, nl,
 	printSpace(40), write('          ********************************************************************'),nl,
 	printSpace(40), write('          * ---------------------------------------------------------------- *'),nl,
 	printSpace(40), write('          * |                                                              | *'),nl,
