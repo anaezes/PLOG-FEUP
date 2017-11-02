@@ -1,163 +1,179 @@
-updatePiece(Board, [Letter, Rotation, Color, Valid], Row, Column, NewValid, NewBoard):-
+/*updatePiece(Board, [Letter, Rotation, Color, Valid], Row, Column, NewValid, NewBoard):-
 	replace(Board,Row,Column,[Letter,Rotation,Color,NewValid], NewBoard).
 	%write(NewBoard), nl.
+*/
 
-% Verifies the color of the piece to it's side and updates the Valid and the Count
-checkNextSidePiece(_, _, nil, Count, NewCount):-
-	NewCount is Count, NewValid is 0,!.
-checkNextSidePiece(PieceColor, NewValid, [Letter, Rotation, Color, Valid], Count, NewCount):-
-	PieceColor == Color,!, %write('LOLZ'),nl,
-	NewCount is Count + 1, NewValid is 0.
-checkNextSidePiece(PieceColor, NewValid, [Letter, Rotation, Color, Valid], Count, NewCount):-
-	NewCount is Count, NewValid is 1. %write('FACK'),nl.
+% Each case of each row of the pattern of piece
+%row 0, col 0
+checkRow([Head | Tail], Color, Board, 0, 0, Row, Col, Count, FinalCount):-
+	Head == 1,
+	BeforeRowNum is Row - 1,
+	BeforeCol is Col - 1,
+	nth0(BeforeRowNum, Board, BeforeRow),
+	nth0(BeforeCol, BeforeRow, DiagonalCell),
+	DiagonalCell \== nil,
+	nth0(2, DiagonalCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, Color, Board, 0, 1, Row, Col, NewCount, FinalCount).
+checkRow([Head | Tail], Color, Board, 0, 0, Row, Col, Count, FinalCount):-
+	checkRow(Tail, Color, Board, 0, 1, Row, Col, Count, FinalCount).
 
-% If the piece is invalid, no need to check
-checkRow([], _, _, _, _, _, _, _,):- write('END '),nl.
-% third row of the piece
-checkRow([Head | Tail], Color, Valid, 2, 0, Board, Row, Column):-
-	write('Check Row 2 0'),write(' - '), write(Head),nl,
-	Head == 1,!,
-	AfterRowNum is Row + 1,
-	BeforeColumnNum is Column - 1,
-	nth0(AfterRowNum, Board, AfterRow),
-	nth0(BeforeColumnNum, AfterRow, CellDiagonal),
-	%checkNextSidePiece(Color, Valid, CellDiagonal, Count, NewCount),
-	checkRow(Tail, Color, Valid, 2, 1, Board, Row, Column).
-checkRow([Head | Tail], Color, Valid, 2, 0, Board, Row, Column):-
-	checkRow(Tail, Color, Valid, 2, 1, Board, Row, Column).
+%row 0, col 1
+checkRow([Head | Tail], Color, Board, 0, 1, Row, Col, Count, FinalCount):-
+	Head == 1,
+	BeforeRowNum is Row - 1,
+	nth0(BeforeRow, Board, BeforeRowNum),
+	nth0(Col, BeforeRow, AboveCell),
+	AboveCell \== nil,
+	nth0(2, AboveCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, Color, Board, 0, 2, Row, Col, NewCount, FinalCount).
+checkRow([Head | Tail], Color, Board, 0, 1, Row, Col, Count, FinalCount):-
+	checkRow(Tail, Color, Board, 0, 2, Row, Col, Count, FinalCount).
 
-checkRow([Head | Tail], Color, Valid, 2, 1, Board, Row, Column):-
-	write('Check Row 2 1'),write(' - '), write(Head),nl,
-	Head == 1,!,
-	AfterRowNum is Row + 1,
-	nth0(AfterRowNum, Board, AfterRow),
-	nth0(Column, AfterRow, CellUnder),
-	%checkNextSidePiece(Color, Valid, CellUnder, Count, NewCount),
-	checkRow(Tail, Color, Valid, 2, 2, Board, Row, Column).
-checkRow([Head | Tail], Color, Valid, 2, 1, Board, Row, Column):-
-	checkRow(Tail, Color, Valid, 2, 2, Board, Row, Column).
+%row 0, col 2
+checkRow([Head | Tail], Color, Board, 0, 2, Row, Col, Count, FinalCount):-
+	Head == 1,
+	BeforeRowNum is Row - 1,
+	AfterCol is Col + 1,
+	nth0(BeforeRowNum, Board, BeforeRow),
+	nth0(AfterCol, BeforeRow, DiagonalCell),
+	DiagonalCell \== nil,
+	nth0(2, DiagonalCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, _, _, _, _, _, _, NewCount, FinalCount).
+checkRow([Head | Tail], Color, Board, 0, 2, Row, Col, Count, FinalCount):-
+	checkRow(Tail, _, _, _, _, _, _, Count, FinalCount).
 
-checkRow([Head | Tail], Color, Valid, 2, 2, Board, Row, Column):-
-	write('Check Row 2 2'),write(' - '), write(Head),nl,
-	Head == 1,!,
-	AfterRowNum is Row + 1,
-	AfterColumnNum is Column + 1,
-	nth0(AfterRowNum, Board, AfterRow),
-	nth0(AfterColumnNum, AfterRow, CellDiagonal),
-	%checkNextSidePiece(Color, Valid, CellDiagonal, Count, NewCount),
-	checkRow([], _, _, _, _, _, _, _).
-checkRow([Head | Tail], Color, Valid, 2, 2, Board, Row, Column):-
-	checkRow([], Color, Valid, 2, 2, Board, Row, Column).
-
-% second row of the piece
-checkRow([Head | Tail], Color, Valid, 1, 0, Board, Row, Column):-
-	write('Check Row 1 0'),write(' - '), write(Head),nl,
-	Head == 1,!,
-	BeforeColumnNum is Column - 1,
+%row 1, col 0
+checkRow([Head | Tail], Color, Board, 1, 0, Row, Col, Count, FinalCount):-
+	Head == 1,
+	BeforeCol is Col - 1,
 	nth0(Row, Board, SameRow),
-	nth0(BeforeColumnNum, SameRow, CellBefore),
-	%checkNextSidePiece(Color, Valid, CellBefore, Count, NewCount),
-	checkRow(Tail, Color, Valid, 1, 1, Board, Row, Column).
-checkRow([Head | Tail], Color, Valid, 1, 0, Board, Row, Column):-
-	checkRow(Tail, Color, Valid, 1, 1, Board, Row, Column).
+	nth0(BeforeCol, SameRow, BeforeCell),
+	BeforeCell \== nil,
+	nth0(2, BeforeCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, Color, Board, 1, 1, Row, Col, NewCount, FinalCount).
+checkRow([Head | Tail], Color, Board, 1, 0, Row, Col, Count, FinalCount):-
+	checkRow(Tail, Color, Board, 1, 1, Row, Col, Count, FinalCount).
 
-checkRow([Head | Tail], Color, Valid, 1, 1, Board, Row, Column):-
-	checkRow(Tail, Color, Valid, 1, 2, Board, Row, Column).
+%row 1, col 1
+checkRow([Head | Tail], Color, Board, 1, 1, Row, Col, Count, FinalCount):-
+	checkRow(Tail, Color, Board, 1, 2, Row, Col, Count, FinalCount).
 
-checkRow([Head | Tail], Color, Valid, 1, 2, Board, Row, Column):-
-	write('Check Row 1 2'),write(' - '), write(Head),nl,
-	Head == 1,!,
-	AfterColumnNum is Column + 1,
+%row 1, col 2
+checkRow([Head | Tail], Color, Board, 1, 2, Row, Col, Count, FinalCount):-
+	Head == 1,
+	AfterCol is Col + 1,
 	nth0(Row, Board, SameRow),
-	nth0(AfterColumnNum, SameRow, CellAfter),
-	%checkNextSidePiece(Color, Valid, CellAfter, Count, NewCount),
-	checkRow([], Color, Valid, 1, 2, Board, Row, Column).
-checkRow([Head | Tail], Color, Valid, 1, 2, Board, Row, Column):-
-	checkRow([], Color, Valid, 1, 2, Board, Row, Column).
+	nth0(AfterCol, SameRow, AfterCell),
+	AfterCell \== nil,
+	nth0(2, AfterCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, Color, Board, 1, 2, Row, Col, NewCount, FinalCount). % Alterar para nada
+checkRow([Head | Tail], Color, Board, 1, 2 , Row, Col, Count, FinalCount):-
+	checkRow(Tail, Color, Board, 1, 2, Row, Col, Count, FinalCount).
 
-% first row of the piece
-checkRow([Head | Tail], Color, Valid, 0, 0, Board, Row, Column):-
-	write('Check Row 0 0'), write(' - '), write(Head),nl,
-	Head == 1,!,
-	BeforeRowNum is Row - 1,
-	BeforeColumnNum is Column - 1,
-	nth0(BeforeRowNum, Board, BeforeRow),
-	nth0(BeforeColumnNum, BeforeRow, CellDiagonal),
-	%checkNextSidePiece(Color, Valid, CellDiagonal, Count, NewCount),
-	checkRow(Tail, Color, Valid, 0, 1, Board, Row, Column).
-checkRow([Head | Tail], Color, Valid, 0, 0, Board, Row, Column):-
-	checkRow(Tail, Color, Valid, 0, 1, Board, Row, Column).
+%row 2, col 0
+checkRow([Head | Tail], Color, Board, 2, 0, Row, Col, Count, FinalCount):-
+	Head == 1,
+	AfterRowNum is Row + 1,
+	BeforeCol is Col - 1,
+	nth0(AfterRowNum, Board, AfterRow),
+	nth0(BeforeCol, AfterRow, DiagonalCell),
+	DiagonalCell \== nil,
+	nth0(2, DiagonalCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, Color, Board, 2, 1, Row, Col, NewCount, FinalCount).
+checkRow([Head | Tail], Color, Board, 2, 0, Row, Col, Count, FinalCount):-
+	checkRow(Tail, Color, Board, 2, 1, Row, Col, Count, FinalCount).
 
-checkRow([Head | Tail], Color, Valid, 0, 1, Board, Row, Column):-
-	write('Check Row 0 1'), write(' - '), write(Head),nl,
-	Head == 1,!,
-	BeforeRowNum is Row - 1,
-	nth0(BeforeRowNum, Board, BeforeRow),
-	nth0(Column, BeforeRow, CellAbove),
-	%checkNextSidePiece(Color, Valid, CellAbove, Count, NewCount),
-	checkRow(Tail, Color, Valid, 0, 2, Board, Row, Column).
-checkRow([Head | Tail], Color, Valid, 0, 1, Board, Row, Column):-
-	checkRow(Tail, Color, Valid, 0, 2, Board, Row, Column).
+%row 2, col 1
+checkRow([Head | Tail], Color, Board, 2, 1, Row, Col, Count, FinalCount):-
+	Head == 1,
+	AfterRowNum is Row + 1,
+	nth0(AfterRowNum, Board, AfterRow),
+	nth0(Col, AfterRow, UnderCell),
+	UnderCell \== nil,
+	nth0(2, UnderCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, Color, Board, 2, 2, Row, Col, NewCount, FinalCount).
+checkRow([Head | Tail], Color, Board, 2, 1, Row, Col, Count, FinalCount):-
+	checkRow(Tail, Color, Board, 2, 2, Row, Col, Count, FinalCount).
 
-checkRow([Head | Tail], Color, Valid, 0, 2, Board, Row, Column):-
-	write('Check Row 0 2'), write(' - '), write(Head),nl,
-	Head == 1,!,
-	BeforeRowNum is Row - 1,
-	AfterColumnNum is Column + 1,
-	nth0(BeforeRowNum, Board, BeforeRow),
-	nth0(AfterColumnNum, BeforeRow, CellDiagonal),
-	%checkNextSidePiece(Color, Valid, CellDiagonal, Count, NewCount),
-	checkRow([], Color, Valid, 0, 2, Board, Row, Column).
-checkRow([Head | Tail], Color, Valid, 0, 2, Board, Row, Column,):-
-	checkRow([], Color, Valid, 0, 2, Board, Row, Column).
+%row 2, col 2
+checkRow([Head | Tail], Color, Board, 2, 2, Row, Col, Count, FinalCount):-
+	Head == 1,
+	AfterRowNum is Row + 1,
+	AfterCol is Col + 1,
+	nth0(AfterRowNum, Board, AfterRow),
+	nth0(AfterCol, AfterRow, DiagonalCell),
+	DiagonalCell \== nil,
+	nth0(2, DiagonalCell, ColorCell),
+	ColorCell == Color, !,
+	NewCount is Count + 1,
+	checkRow(Tail, _, _, _, _, _, _, NewCount, FinalCount).
+checkRow([Head | Tail], Color, Board, 2, 2, Row, Col, Count, FinalCount):-
+	checkRow(Tail, _, _, _, _, _, _, Count, FinalCount).
+
+checkRow([], _, _, _, _, _, _, Count, FinalCount):- write('COUNT: '), write(Count), nl,FinalCount is Count.
 
 
-checkAroundPiece([], _, _, 3, _, _, _, _, _).
-checkAroundPiece(_, _, _, _, _, _, _, _, 1).
-checkAroundPiece([Head | Tail], Color, NewValid, PieceRow, Board, Row, Column, GameEnd):-
-	CountPiecesAround == 4,!,
-	GameEnd is 1.
-checkAroundPiece([Head | Tail], Color, NewValid, PieceRow, Board, Row, Column, GameEnd):-
-	checkRow(Head, Color, NewValid, PieceRow, 0, Board, Row, Column),
+% Goes throught the piece pattern and checks each row of it
+checkAroundPiece([], _, _, _, _, _, 4, GameEnd):-
+	write('Here'),nl, GameEnd is 1.
+checkAroundPiece([], _, _, _, _, _, _, _).
+checkAroundPiece([Head | Tail], Color, Board, PieceRow, Row, Col, CountPiecesAround, GameEnd):-
+	checkRow(Head, Color, Board, PieceRow, 0, Row, Col, CountPiecesAround, FinalCount),
 	NewPieceRow is PieceRow + 1,
-	checkAroundPiece(Tail, Color, NewValid, NewPieceRow, Board, Row, Column, GameEnd).
+	NewCountPiecesAround is FinalCount,
+	write('NewCountPieces: '), write(NewCountPiecesAround),nl,
+	checkAroundPiece(Tail, Color, Board, NewPieceRow, Row, Col, NewCountPiecesAround, GameEnd).
 
-checkPieceStatus([_, _, _, _], _, _, _, _, 1).
-checkPieceStatus([Letter, Rotation, Color, Valid], Board, NewBoard, Row, Column, GameEnd):-
-	getPiece([Letter, Rotation, Color, Valid], Pattern),
+% Gets the pattern of the piece and checks if it is valid
+checkPieceStatus([Letter, Rotation, Color, Valid], Board, Row, Col, GameEnd):-
 	Valid \== 1,!,
-	checkAroundPiece(Pattern, Color, NewValid, 0, Board, Row, Column, 0, GameEnd),
-	updatePiece(Board, [Letter, Rotation, Color, Valid], Row, Column, NewValid, NewBoard).
+	getPiece([Letter, Rotation, Color, Valid], Pattern),
+	checkAroundPiece(Pattern, Color, Board, 0, Row, Col, 0, GameEnd).
+checkPieceStatus([_, _, _, _], _, _, _, _).
 
-findPiece([], _, _, _, _, _).
-findPiece([_ | _], _, _, _, _, 1):-write('IT IS DONE!!!'),nl.
-% it isn't a piece, goes to next row
-findPiece([Head | Tail], Board, NewBoard, Row, Column, GameEnd):-
+% Goes through the row of the board and finds a Piece
+findPiece([], _, _, _, _).
+findPiece([_ | _], _, _, _, GameEnd):- GameEnd == 1, !.
+findPiece([Head | Tail], Board, Row, Col, GameEnd):-
 	Head == nil,!,
-	NewColumn is Column + 1,
-	findPiece(Tail, Board, NewBoard, Row, NewColumn, GameEnd).
-% finds a piece and analises around it
-findPiece([Head | Tail], Board, NewBoard, Row, Column, GameEnd):-
-	Head \== nil,
-	checkPieceStatus(Head, Board, NewBoard, Row, Column, GameEnd),
-	NewColumn is Column + 1,
-	findPiece(Tail, Board, NewBoard, Row, NewColumn, GameEnd).
+	NewCol is Col + 1,
+	findPiece(Tail, Board, Row, NewCol, GameEnd).
+findPiece([Head | Tail], Board, Row, Col, GameEnd):-
+	Head \== nil,!,
+	write(Head),nl,
+	checkPieceStatus(Head, Board, Row, Col, GameEnd),
+	NewCol is Col + 1,
+	findPiece(Tail, Board, Row, NewCol, GameEnd).
 
-checkGameEnd([], _, _, _, _):- write('Game has not ended!'). % continue next player
-checkGameEnd([_ | _], _, _, _, 1):- write('Game is done!'). % end game
-checkGameEnd([Head | Tail], Board, NewBoard, Row, GameEnd):-
-	findPiece(Head, Board, NewBoard, Row, 0, GameEnd),
+% Goes through the rows of the board
+checkGameEnd([],_,_,_):- write('Game continues!'),nl.
+checkGameEnd([_ | _],_,_,GameEnd):- GameEnd == 1, !, write('The Game has ended!'),nl.
+checkGameEnd([Head | Tail], Board, Row, GameEnd):-
+	findPiece(Head, Board, Row, 0, GameEnd),
 	NewRow is Row + 1,
-	checkGameEnd(Tail, NewBoard, NewNewBoard, NewRow, GameEnd).
-
+	checkGameEnd(Tail, Board, NewRow, GameEnd).
 
 board([
 	[nil, nil, nil, nil, nil, nil, nil],
 	[nil, nil, nil, nil, [s, 0, 0, 0], nil, nil],
 	[nil, [j, 0, 1, 0], nil, nil, [j, 0, 0, 0], nil, nil],
 	[nil, [i, 0, 1, 0], [p, 0, 1, 0], [b, 0, 1, 1], [t, 0, 0, 0], [p, 0, 0, 0], nil],
-	[nil, nil, nil, nil, [o, 0, 1, 0], nil, nil],
+	[nil, nil, nil, [o, 0, 1, 0], nil, nil, nil],
 	[nil, nil, nil, nil, nil, nil, nil]	
 	]).
 
-teste8:- board(Board), checkGameEnd(Board, Board, NewBoard, 0, 0), prepareBoard(NewBoard).
+teste8:- board(Board), checkGameEnd(Board, Board, 0, GameEnd), prepareBoard(Board).

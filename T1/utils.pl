@@ -7,6 +7,7 @@
 :-include('humanInput.pl').
 :-include('computerInput.pl').
 :-include('board.pl').
+:-include('checkGameStatus.pl').
 
 % Clone a list 
 copyList(L,R) :- accCp(L,R).
