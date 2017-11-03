@@ -1,57 +1,8 @@
+
+
 /*********************************
 **** FUNCTIONS OF HUMAN INPUT ****
 *********************************/
-
-checkIfMoveIsValid(Board, NumRow, NumCol):-
-	nth0(NumRow, Board, RowChosen),
-	nth0(NumCol, RowChosen, CellChosen),
-	CellChosen == nil, % cell is free
-	
-	% Check if there is a piece in the row before
-	BeforeNumRow is NumRow - 1,
-	nth0(BeforeNumRow, Board, RowBefore),
-	nth0(NumCol, RowBefore, CellBefore),
-	CellBefore \== nil.
-
-
-
-checkIfMoveIsValid(Board, NumRow, NumCol):-
-	nth0(NumRow, Board, RowChosen),
-	nth0(NumCol, RowChosen, CellChosen),
-	CellChosen == nil, % cell is free
-
-	%Check if there is a piece in the row after
-	AfterNumRow is NumRow + 1,
-	nth0(AfterNumRow, Board, RowAfter),
-	nth0(NumCol, RowAfter, CellAfter),
-	CellAfter \== nil.
-
-
-
-checkIfMoveIsValid(Board, NumRow, NumCol):-
-	nth0(NumRow, Board, RowChosen),
-	nth0(NumCol, RowChosen, CellChosen),
-	CellChosen == nil, % cell is free
-
-	%Check if there is a piece in the column before
-	BeforeNumColumn is NumCol - 1,
-	nth0(NumRow, Board, Row),
-	nth0(BeforeNumColumn, Row, CellBefore),
-	CellBefore \== nil.
-
-
-checkIfMoveIsValid(Board, NumRow, NumCol):-
-	nth0(NumRow, Board, RowChosen),
-	nth0(NumCol, RowChosen, CellChosen),
-	CellChosen == nil, % cell is free
-	
-	%Check if there is a piece in the column after
-	AfterNumColumn is NumCol + 1,
-	nth0(NumRow, Board, Row),
-	nth0(AfterNumColumn, Row, CellAfter),
-	CellAfter \== nil.
-
-
 	
 
 betweeMinMax(Min, Max, Num):-
@@ -82,11 +33,10 @@ askNextPiece(Pieces, Letter):-
 	member(Letter, Pieces).
 
 
-askInput(_Board, Pieces, Letter, _ColorPlayer, Rotation):-
+askInput(_Board, Pieces, Letter, Rotation):-
 	repeat,
 	once(askNextPiece(Pieces, Letter)),
 	once(askRotation(Rotation)).
-
 
 askInput(Board, Pieces, Letter, Rotation, NumRow, NumCol):-
 	repeat,
@@ -99,3 +49,15 @@ askMenuInput(Options, Option):-
 	nl, printSpace(10), write('Choose option: '),
 	read(Option),
 	member(Option, Options).
+
+
+askInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer):-
+	repeat,
+	write('  Select piece to move: '), nl, 
+	once(askBoardPosition(Board, SourceRow, SourceColumn)),
+	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
+	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
+	once(askRotation(Rotation)),
+	write('  Select destination: '), nl, 
+	once(askBoardPosition(Board, DestRow, DestColumn)),
+	once(checkIfMoveIsValid(Board, DestRow, DestColumn)).

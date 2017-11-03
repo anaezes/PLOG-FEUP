@@ -1,8 +1,8 @@
 
 
-/**************************
-**** FUNCTIONS TO MOVE ****
-**************************/
+/*****************************************
+**** FUNCTIONS TO ADD AND MOVE PIECES ****
+*****************************************/
 
 
 %give a list of values
@@ -52,6 +52,17 @@ addPiece(Board, Row, Column, PieceCode, Color, Rotation, NewBoard):-
 replace(Board,Row,Column,[PieceCode,Rotation,Color,0], AuxBoard),
 verifyExpandBoard(Row, Column, AuxBoard, NewBoard).
 
+/**
+* MOVE PIECE
+**/
+movePiece(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, NewBoard):-
+nth0(SourceRow, Board, RowBoard),
+nth0(SourceColumn, RowBoard, Piece),
+nth0(0, Piece, PieceCode),
+nth0(2, Piece, Color),
+replace(Board, SourceRow, SourceColumn, nil, NewBoardAux),
+replace(NewBoardAux, DestRow, DestColumn, [PieceCode, Rotation, Color, 0], NewBoardAux2),
+verifyExpandBoard(DestRow, DestColumn, NewBoardAux2, NewBoard).
 
 
 
@@ -152,3 +163,113 @@ addRowDown([H1 | T1], NewBoard) :-
 length(H1, Width),
 addNilSpaces(Width, nil, AuxList),
 append([H1 | T1], [AuxList], NewBoard).
+
+
+
+
+/*****************************
+******** CHECK MOVES ********
+*****************************/
+
+/* Add a piece */
+
+checkIfMoveIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen == nil, % cell is free
+	
+	% Check if there is a piece in the row before
+	BeforeNumRow is NumRow - 1,
+	nth0(BeforeNumRow, Board, RowBefore),
+	nth0(NumCol, RowBefore, CellBefore),
+	CellBefore \== nil.
+
+
+checkIfMoveIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen == nil, % cell is free
+
+	%Check if there is a piece in the row after
+	AfterNumRow is NumRow + 1,
+	nth0(AfterNumRow, Board, RowAfter),
+	nth0(NumCol, RowAfter, CellAfter),
+	CellAfter \== nil.
+
+checkIfMoveIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen == nil, % cell is free
+
+	%Check if there is a piece in the column before
+	BeforeNumColumn is NumCol - 1,
+	nth0(NumRow, Board, Row),
+	nth0(BeforeNumColumn, Row, CellBefore),
+	CellBefore \== nil.
+
+
+checkIfMoveIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen == nil, % cell is free
+	
+	%Check if there is a piece in the column after
+	AfterNumColumn is NumCol + 1,
+	nth0(NumRow, Board, Row),
+	nth0(AfterNumColumn, Row, CellAfter),
+	CellAfter \== nil.
+
+
+
+/* Remove a piece */
+
+checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen \== nil, % cell is not free
+	
+	% Check if there isn't  a piece in the row before
+	BeforeNumRow is NumRow - 1,
+	nth0(BeforeNumRow, Board, RowBefore),
+	nth0(NumCol, RowBefore, CellBefore),
+	CellBefore == nil.
+
+checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen \== nil, % cell is free
+
+	%Check if there isn't  a piece in the row after
+	AfterNumRow is NumRow + 1,
+	nth0(AfterNumRow, Board, RowAfter),
+	nth0(NumCol, RowAfter, CellAfter),
+	CellAfter == nil.
+
+checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen \== nil, % cell is free
+
+	%Check if there isn't  a piece in the column before
+	BeforeNumColumn is NumCol - 1,
+	nth0(NumRow, Board, Row),
+	nth0(BeforeNumColumn, Row, CellBefore),
+	CellBefore == nil.
+
+checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+	nth0(NumRow, Board, RowChosen),
+	nth0(NumCol, RowChosen, CellChosen),
+	CellChosen \== nil, % cell is free
+	
+	%Check if there isn't a piece in the column after
+	AfterNumColumn is NumCol + 1,
+	nth0(NumRow, Board, Row),
+	nth0(AfterNumColumn, Row, CellAfter),
+	CellAfter == nil.
+
+
+checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer) :-
+	nth0(SourceRow, Board, RowBoard),
+	nth0(SourceColumn, RowBoard, Piece),
+	nth0(2, Piece, ColorPiece),
+	ColorPiece == ColorPlayer.
