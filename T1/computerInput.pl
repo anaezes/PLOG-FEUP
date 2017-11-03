@@ -46,7 +46,4 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 	once(getRotation(Rotation)),
 	once(getPosition(Board, DestRow, DestColumn)),
 	once(checkIfMoveIsValid(Board, DestRow, DestColumn)),
-	write('-> Computer removes piece from position ('),
-	write(SourceRow), write(','), write(SourceColumn), write(')'), nl, nl, sleep(2),
-	write('-> ... and puts it'), write(' in position ('),
-	write(DestRow), write(','), write(DestColumn), write(')'), nl, nl.
+	once(printInformation(SourceRow, SourceColumn, DestRow, DestColumn)).

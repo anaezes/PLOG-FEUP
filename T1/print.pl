@@ -199,28 +199,43 @@ prepareLegendsPieces([Head|Tail]):-
 
 printInfoColor(Player):-
 	getColorPlayer(Player, Color), nl,
-	printSpace(50),write('**************************'), nl,
-	printSpace(50),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
-	printSpace(50),write('**************************'), nl, nl.
+	printSpace(20),write('**************************'), nl,
+	printSpace(20),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
+	printSpace(20),write('**************************'), nl, nl.
 
 printInfoType(Player):-
 	getTypePlayer(Player, Color), nl,
-	printSpace(50), write('*****************************'), nl,
-	printSpace(50),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
-	printSpace(50),write('*****************************'), nl, nl.
+	printSpace(20), write('*****************************'), nl,
+	printSpace(20),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
+	printSpace(20),write('*****************************'), nl, nl.
 
 printInfoColorComputer(Player):-
 	getColorPlayer(Player, Color), nl,
-	printSpace(50), write('***********************************'), nl,
-	printSpace(50), write('******  '), write('COMPUTER '), write(Color), write(' TURN'), write('  ******'), nl, 
-	printSpace(50),write('***********************************'), nl, nl.
+	printSpace(20), write('***********************************'), nl,
+	printSpace(20), write('******  '), write('COMPUTER '), write(Color), write(' TURN'), write('  ******'), nl, 
+	printSpace(20),write('***********************************'), nl, nl.
+
+printInfoDraw :- nl,
+	printSpace(20), write('********************************************************************'), nl,
+	printSpace(20), write('******  '), write('Oh no! They ran out of pieces ... time to move them!'), write('  ******'), nl, 
+	printSpace(20), write('********************************************************************'), nl, nl, sleep(4).
+
+printInfoWinGame(Color):- nl,
+	printSpace(20), write('*******************************************************'), nl,
+	printSpace(20), write('******  '), write('The player with the pieces '), write(Color), write(' WINS!!!'), write('  ******'), nl, 
+	printSpace(20), write('*******************************************************'), nl, nl, sleep(4).
+
+printInfoWinGameType(Type):- nl,
+	printSpace(20), write('************************************'), nl,
+	printSpace(20), write('******  '), write('The '), write(Type), write(' WINS!!!'),write('  ******'), nl, 
+	printSpace(20), write('************************************'), nl, nl, sleep(4).
 
 
- 
-printInfoDraw :-
-	printSpace(50), write('***********************************'), nl,
-	printSpace(50), write('******  '), write('DRAW! Try Again...'), nl, write('  ******'), nl, 
-	printSpace(50),write('***********************************'), nl, nl, sleep(2).
+printInformation(SourceRow, SourceColumn, DestRow, DestColumn) :- 
+	write('-> Computer removes piece from position ('),
+	write(SourceRow), write(','), write(SourceColumn), write(')'), sleep(2),
+	write('... and puts it'), write(' in position ('),
+	write(DestRow), write(','), write(DestColumn), write(')'), nl, nl,  sleep(2).
 
 printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):- 
 	write('  Available pieces: '), nl, nl,
@@ -237,35 +252,33 @@ printSpace(Value):-
 
 
 printMenuScreen :- nl, nl,
-	printSpace(40), write('          ********************************************************************'),nl,
-	printSpace(40), write('          * ---------------------------------------------------------------- *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                ||\\\\   ||  ||       ||  ||  ||                | *'),nl,
-	printSpace(40), write('          * |                || \\\\  ||  ||       ||  ||  ||                | *'),nl,
-	printSpace(40), write('          * |                ||  \\\\ ||  || ==    ||  ||  ||                | *'),nl,
-	printSpace(40), write('          * |                ||   \\\\||  ||    |__||  ||__||                | *'),nl,
-	printSpace(40), write('          * |                ||    \\||  ||    \\__ /  |____|                | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                      **** WELCOME ! ****                     | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                        Human vs Human:                       | *'),nl,
-	printSpace(40), write('          * |                         1.  Level I                          | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                        Human vs Computer:                    | *'),nl,
-	printSpace(40), write('          * |                         2.  Level I                          | *'),nl,
-	printSpace(40), write('          * |                         3.  Level II                         | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                     Computer vs Computer:                    | *'),nl,
-	printSpace(40), write('          * |                         4.  Level I                          | *'),nl,
-	printSpace(40), write('          * |                         5.  Level II                         | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * |                     Ana Santos up200700742                   | *'),nl,
-	printSpace(40), write('          * |                  Margarida Silva up201505505                 | *'),nl,
-	printSpace(40), write('          * |                                                              | *'),nl,
-	printSpace(40), write('          * ---------------------------------------------------------------- *'),nl,
-	printSpace(40), write('          ********************************************************************'),nl.
-
-
-removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces) :- delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
+	printSpace(20), write('          ********************************************************************'),nl,
+	printSpace(20), write('          *  ______________________________________________________________  *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |         .__   __.  __                  __   __    __         | *'),nl,
+	printSpace(20), write('          * |         |  \\ |  | |  |                |  | |  |  |  |        | *'),nl,
+	printSpace(20), write('          * |         |   \\|  | |  |  ______        |  | |  |  |  |        | *'),nl,
+	printSpace(20), write('          * |         |  . `  | |  | |______| .--.  |  | |  |  |  |        | *'),nl,
+	printSpace(20), write('          * |         |  |\\   | |  |          |  `--\'  | |  `\-\-\'  |        | *'),nl,
+	printSpace(20), write('          * |         |__| \\__| |__|           \\______/   \\______/         | *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                      **** WELCOME ! ****                     | *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                        Human vs Human:                       | *'),nl,
+	printSpace(20), write('          * |                         1.  Level I                          | *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                        Human vs Computer:                    | *'),nl,
+	printSpace(20), write('          * |                         2.  Level I                          | *'),nl,
+	printSpace(20), write('          * |                         3.  Level II                         | *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                     Computer vs Computer:                    | *'),nl,
+	printSpace(20), write('          * |                         4.  Level I                          | *'),nl,
+	printSpace(20), write('          * |                         5.  Level II                         | *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                     Ana Santos up200700742                   | *'),nl,
+	printSpace(20), write('          * |                  Margarida Silva up201505505                 | *'),nl,
+	printSpace(20), write('          * |______________________________________________________________| *'),nl,
+	printSpace(20), write('          *                                                                  *'),nl,
+	printSpace(20), write('          ********************************************************************'),nl.
