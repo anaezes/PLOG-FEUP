@@ -13,7 +13,7 @@ delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
 /**
 * Human vs Human
 **/
-game2Players(Board, PiecesWhite, PiecesBlack, Draw) :-
+game2Players(Board, PiecesWhite, PiecesBlack, Draw, GameEnd) :-
 	clearScreen,
 	ColorPlayer = 1,
 	printInfoColor(ColorPlayer), sleep(1),
@@ -22,10 +22,12 @@ game2Players(Board, PiecesWhite, PiecesBlack, Draw) :-
 	addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard),
 	removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 	NewColorPlayer is ColorPlayer - 1,
-	game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw).
+	game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw, GameEnd).
 
-game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
+game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
+	GameEnd \== 1,
+	Draw == 0, 
 	ColorPlayer == 1, !,
 	printInfoColor(ColorPlayer), sleep(1),
 	prepareBoard(Board), sleep(2),
@@ -35,11 +37,14 @@ game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
 	removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 	NewColorPlayer is ColorPlayer - 1,
 	% adicionar condição de ganhar jogo
-	vertifyDraw(NewPiecesWhite, PiecesBlack, Draw),
-	game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	vertifyDraw(NewPiecesWhite, PiecesBlack, NewDraw),
+	game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
-game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
+game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
+	GameEnd \== 1,
+	Draw == 0, 
 	printInfoColor(ColorPlayer), sleep(1),
 	prepareBoard(Board), sleep(2),
 	printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
@@ -48,32 +53,46 @@ game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
 	removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 	NewColorPlayer is ColorPlayer + 1,
 	% adicionar condição de ganhar jogo
-	vertifyDraw(PiecesWhite, NewPiecesBlack, Draw), 
-	game2Players(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, Draw).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	vertifyDraw(PiecesWhite, NewPiecesBlack, NewDraw), 
+	game2Players(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
 
 /* After Draw */
-game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1)  :- game2Players(Board, ColorPlayer).
-game2Players(Board, ColorPlayer) :-
+game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd)  :- 
+	game2Players(Board, ColorPlayer, GameEnd).
+
+game2Players(Board, ColorPlayer, GameEnd) :-
 	clearScreen,
+	GameEnd \== 1,
 	printInfoColor(ColorPlayer), sleep(1),
 	prepareBoard(Board), sleep(2),
 	askInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer),
 	movePiece(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, NewBoard),
-	NewColorPlayer is ColorPlayer - 1,
+	NewColorPlayer is mod((ColorPlayer + 1), 2),
 	% adicionar condição de ganhar jogo
-	game2Players(NewBoard, NewColorPlayer).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	game2Players(NewBoard, NewColorPlayer, NewGameEnd).
 
+/* End Game */
+game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
+	WinColorPlayer is mod((ColorPlayer + 1), 2),
+	getColorPlayer(WinColorPlayer, Color),
+	printInfoWinGame(Color).
 
-
+game2Players(Board, ColorPlayer, 1)  :- 
+	WinColorPlayer is mod((ColorPlayer + 1), 2),
+	getColorPlayer(WinColorPlayer, Color),
+	printInfoWinGame(Color).
 
 
 
 /**
 * Human vs Computer
 **/
-gameHumanVsComputer(Board, Pieces, PiecesBlack, Draw) :-
+gameHumanVsComputer(Board, Pieces, PiecesBlack, Draw, GameEnd) :-
 	clearScreen,
+	Draw == 0, 
 	ColorPlayer = 1,
 	printInfoType(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, Pieces]), sleep(1),
@@ -81,10 +100,11 @@ gameHumanVsComputer(Board, Pieces, PiecesBlack, Draw) :-
 	addPiece(Board, Letter, ColorPlayer, Rotation, NewBoard), sleep(1),
 	removePiecePlayed(Pieces, Letter, NewListAvailablePieces),
 	NewColorPlayer is ColorPlayer - 1,
-	gameHumanVsComputer(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer, Draw).
+	gameHumanVsComputer(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer, Draw, GameEnd).
 
-gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
+gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
+	GameEnd \== 1, Draw == 0, 
 	ColorPlayer == 1, !,
 	printInfoType(ColorPlayer), sleep(1),
 	prepareBoard(Board), sleep(2),
@@ -94,11 +114,13 @@ gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
 	removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 	NewColorPlayer is ColorPlayer - 1,
 	% adicionar condição de ganhar jogo
-	vertifyDraw(NewPiecesWhite, PiecesBlack, Draw),
-	gameHumanVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	vertifyDraw(NewPiecesWhite, PiecesBlack, NewDraw),
+	gameHumanVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
-gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
+gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
+	GameEnd \== 1, Draw == 0, 
 	ColorPlayer == 0, !,
 	printInfoType(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
@@ -107,13 +129,15 @@ gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
 	prepareBoard(NewBoard), nl, sleep(2),
 	removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 	NewColorPlayer is ColorPlayer + 1,
-	vertifyDraw(PiecesWhite, NewPiecesBlack, Draw),
-	gameHumanVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, Draw).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	vertifyDraw(PiecesWhite, NewPiecesBlack, NewDraw),
+	gameHumanVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
 /* After Draw */
-gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1)  :- gameHumanVsComputer(Board, ColorPlayer).
-gameHumanVsComputer(Board, ColorPlayer) :-
+gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd)  :- gameHumanVsComputer(Board, ColorPlayer, GameEnd).
+gameHumanVsComputer(Board, ColorPlayer, GameEnd) :-
 	clearScreen,
+	GameEnd \== 1,
 	ColorPlayer == 1, !,
 	printInfoColor(ColorPlayer), sleep(1),
 	prepareBoard(Board), sleep(2),
@@ -121,27 +145,40 @@ gameHumanVsComputer(Board, ColorPlayer) :-
 	movePiece(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, NewBoard),
 	NewColorPlayer is ColorPlayer - 1,
 	% adicionar condição de ganhar jogo
-	gameHumanVsComputer(NewBoard, NewColorPlayer).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	gameHumanVsComputer(NewBoard, NewColorPlayer, NewGameEnd).
 
-gameHumanVsComputer(Board, ColorPlayer) :-
+gameHumanVsComputer(Board, ColorPlayer, GameEnd) :-
 	clearScreen,
+	GameEnd \== 1, 
 	ColorPlayer == 0, !,
 	printInfoColor(ColorPlayer), sleep(1),
 	prepareBoard(Board), sleep(2),
 	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer),
 	movePiece(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, NewBoard),
-	NewColorPlayer is ColorPlayer - 1,
+	NewColorPlayer is ColorPlayer + 1,
 	% adicionar condição de ganhar jogo
-	gameHumanVsComputer(NewBoard, NewColorPlayer).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	gameHumanVsComputer(NewBoard, NewColorPlayer, GameEnd, NewGameEnd).
 
 
+/* End Game */
+gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
+	WinColorPlayer is mod((ColorPlayer + 1), 2),
+	getTypePlayer(WinColorPlayer, Type),
+	printInfoWinGameType(Type).
+
+gameHumanVsComputer(Board, ColorPlayer, 1)  :- 
+	WinColorPlayer is mod((ColorPlayer + 1), 2),
+	getTypePlayer(WinColorPlayer, Type),
+	printInfoWinGameType(Type).
 
 
 
 /**
 * Computer vs Computer
 **/
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw) :-
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw, GameEnd) :-
 	clearScreen,
 	ColorPlayer = 1,
 	printInfoColorComputer(ColorPlayer), sleep(1),
@@ -151,11 +188,11 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw) :-
 	prepareBoard(NewBoard), nl, sleep(3),
 	removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 	NewColorPlayer is ColorPlayer - 1,
-	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw).
+	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw, GameEnd).
 
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
-	Draw == 0, 
+	GameEnd \== 1, Draw == 0, 
 	ColorPlayer == 1, !,
 	printInfoColorComputer(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, PiecesWhite]), sleep(1),
@@ -165,12 +202,13 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
 	removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 	NewColorPlayer is ColorPlayer - 1,
 	% adicionar condição de ganhar jogo
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
 	vertifyDraw(NewPiecesWhite, PiecesBlack, NewDraw),
-	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw).
+	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
-	Draw == 0, 
+	GameEnd \== 1, Draw == 0, 
 	ColorPlayer == 0, !,
 	printInfoColorComputer(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
@@ -180,26 +218,38 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw) :-
 	removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 	NewColorPlayer is ColorPlayer + 1, !,
 	% adicionar condição de ganhar jogo
+		checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
 	vertifyDraw(PiecesWhite, NewPiecesBlack, NewDraw), 
-	gameComputerVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw).
+	gameComputerVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
 
 /* After Draw */
-gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1)  :- 
-	gameComputerVsComputer(Board, ColorPlayer).
+gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd)  :- 
+	gameComputerVsComputer(Board, ColorPlayer, GameEnd).
 
-gameComputerVsComputer(Board, ColorPlayer) :-
-	write('draw!!!!!!!!!'),
-	clearScreen,	
+gameComputerVsComputer(Board, ColorPlayer, GameEnd) :-
+	clearScreen,
+	GameEnd \== 1, 	
 	printInfoColor(ColorPlayer), sleep(1),
 	prepareBoard(Board), sleep(2),
 	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer),
 	movePiece(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, NewBoard),
-	NewColorPlayer is ColorPlayer - 1,
+	NewColorPlayer is mod((ColorPlayer + 1), 2),
 	% adicionar condição de ganhar jogo
-	gameComputerVsComputer(NewBoard, NewColorPlayer).
+	checkGameEnd(NewBoard, NewBoard, 0, NewGameEnd),
+	gameComputerVsComputer(NewBoard, NewColorPlayer, NewGameEnd).
 
 
+/* End Game*/
+gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
+	WinColorPlayer is mod((ColorPlayer + 1), 2),
+	getColorPlayer(WinColorPlayer, Color),
+	printInfoWinGame(Color).
+
+gameComputerVsComputer(Board, ColorPlayer, 1)  :- 
+	WinColorPlayer is mod((ColorPlayer + 1), 2),
+	getColorPlayer(WinColorPlayer, Color),
+	printInfoWinGame(Color).
 
 
 
@@ -243,7 +293,7 @@ clearScreen,
 board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
-game2Players(Board, PiecesWhite, PiecesBlack, 0),
+game2Players(Board, PiecesWhite, PiecesBlack, 0, 0),
 ni_ju.
 
 initGame(Option):-
@@ -253,7 +303,7 @@ clearScreen,
 board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
-gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, 0),
+gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, 0, 0),
 ni_ju.
 
 initGame(Option):-
@@ -268,7 +318,7 @@ clearScreen,
 board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 0),
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 0, 0),
 ni_ju.
 
 initGame(Option):-
