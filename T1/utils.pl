@@ -59,8 +59,8 @@ getCode(r,114).
 getCode(s,115).
 getCode(t,116).
 
-validSymbol(0, 255). % válida
-validSymbol(1, 157). % inválida
+validSymbol(0, 'V'). % válida
+validSymbol(1, 'I'). % inválida
 validSymbol([Head | _], Valid):- validSymbol(Head, Valid).
 
 getColorPlayer(1,'WHITE').
