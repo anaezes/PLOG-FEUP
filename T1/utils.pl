@@ -9,6 +9,8 @@
 :-include('board.pl').
 :-include('checkGameStatus.pl').
 
+:-style_check(-discontiguous).
+
 % Dictionary of pieces
 patternLetter(a, [[1,1,1],[0,0,1],[0,0,0]]).
 patternLetter(b, [[1,1,1],[0,0,0],[0,0,1]]).

@@ -3,65 +3,7 @@
 **** FUNCTIONS TO PRINT ****
 **************************/
 
-
-% Patterns
-patternLetter(a, [[1,1,1],[0,0,1],[0,0,0]]).
-patternLetter(b, [[1,1,1],[0,0,0],[0,0,1]]).
-patternLetter(c, [[1,1,1],[0,0,0],[0,1,0]]).
-patternLetter(d, [[1,1,1],[0,0,0],[1,0,0]]).
-patternLetter(e, [[1,1,1],[1,0,0],[0,0,0]]).
-patternLetter(f, [[1,1,0],[0,0,1],[0,0,1]]).
-patternLetter(g, [[1,1,0],[0,0,1],[0,1,0]]).
-patternLetter(h, [[1,1,0],[0,0,1],[1,0,0]]).
-patternLetter(i, [[1,1,0],[1,0,1],[0,0,0]]).
-patternLetter(j, [[1,1,0],[0,0,0],[0,1,1]]).
-patternLetter(k, [[1,1,0],[0,0,0],[1,0,1]]).
-patternLetter(l, [[1,1,0],[1,0,0],[0,0,1]]).
-patternLetter(m, [[1,1,0],[0,0,0],[1,1,0]]).
-patternLetter(n, [[1,1,0],[1,0,0],[0,1,0]]).
-patternLetter(o, [[1,0,0],[0,0,1],[1,0,1]]).
-patternLetter(p, [[1,0,0],[1,0,1],[0,0,1]]).
-patternLetter(q, [[1,0,0],[0,0,1],[1,1,0]]).
-patternLetter(r, [[1,0,0],[1,0,1],[0,1,0]]).
-patternLetter(s, [[0,1,0],[1,0,1],[0,1,0]]).
-patternLetter(t, [[1,0,1],[0,0,0],[1,0,1]]).
-
-getSymbol(0, 0, 178). % peça preta sem quadrado
-getSymbol(1, 0, 254). % peça preta com quadrado
-getSymbol(0, 1, 176). % peça branca sem quadrado
-getSymbol(1, 1, 254). % peça branca com quadrado
-
-getCode(a,97).
-getCode(b,98).
-getCode(c,99).
-getCode(d,100).
-getCode(e,101).
-getCode(f,102).
-getCode(g,103).
-getCode(h,104).
-getCode(i,105).
-getCode(j,106).
-getCode(k,107).
-getCode(l,108).
-getCode(m,109).
-getCode(n,110).
-getCode(o,111).
-getCode(p,112).
-getCode(q,113).
-getCode(r,114).
-getCode(s,115).
-getCode(t,116).
-
-validSymbol(0, 255). % válida
-validSymbol(1, 157). % inválida
-validSymbol([Head | _], Valid):- validSymbol(Head, Valid).
-
-getColorPlayer(1,'WHITE').
-getColorPlayer(0,'BLACK').
-getTypePlayer(1, ' HUMAN  ').
-getTypePlayer(0, 'COMPUTER').
-
-% Rotates piece
+% Get Rotation
 rotatePattern(0, OldPattern, OldPattern). 
 rotatePattern(1, OldPattern, NewPattern):- % 90 degrees
 	transpose(OldPattern, TempPattern),
@@ -82,12 +24,11 @@ getPieceInfo([Head | Tail], Color, Valid):-
 % Get pattern
 getPiecePattern(PieceNum, Pattern, NewPattern):-
 	nth0(PieceNum, Pattern, NewPattern).
-
 getPiecePattern(PieceNum, Letter, Pattern):-
 	patternLetter(Letter, TempPattern),
 	nth0(PieceNum, TempPattern, Pattern).
 
-%Prints the 
+% Get the symbols of pattern
 printEachSymbol([],_,_).
 printEachSymbol([Head | Tail], Color, Valid):-
 	getSymbol(Head, Color, Char),
@@ -97,6 +38,7 @@ printPieceSymbols(PieceNum, Pattern, Color, Valid):-
 	getPiecePattern(PieceNum, Pattern, NewPattern),
 	printEachSymbol(NewPattern, Color, Valid).
 
+% Main function for print Pieces
 printPiece([], _, _).
 printPiece(nil, _, _) :- 
 	write('|   |').
@@ -106,11 +48,13 @@ printPiece([_Letter, _Rotation | Tail], Pattern, PieceNum):-
 	printPieceSymbols(PieceNum, Pattern, Color, Valid),
 	write('|').
 
+% Get a piece after apply the rotation
 getPiece(nil,nil).
 getPiece([Letter, Rotation | _Tail], Piece):-
 	patternLetter(Letter, Pattern),
 	rotatePattern(Rotation, Pattern, Piece).
 
+% Get one-piece row pattern
 printRowPieces([],_, _):- nl.
 printRowPieces([Head | Tail], Num, PieceNum):-
 	getPiece(Head, Piece),
@@ -155,19 +99,26 @@ printTopNumbers(Count, ColumnsNum):-
 	NewColumnsNum is ColumnsNum - 1,
 	printTopNumbers(NewCount, NewColumnsNum).
 printTopNumbers(Count, ColumnsNum):-
+	Count =< 9,
 	write('| '), write(Count), write(' |'),
 	NewCount is Count + 1,
 	NewColumnsNum is ColumnsNum - 1,
 	printTopNumbers(NewCount, NewColumnsNum).
+printTopNumbers(Count, ColumnsNum):-
+	write('| '), write(Count), write('|'),
+	NewCount is Count + 1,
+	NewColumnsNum is ColumnsNum - 1,
+	printTopNumbers(NewCount, NewColumnsNum).
 
+% Print the horizontal separator of board
 printSeparator(0):- write('--').
 printSeparator(ColumnsNum):-
 	write('-----'),
 	NewColumnsNum is ColumnsNum - 1,
 	printSeparator(NewColumnsNum).
 
-
-prepareBoard([Head | Tail]):-
+% Main funtion of print board
+printBoardMain([Head | Tail]):-
 	nl,length(Head, ColumnsNum),
 	write('   '),printTopNumbers(0,ColumnsNum), nl,
 	printBoard([Head | Tail], 0), nl.
@@ -196,6 +147,13 @@ prepareLegendsPieces([Head|Tail]):-
 	put_code(Code),
 	write('      '),
 	prepareLegendsPieces(Tail).
+
+printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):- 
+	write('  Available pieces: '), nl, nl,
+	write('   '),
+	copyList([Head2 | Tail], AuxTail),
+	prepareLegendsPieces(AuxTail), nl,
+	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
 printInfoColor(Player):-
 	getColorPlayer(Player, Color), nl,
@@ -236,13 +194,6 @@ printInformation(SourceRow, SourceColumn, DestRow, DestColumn) :-
 	write(SourceRow), write(','), write(SourceColumn), write(')'), sleep(2),
 	write('... and puts it'), write(' in position ('),
 	write(DestRow), write(','), write(DestColumn), write(')'), nl, nl,  sleep(2).
-
-printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):- 
-	write('  Available pieces: '), nl, nl,
-	write('   '),
-	copyList([Head2 | Tail], AuxTail),
-	prepareLegendsPieces(AuxTail), nl,
-	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
 printSpace(0).
 printSpace(Value):-
