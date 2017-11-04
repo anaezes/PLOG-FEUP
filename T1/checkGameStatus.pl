@@ -7,11 +7,11 @@ checkValidAndUpdate(Row, Col, [Letter, Rotation, Color, Valid], NewValid, Board,
 	NewValid == 1,!,
 	replace(Board,Row,Col,[Letter,Rotation,Color,NewValid], NewBoard).
 checkValidAndUpdate(Row, Col, [Letter, Rotation, Color, Valid], NewValid, Board, NewBoard).*/
-checkColorPiece(Piece, Color, Count, NewCount, Valid):-
+checkColorPiece(Piece, Color, Count, NewCount, _Valid):-
 	nth0(2, Piece, ColorCell),
 	ColorCell == Color, !,
 	NewCount is Count + 1.
-checkColorPiece(Piece, Color, Count, NewCount, Valid):- 
+checkColorPiece(_Piece, _Color, Count, NewCount, Valid):- 
 	NewCount is Count, 
 	Valid is 1.
 
@@ -26,7 +26,7 @@ checkRow([Head | Tail], Color, Valid, Board, 0, 0, Row, Col, Count, FinalCount):
 	DiagonalCell \== nil,!,
 	checkColorPiece(DiagonalCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, Color, Valid, Board, 0, 1, Row, Col, NewCount, FinalCount).
-checkRow([Head | Tail], Color, Valid, Board, 0, 0, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], Color, Valid, Board, 0, 0, Row, Col, Count, FinalCount):-
 	checkRow(Tail, Color, Valid, Board, 0, 1, Row, Col, Count, FinalCount).
 
 %row 0, col 1
@@ -38,7 +38,7 @@ checkRow([Head | Tail], Color, Valid, Board, 0, 1, Row, Col, Count, FinalCount):
 	AboveCell \== nil,!,
 	checkColorPiece(AboveCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, Color, Valid, Board, 0, 2, Row, Col, NewCount, FinalCount).
-checkRow([Head | Tail], Color, Valid, Board, 0, 1, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], Color, Valid, Board, 0, 1, Row, Col, Count, FinalCount):-
 	checkRow(Tail, Color, Valid, Board, 0, 2, Row, Col, Count, FinalCount).
 
 %row 0, col 2
@@ -51,7 +51,7 @@ checkRow([Head | Tail], Color, Valid, Board, 0, 2, Row, Col, Count, FinalCount):
 	DiagonalCell \== nil,!,
 	checkColorPiece(DiagonalCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, _, Valid, _, _, _, _, _, NewCount, FinalCount).
-checkRow([Head | Tail], Color, Valid, Board, 0, 2, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], _Color, Valid, _Board, 0, 2, _Row, _Col, Count, FinalCount):-
 	checkRow(Tail, _, Valid, _, _, _, _, _, Count, FinalCount).
 
 %row 1, col 0
@@ -63,11 +63,11 @@ checkRow([Head | Tail], Color, Valid, Board, 1, 0, Row, Col, Count, FinalCount):
 	BeforeCell \== nil,!,
 	checkColorPiece(BeforeCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, Color, Valid, Board, 1, 1, Row, Col, NewCount, FinalCount).
-checkRow([Head | Tail], Color, Valid, Board, 1, 0, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], Color, Valid, Board, 1, 0, Row, Col, Count, FinalCount):-
 	checkRow(Tail, Color, Valid, Board, 1, 1, Row, Col, Count, FinalCount).
 
 %row 1, col 1
-checkRow([Head | Tail], Color, Valid, Board, 1, 1, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], Color, Valid, Board, 1, 1, Row, Col, Count, FinalCount):-
 	checkRow(Tail, Color, Valid, Board, 1, 2, Row, Col, Count, FinalCount).
 
 %row 1, col 2
@@ -79,7 +79,7 @@ checkRow([Head | Tail], Color, Valid, Board, 1, 2, Row, Col, Count, FinalCount):
 	AfterCell \== nil,!,
 	checkColorPiece(AfterCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, Color, Valid, Board, 1, 2, Row, Col, NewCount, FinalCount). % Alterar para nada
-checkRow([Head | Tail], Color, Valid, Board, 1, 2 , Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], Color, Valid, Board, 1, 2 , Row, Col, Count, FinalCount):-
 	checkRow(Tail, Color, Valid, Board, 1, 2, Row, Col, Count, FinalCount).
 
 %row 2, col 0
@@ -92,7 +92,7 @@ checkRow([Head | Tail], Color, Valid, Board, 2, 0, Row, Col, Count, FinalCount):
 	DiagonalCell \== nil,!,
 	checkColorPiece(DiagonalCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, Color, Valid, Board, 2, 1, Row, Col, NewCount, FinalCount).
-checkRow([Head | Tail], Color, Valid, Board, 2, 0, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], Color, Valid, Board, 2, 0, Row, Col, Count, FinalCount):-
 	checkRow(Tail, Color, Valid, Board, 2, 1, Row, Col, Count, FinalCount).
 
 %row 2, col 1
@@ -104,7 +104,7 @@ checkRow([Head | Tail], Color, Valid, Board, 2, 1, Row, Col, Count, FinalCount):
 	UnderCell \== nil,!,
 	checkColorPiece(UnderCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, Color, Valid, Board, 2, 2, Row, Col, NewCount, FinalCount).
-checkRow([Head | Tail], Color, Valid, Board, 2, 1, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], Color, Valid, Board, 2, 1, Row, Col, Count, FinalCount):-
 	checkRow(Tail, Color, Valid, Board, 2, 2, Row, Col, Count, FinalCount).
 
 %row 2, col 2
@@ -117,10 +117,10 @@ checkRow([Head | Tail], Color, Valid, Board, 2, 2, Row, Col, Count, FinalCount):
 	DiagonalCell \== nil,!,
 	checkColorPiece(DiagonalCell, Color, Count, NewCount, Valid),
 	checkRow(Tail, _, Valid, _, _, _, _, _, NewCount, FinalCount).
-checkRow([Head | Tail], Color, Valid, Board, 2, 2, Row, Col, Count, FinalCount):-
+checkRow([_Head | Tail], _Color, Valid, _Board, 2, 2, _Row, _Col, Count, FinalCount):-
 	checkRow(Tail, _, Valid, _, _, _, _, _, Count, FinalCount).
 
-checkRow([], _, Valid, _, _, _, _, _, Count, FinalCount):- FinalCount is Count.
+checkRow([], _, _Valid, _, _, _, _, _, Count, FinalCount):- FinalCount is Count.
 
 % Goes throught the piece pattern and checks each row of it
 checkAroundPiece([], _, _, _, _, _, _, 4, GameEnd):- GameEnd is 1.
@@ -134,7 +134,7 @@ checkAroundPiece([Head | Tail], Color, Valid, Board, PieceRow, Row, Col, CountPi
 addPieceToChangeBoard(Row, Col, InvalidPieces, NewInvalidPieces):-
 	append(InvalidPieces, [Row , Col], NewInvalidPieces),
 	write('New InvalidPieces: '), write(NewInvalidPieces),nl.
-addPieceToChangeBoard(_, _, InvalidPieces, NewInvalidPieces).
+addPieceToChangeBoard(_, _, _InvalidPieces, _NewInvalidPieces).
 
 % Gets the pattern of the piece and checks if it is valid
 checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameEnd):-
@@ -162,13 +162,13 @@ findPiece([Head | Tail], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameE
 	write(Head),nl,
 	checkPieceStatus(Head, Board, InvalidPieces, NewInvalidPieces, Row, Col, GameEnd),
 	NewCol is Col + 1,
-	findPiece(Tail, Board, NewInvalidPieces, NewNewInvalidPieces, Row, NewCol, GameEnd).
+	findPiece(Tail, Board, NewInvalidPieces, _NewNewInvalidPieces, Row, NewCol, GameEnd).
 
 % Goes through the invalid pieces and updates the board
-updateBoard([], Board, NewBoard):-write(Board),nl.
+updateBoard([], Board, _NewBoard):-write(Board),nl.
 updateBoard([Row, Col | Tail], Board, NewBoard):-
 	nth0(Row, Board, BoardRow),
-	nth0(Col, BoardRow, [Letter, Rotation, Color, Valid]),
+	nth0(Col, BoardRow, [Letter, Rotation, Color, _Valid]),
 	replace(Board,Row,Col,[Letter,Rotation,Color,1], NewBoard),
 	updateBoard(Tail, NewBoard, NewBoard).
 
@@ -193,4 +193,4 @@ board([
 	[nil, nil, nil, nil, nil, nil, nil]	
 	]). %[j, 0, 1, 0]
 
-teste8:- board(Board), checkGameEnd(Board, Board, NewBoard, InvalidPieces, 0, GameEnd), write(NewBoard),nl,prepareBoard(Board).
+teste8:- board(Board), checkGameEnd(Board, Board, NewBoard, _InvalidPieces, 0, _GameEnd), write(NewBoard),nl, printBoardMain(Board).
