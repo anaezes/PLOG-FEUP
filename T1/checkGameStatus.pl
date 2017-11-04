@@ -1,12 +1,3 @@
-/*updatePiece(Board, [Letter, Rotation, Color, Valid], Row, Column, Valid, NewBoard):-
-	replace(Board,Row,Column,[Letter,Rotation,Color,Valid], NewBoard).
-	%write(NewBoard), nl.
-*/
-/*
-checkValidAndUpdate(Row, Col, [Letter, Rotation, Color, Valid], NewValid, Board, NewBoard):-
-	NewValid == 1,!,
-	replace(Board,Row,Col,[Letter,Rotation,Color,NewValid], NewBoard).
-checkValidAndUpdate(Row, Col, [Letter, Rotation, Color, Valid], NewValid, Board, NewBoard).*/
 checkColorPiece(Piece, Color, Count, NewCount, _Valid):-
 	nth0(2, Piece, ColorCell),
 	ColorCell == Color, !,
@@ -131,58 +122,73 @@ checkAroundPiece([Head | Tail], Color, Valid, Board, PieceRow, Row, Col, CountPi
 	NewCountPiecesAround is FinalCount,
 	checkAroundPiece(Tail, Color, Valid, Board, NewPieceRow, Row, Col, NewCountPiecesAround, GameEnd).
 
-addPieceToChangeBoard(Row, Col, InvalidPieces, NewInvalidPieces):-
-	append(InvalidPieces, [Row , Col], NewInvalidPieces),
-	write('New InvalidPieces: '), write(NewInvalidPieces),nl.
-addPieceToChangeBoard(_, _, _InvalidPieces, _NewInvalidPieces).
-
 % Gets the pattern of the piece and checks if it is valid
-checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameEnd):-
+checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col, GameEnd):-
 	Valid \== 1,
 	getPiece([Letter, Rotation, Color, Valid], Pattern),
 	checkAroundPiece(Pattern, Color, NewValid, Board, 0, Row, Col, 0, GameEnd),
 	NewValid == 1,!,
-	addPieceToChangeBoard(Row, Col, InvalidPieces, NewInvalidPieces),
-	write('InvalidPieces: '), write(NewInvalidPieces), nl.
-	%checkValidAndUpdate(Row, Col, [Letter, Rotation, Color, Valid], NewValid, Board, NewBoard).
-checkPieceStatus([_, _, _, _], _, InvalidPieces, NewInvalidPieces, _, _, _):-
-	copyList(InvalidPieces, NewInvalidPieces).
+	append(_, [Row, Col], InvalidPiece).
+checkPieceStatus([_, _, _, _], _, _, _, _, _).
+
+% Appends the new Invalid Pieces to the others
+aggregateInvalidPieces(OldInvalidPieces, NewInvalidPieces, AllInvalidPieces):-
+	is_list(OldInvalidPieces),
+	is_list(NewInvalidPieces),!,
+	append(OldInvalidPieces, NewInvalidPieces, AllInvalidPieces).
+aggregateInvalidPieces(OldInvalidPieces, _NewInvalidPieces, AllInvalidPieces):-
+	is_list(OldInvalidPieces),!,
+	copyList(OldInvalidPieces, AllInvalidPieces).
+aggregateInvalidPieces(_OldInvalidPieces, NewInvalidPieces, AllInvalidPieces):-
+	is_list(NewInvalidPieces),!,
+	copyList(NewInvalidPieces, AllInvalidPieces).
+aggregateInvalidPieces(_OldInvalidPieces, _NewInvalidPieces, _AllInvalidPieces).
 
 % Goes through the row of the board and finds a Piece
-findPiece([], _, _, _, _, _, _).
+findPiece([], _, InvalidPieces, NewInvalidPieces, _, _, _):-
+	copyList(InvalidPieces, NewInvalidPieces).
 findPiece([_ | _], _, _, _, _, _, GameEnd):- GameEnd == 1, !.
 findPiece([Head | Tail], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameEnd):-
 	Head == nil,!,
-	write('Find Piece1: '), write(InvalidPieces),nl,
 	NewCol is Col + 1,
 	findPiece(Tail, Board, InvalidPieces, NewInvalidPieces, Row, NewCol, GameEnd).
 findPiece([Head | Tail], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameEnd):-
 	Head \== nil,!,
-	write('Find Piece2: '), write(InvalidPieces),nl,
 	write(Head),nl,
-	checkPieceStatus(Head, Board, InvalidPieces, NewInvalidPieces, Row, Col, GameEnd),
+	checkPieceStatus(Head, Board, NewInvalidPiece, Row, Col, GameEnd),
 	NewCol is Col + 1,
-	findPiece(Tail, Board, NewInvalidPieces, _NewNewInvalidPieces, Row, NewCol, GameEnd).
-
-% Goes through the invalid pieces and updates the board
-updateBoard([], Board, _NewBoard):-write(Board),nl.
-updateBoard([Row, Col | Tail], Board, NewBoard):-
-	nth0(Row, Board, BoardRow),
-	nth0(Col, BoardRow, [Letter, Rotation, Color, _Valid]),
-	replace(Board,Row,Col,[Letter,Rotation,Color,1], NewBoard),
-	updateBoard(Tail, NewBoard, NewBoard).
+	aggregateInvalidPieces(InvalidPieces, NewInvalidPiece, RowInvalidPieces),
+	findPiece(Tail, Board, RowInvalidPieces, NewInvalidPieces, Row, NewCol, GameEnd).
 
 % Goes through the rows of the board
-checkGameEnd([],Board,NewBoard,InvalidPieces,_,_):- 
-	updateBoard(InvalidPieces, Board, NewBoard),
+checkGameEnd([],_,InvalidPieces, FinalInvalidPieces,_,_):- 
+	copyList(InvalidPieces, FinalInvalidPieces),
 	write('Game continues!'),nl.
 checkGameEnd([_ | _],_,_,_,_,GameEnd):- 
 	GameEnd == 1, !, 
 	write('The Game has ended!'),nl.
-checkGameEnd([Head | Tail], Board, NewBoard, InvalidPieces, Row, GameEnd):-
-	findPiece(Head, Board, InvalidPieces, NewInvalidPieces, Row, 0, GameEnd),
+checkGameEnd([Head | Tail], Board, InvalidPieces, FinalInvalidPieces, Row, GameEnd):-
+	findPiece(Head, Board, _RowInvalidPieces, ResultInvalidPieces, Row, 0, GameEnd),
 	NewRow is Row + 1,
-	checkGameEnd(Tail, Board, NewBoard, NewInvalidPieces, NewRow, GameEnd).
+	aggregateInvalidPieces(InvalidPieces, ResultInvalidPieces, NewInvalidPieces),
+	write('checkGameEnd: '), write(NewInvalidPieces),nl,
+	checkGameEnd(Tail, Board, NewInvalidPieces, FinalInvalidPieces, NewRow, GameEnd).
+
+% Goes through the invalid pieces and updates the board
+updateBoardAux([], Board, NewBoard):-
+	copyList(Board, NewBoard),
+	write('Board Updated'),nl.
+updateBoardAux([Row, Col | Tail], Board, NewBoard):-
+	nth0(Row, Board, BoardRow),
+	nth0(Col, BoardRow, [Letter, Rotation, Color, _Valid]),
+	replace(Board,Row,Col,[Letter,Rotation,Color,1], TempBoard),
+	updateBoardAux(Tail, TempBoard, NewBoard).
+% Verifies if there are Invalid Pieces
+updateBoard(InvalidPieces, Board, NewBoard):-
+	is_list(InvalidPieces),!,
+	updateBoardAux(InvalidPieces, Board, NewBoard).
+updateBoard(_InvalidPieces, Board, NewBoard):-
+	copyList(Board, NewBoard).
 
 board([
 	[nil, nil, nil, nil, nil, nil, nil],
@@ -193,4 +199,9 @@ board([
 	[nil, nil, nil, nil, nil, nil, nil]	
 	]). %[j, 0, 1, 0]
 
-teste8:- board(Board), checkGameEnd(Board, Board, NewBoard, _InvalidPieces, 0, _GameEnd), write(NewBoard),nl, printBoardMain(Board).
+teste8:- 
+	board(Board), 
+	checkGameEnd(Board, Board, _InvalidPieces, FinalInvalidPieces, 0, _GameEnd), 
+	updateBoard(FinalInvalidPieces, Board, NewBoard),
+	write(NewBoard),nl, 
+	printBoardMain(NewBoard).
