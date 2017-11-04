@@ -154,30 +154,33 @@ findPiece([Head | Tail], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameE
 	findPiece(Tail, Board, InvalidPieces, NewInvalidPieces, Row, NewCol, GameEnd).
 findPiece([Head | Tail], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameEnd):-
 	Head \== nil,!,
-	write(Head),nl,
+	%write(Head),nl,
 	checkPieceStatus(Head, Board, NewInvalidPiece, Row, Col, GameEnd),
 	NewCol is Col + 1,
 	aggregateInvalidPieces(InvalidPieces, NewInvalidPiece, RowInvalidPieces),
 	findPiece(Tail, Board, RowInvalidPieces, NewInvalidPieces, Row, NewCol, GameEnd).
 
 % Goes through the rows of the board
+checkGameEnd(Board, NewInvalidPieces, GameEnd):- 
+	checkGameEnd(Board, Board, InvalidPieces, NewInvalidPieces, 0, GameEnd).
+
 checkGameEnd([],_,InvalidPieces, FinalInvalidPieces,_,_):- 
-	copyList(InvalidPieces, FinalInvalidPieces),
-	write('Game continues!'),nl.
+	copyList(InvalidPieces, FinalInvalidPieces).
+	%write('Game continues!'),nl.
 checkGameEnd([_ | _],_,_,_,_,GameEnd):- 
-	GameEnd == 1, !, 
-	write('The Game has ended!'),nl.
+	GameEnd == 1, !.
+	%write('The Game has ended!'),nl.
 checkGameEnd([Head | Tail], Board, InvalidPieces, FinalInvalidPieces, Row, GameEnd):-
 	findPiece(Head, Board, _RowInvalidPieces, ResultInvalidPieces, Row, 0, GameEnd),
 	NewRow is Row + 1,
 	aggregateInvalidPieces(InvalidPieces, ResultInvalidPieces, NewInvalidPieces),
-	write('checkGameEnd: '), write(NewInvalidPieces),nl,
+	%write('checkGameEnd: '), write(NewInvalidPieces),nl,
 	checkGameEnd(Tail, Board, NewInvalidPieces, FinalInvalidPieces, NewRow, GameEnd).
 
 % Goes through the invalid pieces and updates the board
 updateBoardAux([], Board, NewBoard):-
-	copyList(Board, NewBoard),
-	write('Board Updated'),nl.
+	copyList(Board, NewBoard).
+	%write('Board Updated'),nl.
 updateBoardAux([Row, Col | Tail], Board, NewBoard):-
 	nth0(Row, Board, BoardRow),
 	nth0(Col, BoardRow, [Letter, Rotation, Color, _Valid]),
@@ -205,3 +208,6 @@ teste8:-
 	updateBoard(FinalInvalidPieces, Board, NewBoard),
 	write(NewBoard),nl, 
 	printBoardMain(NewBoard).
+
+
+

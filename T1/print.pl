@@ -24,9 +24,9 @@ getPieceInfo([Head | Tail], Color, Valid):-
 % Get pattern
 getPiecePattern(PieceNum, Pattern, NewPattern):-
 	nth0(PieceNum, Pattern, NewPattern).
-/*getPiecePattern(PieceNum, Letter, Pattern):-
+getPiecePattern(PieceNum, Letter, Pattern):-
 	patternLetter(Letter, TempPattern),
-	nth0(PieceNum, TempPattern, Pattern).*/
+	nth0(PieceNum, TempPattern, Pattern).
 
 % Get the symbols of pattern
 printEachSymbol([],_,_,_,_).
@@ -38,9 +38,22 @@ printEachSymbol([Head | Tail], Col, PieceNum, Color, Valid):-
 	put_code(Char),
 	NewCol is Col + 1,
 	printEachSymbol(Tail, NewCol, PieceNum, Color, Valid).
+
+printEachSymbol([],_,_).
+printEachSymbol([Head | Tail], Color, Valid):-
+	getSymbol(Head, Color, Char),
+	put_code(Char),
+	printEachSymbol(Tail, Color, Valid).
+
+
 printPieceSymbols(PieceNum, Pattern, Color, Valid):-
 	getPiecePattern(PieceNum, Pattern, NewPattern),
 	printEachSymbol(NewPattern, 0, PieceNum, Color, Valid).
+
+printPieceSymbols(PieceNum, Pattern, Color, Valid):-
+ 	getPiecePattern(PieceNum, Pattern, NewPattern),
+ 	getPiecePattern(PieceNum, Pattern, NewPattern),
+	printEachSymbol(NewPattern, Color, Valid).
 
 % Main function for print Pieces
 printPiece([], _, _).
@@ -128,13 +141,13 @@ printBoardMain([Head | Tail]):-
 	printBoard([Head | Tail], 0), nl.
 
 
-
 /** PRINT AVAILABLE PIECES **/
 
 printAvailablePiecesRow(_, [_ , []]).
 printAvailablePiecesRow(PieceRow, [Head , [Head2 | Tail] ]):- 
 	write(' |'),
-	printPieceSymbols(PieceRow, Head2, Head, 1), 
+	Valid = '0',
+	printPieceSymbols(PieceRow, Head2, Head, Valid), 
 	write('| '),
 	printAvailablePiecesRow(PieceRow, [Head, Tail]).
 
