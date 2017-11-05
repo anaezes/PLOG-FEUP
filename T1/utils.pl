@@ -8,6 +8,7 @@
 :-include('computerInput.pl').
 :-include('board.pl').
 :-include('checkGameStatus.pl').
+:-include('ia.pl').
 
 :-style_check(-discontiguous).
 

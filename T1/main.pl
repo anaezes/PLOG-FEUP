@@ -367,3 +367,5 @@ board4([
 
 testeMove :- board3(Board), printBoardMain(Board),
 	movePiece(Board, 1, 4, 3, 1, 1, NewBoard), printBoardMain(NewBoard).
+
+testeCheck(X,Y) :- board3(Board), validMove(Board, X, Y).
