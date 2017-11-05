@@ -43,7 +43,7 @@ askInput(Board, Pieces, Letter, Rotation, NumRow, NumCol):-
 	once(askNextPiece(Pieces, Letter)),
 	once(askRotation(Rotation)),
 	once(askBoardPosition(Board, NumRow, NumCol)),
-	once(checkIfMoveIsValid(Board, NumRow, NumCol)).
+	once(validMove(Board, NumRow, NumCol)).
 
 askMenuInput(Options, Option):-
 	nl, printSpace(10), write('Choose option: '),
@@ -60,4 +60,4 @@ askInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, Colo
 	once(askRotation(Rotation)),
 	write('  Select destination: '), nl, 
 	once(askBoardPosition(Board, DestRow, DestColumn)),
-	once(checkIfMoveIsValid(Board, DestRow, DestColumn)).
+	once(validMove(Board, DestRow, DestColumn)).

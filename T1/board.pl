@@ -173,7 +173,7 @@ append([H1 | T1], [AuxList], NewBoard).
 
 /* Add a piece */
 
-checkIfMoveIsValid(Board, NumRow, NumCol):-
+validMove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen == nil, % cell is free
@@ -185,7 +185,7 @@ checkIfMoveIsValid(Board, NumRow, NumCol):-
 	CellBefore \== nil.
 
 
-checkIfMoveIsValid(Board, NumRow, NumCol):-
+validMove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen == nil, % cell is free
@@ -196,7 +196,7 @@ checkIfMoveIsValid(Board, NumRow, NumCol):-
 	nth0(NumCol, RowAfter, CellAfter),
 	CellAfter \== nil.
 
-checkIfMoveIsValid(Board, NumRow, NumCol):-
+validMove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen == nil, % cell is free
@@ -208,7 +208,7 @@ checkIfMoveIsValid(Board, NumRow, NumCol):-
 	CellBefore \== nil.
 
 
-checkIfMoveIsValid(Board, NumRow, NumCol):-
+validMove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen == nil, % cell is free

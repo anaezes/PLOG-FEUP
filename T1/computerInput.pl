@@ -34,7 +34,7 @@ computerInput([H|T], Pieces, Letter, Rotation, NumRow, NumCol) :-
 	once(getPieceLetter(Pieces, Letter)),
 	once(getRotation(Rotation)),
 	once(getPosition([H|T], NumRow, NumCol)),
-	once(checkIfMoveIsValid([H|T], NumRow, NumCol)), nl,
+	once(validMove([H|T], NumRow, NumCol)), nl,
 	write('-> Computer played piece '), write(Letter), write(' in ('),
 	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
 
@@ -45,5 +45,5 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
 	once(getRotation(Rotation)),
 	once(getPosition(Board, DestRow, DestColumn)),
-	once(checkIfMoveIsValid(Board, DestRow, DestColumn)),
+	once(validMove(Board, DestRow, DestColumn)),
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestColumn)).
