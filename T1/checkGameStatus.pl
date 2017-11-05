@@ -114,7 +114,7 @@ checkRow([_Head | Tail], _Color, Valid, _Board, 2, 2, _Row, _Col, Count, FinalCo
 checkRow([], _, _Valid, _, _, _, _, _, Count, FinalCount):- FinalCount is Count.
 
 % Goes throught the piece pattern and checks each row of it
-checkAroundPiece([], _, _, _, _, _, _, 4, GameEnd):- GameEnd is 1.
+checkAroundPiece([], _, _, _, _, _, _, CountPiecesAround, GameEnd):- CountPiecesAround == 4, !, GameEnd is 1.
 checkAroundPiece([], _, _, _, _, _, _, _, _).
 checkAroundPiece([Head | Tail], Color, Valid, Board, PieceRow, Row, Col, CountPiecesAround, GameEnd):-
 	checkRow(Head, Color, Valid, Board, PieceRow, 0, Row, Col, CountPiecesAround, FinalCount),
@@ -126,7 +126,13 @@ checkAroundPiece([Head | Tail], Color, Valid, Board, PieceRow, Row, Col, CountPi
 checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col, GameEnd):-
 	Valid \== 1,
 	getPiece([Letter, Rotation, Color, Valid], Pattern),
-	checkAroundPiece(Pattern, Color, NewValid, Board, 0, Row, Col, 0, GameEnd),
+	checkAroundPiece(Pattern, Color, NewValid, Board, 0, Row, Col, 0, NewGameEnd),
+	NewGameEnd == 1,!,
+	GameEnd is 1.
+checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col, GameEnd):-
+	Valid \== 1,
+	getPiece([Letter, Rotation, Color, Valid], Pattern),
+	checkAroundPiece(Pattern, Color, NewValid, Board, 0, Row, Col, 0, NewGameEnd),
 	NewValid == 1,!,
 	append(_, [Row, Col], InvalidPiece).
 checkPieceStatus([_, _, _, _], _, _, _, _, _).
@@ -165,10 +171,10 @@ checkGameEnd(Board, NewInvalidPieces, GameEnd):-
 	checkGameEnd(Board, Board, InvalidPieces, NewInvalidPieces, 0, GameEnd).
 
 checkGameEnd([],_,InvalidPieces, FinalInvalidPieces,_,_):- 
-	copyList(InvalidPieces, FinalInvalidPieces).
+	copyList(InvalidPieces, FinalInvalidPieces),
 	%write('Game continues!'),nl.
 checkGameEnd([_ | _],_,_,_,_,GameEnd):- 
-	GameEnd == 1, !.
+	GameEnd == 1, !,
 	%write('The Game has ended!'),nl.
 checkGameEnd([Head | Tail], Board, InvalidPieces, FinalInvalidPieces, Row, GameEnd):-
 	findPiece(Head, Board, _RowInvalidPieces, ResultInvalidPieces, Row, 0, GameEnd),
@@ -196,7 +202,7 @@ updateBoard(_InvalidPieces, Board, NewBoard):-
 board([
 	[nil, nil, nil, nil, nil, nil, nil],
 	[nil, nil, nil, nil, [s, 0, 0, 0], nil, nil],
-	[nil, [s, 0, 0, 0], nil, nil, [j, 0, 0, 0], nil, nil],
+	[nil, [j, 0, 1, 0], nil, nil, [j, 0, 0, 0], nil, nil],
 	[nil, [i, 0, 1, 0], [p, 0, 1, 0], [b, 0, 1, 1], [t, 0, 0, 0], [p, 0, 0, 0], nil],
 	[nil, nil, nil, [o, 0, 1, 0], nil, nil, nil],
 	[nil, nil, nil, nil, nil, nil, nil]	
