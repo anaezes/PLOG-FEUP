@@ -1,100 +1,81 @@
 
 
-bestMoveVitory(_, [], _, _, _, _, _, _).
-bestMoveVitory(_, _, _, _, _, _, _, 1).
-bestMoveVitory(Board, [H|T], ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory) :- 
-	bestValidMove(Board, H, ValidMoves, ColorPlayer, Rotation, Row, Col, Vitory),
-	write('bestMoveVitory' ), nl,
-	Vitory \== 1, 
-	bestMoveVitory(Board, T, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory).
-bestMoveVitory(Board, [H|T], ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory) :- 
-	bestValidMove(Board, H, ValidMoves, ColorPlayer, Rotation, Row, Col, Vitory),
-	Vitory == 1, 
-	Letter = H,
-bestMoveVitory(Board, T, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory).
+bestMoveVitory(_, [], _, _, _, _, _, _, _,_, _).
+bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :- 
+	AuxVitory \== 1, 
+	bestValidMove(Board, H, ValidMoves, BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory),
+	bestMoveVitory(Board, T, H, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory).
+
+bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :- 
+	AuxVitory == 1, !,
+	Letter = BeforeLetter.
 
 
-
-bestValidMove(_, _, nil, _, _, _, _, _).
-bestValidMove(_, _, _, _, _, _, _, 1).
-bestValidMove(Board, Letter, [H|T], ColorPlayer, Rotation, Row, Col, Vitory) :-
-	write('bestValidMove' ), nl,
+bestValidMove(_, _, [], _, _, _, _, _, Vitory, AuxVitory).
+bestValidMove(Board, Letter, [H|T], BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory) :-
+	AuxVitory \== 1, !,
 	nth0(0, H, X), nth0(1, H, Y),
-	bestRotation(Board, Letter, X, Y, ColorPlayer, 0, Rotation, Vitory),
-	Vitory \== 1, 
-	bestValidMove(Board, Letter, T, ColorPlayer, Rotation, Row, Col, Vitory).
-bestValidMove(Board, Letter, [H|T], ColorPlayer, Rotation, Row, Col, Vitory) :-
-	nth0(0, H, X), nth0(1, H, Y),
-	bestRotation(Board, Letter, X, Y, ColorPlayer, 0, Rotation, Vitory),
-	Vitory == 1, 
-	write(X), write(Y), 
-	Row = X, Col = Y,
-	bestValidMove(Board, Letter, T, ColorPlayer, Rotation, Row, Col, Vitory).
+	bestRotation(Board, Letter, X, Y, ColorPlayer, 0, Rotation, NewVitory, AuxVitory),
+	bestValidMove(Board, Letter, T, H, ColorPlayer, Rotation, Row, Col, NewVitory, AuxVitory).
 
+bestValidMove(Board, _, _, BeforeCords, _, Rotation, Row, Col, Vitory, AuxVitory) :-
+AuxVitory == 1, !,
+	nth0(0, BeforeCords, X), Row = X,
+	nth0(1, BeforeCords, Y), Col = Y.
 
-
-
-bestRotation(_, _, _, _, _, 4, _, _). % Not vitory
-bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory) :- 
-write('bestRotation' ), nl,
+bestRotation(_, _, _, _, _, 4, 0, _, _). % Not vitory
+bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux) :- 
+	Vitory \== 1, !,
 	addPiece(Board, Row, Col, Letter, ColorPlayer, AuxRot, NewBoard),
-	printBoardMain(NewBoard),
-	checkGameEnd(Board, Board, InvalidPieces, FinalInvalidPieces, 0, Vitory),
-	write(Vitory), nl, 
-	NewVitory \== 1, !,
+	checkGameEnd(NewBoard, NewBoard, _InvalidPieces, _FinalInvalidPieces, 0, NewVitory),
 	NewAuxRot is AuxRot + 1,
-	bestRotation(Board, Letter, Row, Col, ColorPlayer, NewAuxRot, Rotation, NewVitory).
+	bestRotation(Board, Letter, Row, Col, ColorPlayer, NewAuxRot, Rotation, NewVitory, Aux).
 
-%vitory	
-bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory) :- 
-	Rotation = AuxRot.
-
-
+bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux) :- 
+	Vitory == 1, !,
+	Aux is Vitory,
+	Rotation is AuxRot - 1.
 
 getValidMoves(Board, ValidMoves) :-
 	setof([X,Y], validMove(Board, X, Y), ValidMoves).
 
-
-
 piecesWhite([a,c,d,e,f,g,h,j,k,l,m,n,q,r,s,t]).
-validMoves([[0,4],[1,1],[1,3],[1,5],[2,0],[2,2],[2,3],[2,5],[3,0],[3,6],[4,1],[4,2],[4,4],[4,5],[5,3]]).
+
 
 board5([
 	[nil, nil, nil, nil, nil, nil, nil],
 	[nil, nil, nil, nil, [s, 0, 0, 0], nil, nil],
 	[nil, nil, nil, nil, [j, 0, 0, 0], nil, nil],
 	[nil, [i, 0, 1, 0], [p, 0, 1, 0], [b, 0, 1, 1], [t, 0, 0, 0], [p, 0, 0, 0], nil],
-[nil, nil, nil, [o, 0, 1, 0], nil, nil, nil],
+	[nil, nil, nil, [o, 0, 1, 0], nil, nil, nil],
 	[nil, nil, nil, nil, nil, nil, nil]	
 	]).
 
 
 testeIA:- 
-	board(Board),
+	board5(Board),
 	piecesWhite(PiecesWhite),
 	getValidMoves(Board, ValidMoves),
-	bestMoveVitory(Board, PiecesWhite, ValidMoves, 1, Letter, Rotation, Row, Col, Vitory),
-	write('Vitory:' ), write(Vitory), nl,
+	bestMoveVitory(Board, PiecesWhite, BeforeLetter, ValidMoves, 1, Letter, Rotation, Row, Col, Vitory, AuxVitory),
+	write('AuxVitory:' ), write(AuxVitory), nl,
 	write('Letter:' ), write(Letter), nl,
 	write('Rotation:' ), write(Rotation), nl,
 	write('Row:' ), write(Row), nl,
 	write('Col:' ), write(Col), nl.
-
+/*
 testeRotation :- 
 	board5(Board),
-	bestRotation(Board, j, 2, 1, 1, 0, Rotation, Vitory), 
-	write('Vitory:' ), write(Vitory), nl,
+	bestRotation(Board, j, 2, 1, 1, 0, Rotation, Vitory, Aux), 
+	write('Aux:' ), write(Aux), nl,
 	write('Rotation:' ), write(Rotation), nl.
 
 testeBestValidMove :- 
 	board5(Board),
 	write(Board),
-	printBoardMain(CurrBoard),
-	validMoves(ValidMoves),
+	getValidMoves(Board, ValidMoves),
 	write(ValidMoves), nl, 
-	bestValidMove(Board, j, ValidMoves, 1, Rotation, Row, Col, 0),
-	write('Vitory:' ), write(Vitory), nl,
+	bestValidMove(Board, j, ValidMoves, BeforeCords, 1, Rotation, Row, Col, Vitory, Aux),
 	write('Rotation:' ), write(Rotation), nl,
 	write('Row:' ), write(Row), nl,
-	write('Col:' ), write(Col), nl.        
+	write('Col:' ), write(Col), nl.    */    
 

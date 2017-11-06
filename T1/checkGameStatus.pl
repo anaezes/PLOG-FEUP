@@ -172,15 +172,15 @@ checkGameEnd(Board, NewInvalidPieces, GameEnd):-
 
 checkGameEnd([],_,InvalidPieces, FinalInvalidPieces,_,_):- 
 	copyList(InvalidPieces, FinalInvalidPieces),
-	%write('Game continues!'),nl.
+	write('Game continues!'),nl.
 checkGameEnd([_ | _],_,_,_,_,GameEnd):- 
 	GameEnd == 1, !,
-	%write('The Game has ended!'),nl.
+	write('The Game has ended!'),nl.
 checkGameEnd([Head | Tail], Board, InvalidPieces, FinalInvalidPieces, Row, GameEnd):-
 	findPiece(Head, Board, _RowInvalidPieces, ResultInvalidPieces, Row, 0, GameEnd),
 	NewRow is Row + 1,
 	aggregateInvalidPieces(InvalidPieces, ResultInvalidPieces, NewInvalidPieces),
-	%write('checkGameEnd: '), write(NewInvalidPieces),nl,
+	write('checkGameEnd: '), write(NewInvalidPieces),nl,
 	checkGameEnd(Tail, Board, NewInvalidPieces, FinalInvalidPieces, NewRow, GameEnd).
 
 % Goes through the invalid pieces and updates the board
@@ -210,8 +210,9 @@ board([
 
 teste8:- 
 	board(Board), 
-	checkGameEnd(Board, Board, _InvalidPieces, FinalInvalidPieces, 0, _GameEnd), 
+	checkGameEnd(Board, Board, _InvalidPieces, FinalInvalidPieces, 0, GameEnd), 
 	updateBoard(FinalInvalidPieces, Board, NewBoard),
+	write(GameEnd),nl, 
 	write(NewBoard),nl, 
 	printBoardMain(NewBoard).
 
