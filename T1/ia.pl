@@ -1,6 +1,6 @@
 
 
-bestMoveVitory(_, [], _, _, _, _, _, _, _,_, _).
+bestMoveVitory(_, [], _, _, _, _, _, _, _,_, _ ) :- write('SAIU CASO BASE bestMove'), nl.
 bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :- 
 	AuxVitory \== 1, 
 	bestValidMove(Board, H, ValidMoves, BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory),
@@ -8,7 +8,12 @@ bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rota
 
 bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :- 
 	AuxVitory == 1, !,
-	Letter = BeforeLetter.
+	Letter = BeforeLetter,
+	write('AuxVitory:' ), write(AuxVitory), nl,
+	write('Letter:' ), write(Letter), nl,
+	write('Rotation:' ), write(Rotation), nl,
+	write('Row:' ), write(Row), nl,
+	write('Col:' ), write(Col), nl.
 
 
 bestValidMove(_, _, [], _, _, _, _, _, Vitory, AuxVitory).
@@ -36,7 +41,7 @@ bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux
 	Aux is Vitory,
 	Rotation is AuxRot - 1.
 
-piecesWhite([a,c,d,e,f,g,h,j,k,l,m,n,q,r,s,t]).
+%piecesWhite([a,c,d,e,f,g,h,j,k,l,m,n,q,r,s,t]).
 
 
 board5([
@@ -48,17 +53,13 @@ board5([
 	[nil, nil, nil, nil, nil, nil, nil]	
 	]).
 
+boardP([
+	[nil, nil, nil ],
+	[nil, [j, 0, 1, 0], nil],
+	[nil, nil, nil]	
+	]). %[j, 0, 1, 0]
 
-testeIA:- 
-	board5(Board),
-	piecesWhite(PiecesWhite),
-	getValidMoves(Board, ValidMoves),
-	bestMoveVitory(Board, PiecesWhite, BeforeLetter, ValidMoves, 1, Letter, Rotation, Row, Col, Vitory, AuxVitory),
-	write('AuxVitory:' ), write(AuxVitory), nl,
-	write('Letter:' ), write(Letter), nl,
-	write('Rotation:' ), write(Rotation), nl,
-	write('Row:' ), write(Row), nl,
-	write('Col:' ), write(Col), nl.
+
 /*
 testeRotation :- 
 	board5(Board),
@@ -76,3 +77,13 @@ testeBestValidMove :-
 	write('Row:' ), write(Row), nl,
 	write('Col:' ), write(Col), nl.    */    
 
+testeIA:- 
+	boardP(Board),
+	piecesWhite(PiecesWhite),
+	getValidMoves(Board, ValidMoves),
+	bestMoveVitory(Board, PiecesWhite, BeforeLetter, ValidMoves, 1, Letter, Rotation, Row, Col, Vitory, AuxVitory),
+	write('AuxVitory:' ), write(AuxVitory), nl,
+	write('Letter:' ), write(Letter), nl,
+	write('Rotation:' ), write(Rotation), nl,
+	write('Row:' ), write(Row), nl,
+	write('Col:' ), write(Col), nl.

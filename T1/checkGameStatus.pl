@@ -208,8 +208,14 @@ board([
 	[nil, nil, nil, nil, nil, nil, nil]	
 	]). %[j, 0, 1, 0]
 
+boardP([
+	[nil, nil, nil ],
+	[nil, [j, 0, 1, 0], nil],
+	[nil, nil, nil]	
+	]). %[j, 0, 1, 0]
+
 teste8:- 
-	board(Board), 
+	boardP(Board), 
 	checkGameEnd(Board, Board, _InvalidPieces, FinalInvalidPieces, 0, GameEnd), 
 	updateBoard(FinalInvalidPieces, Board, NewBoard),
 	write(GameEnd),nl, 

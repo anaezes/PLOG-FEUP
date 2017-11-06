@@ -3,6 +3,8 @@
 /************************************
 **** FUNCTIONS OF COMPUTER INPUT ****
 ************************************/
+
+
 getPieceLetter(Pieces, Letter) :- 	
 	length(Pieces, AuxNumPieces),
 	NumPieces is AuxNumPieces - 1,
@@ -27,7 +29,13 @@ computerInput(_Board, Pieces, Letter, Rotation) :-
 	write('-> Computer played piece '), write(Letter), nl, nl.
 
 
-computerInput(Board, Pieces, Letter, Rotation, NumRow, NumCol) :-
+
+
+/**
+* Level one AI
+**/
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
+	Level == 1, !,
 	repeat,
 	once(getPieceLetter(Pieces, Letter)),
 	once(getRotation(Rotation)),
@@ -35,7 +43,31 @@ computerInput(Board, Pieces, Letter, Rotation, NumRow, NumCol) :-
 	write('-> Computer played piece '), write(Letter), write(' in ('),
 	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
 
-computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer):-
+/**
+* Level two AI
+**/
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 2) :-
+	getValidMoves(Board, ValidMoves),
+	once(bestMoveVitory(Board, Pieces, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, NumRow, NumCol, Vitory, Aux)),
+	write('Aux:' ), write(Aux), nl,
+	Aux == 1, !,
+	write('-> Computer played piece '), write(Letter), write(' in ('),
+	write(NumRow), write(','), write(NumCol), write(')'), nl, nl,
+	write('Entrou opção que vai ganhar').
+
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 2) :- 
+	write('O jogo continua....'),
+	computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 1).
+
+
+/*vai ser para alterar - Encontrar a melhor jogada
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
+	write('computerInput 2 '),nl,
+	computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 1).*/
+
+
+computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, Level):-
+%	Level == 1, !,
 	repeat, 
 	once(getPosition(Board, SourceRow, SourceColumn)),
 	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
@@ -43,24 +75,3 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 	once(getRotation(Rotation)),
 	once(getPosition(Board, DestRow, DestColumn)), %random positions
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestColumn)).
-/*
-computerInputIA(Board, Pieces, Letter, Rotation, NumRow, NumCol) :-
-	bestMoveVitory(Board, Pieces, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory),
-
-computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer).*/
-
-
-computerInput(Board, Pieces, Letter, Rotation, NumRow, NumCol, Level) :-
-	Level == 1, !, 
-	computerInput(Board, Pieces, Letter, Rotation, NumRow, NumCol).
-
-computerInput(Board, Pieces, Letter, Rotation, NumRow, NumCol, Level) :-
-	computerInputIA(Board, Pieces, Letter, Rotation, NumRow, NumCol).
-
-
-computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, Level):-
-	Level == 1, !,
-	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer).
-
-computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, Level):-
-	computerInputMoveIA(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer).
