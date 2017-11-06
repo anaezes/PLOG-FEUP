@@ -75,3 +75,6 @@ accCp([],[]).
 accCp([H|T1],[H|T2]) :- accCp(T1,T2).
 
 clearScreen :- write('\33\[2J').
+
+getValidMoves(Board, ValidMoves) :-
+	setof([X,Y], validMove(Board, X, Y), ValidMoves).

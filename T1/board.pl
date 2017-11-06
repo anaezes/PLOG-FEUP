@@ -171,6 +171,9 @@ append([H1 | T1], [AuxList], NewBoard).
 ******** CHECK MOVES ********
 *****************************/
 
+getValidMoves(Board, ValidMoves) :-
+	setof([X,Y], validMove(Board, X, Y), ValidMoves).
+
 /* Add a piece */
 
 validMove(Board, NumRow, NumCol):-

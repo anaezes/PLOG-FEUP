@@ -36,9 +36,6 @@ bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux
 	Aux is Vitory,
 	Rotation is AuxRot - 1.
 
-getValidMoves(Board, ValidMoves) :-
-	setof([X,Y], validMove(Board, X, Y), ValidMoves).
-
 piecesWhite([a,c,d,e,f,g,h,j,k,l,m,n,q,r,s,t]).
 
 

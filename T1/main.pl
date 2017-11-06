@@ -87,7 +87,7 @@ game2Players(_Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :-
 
 
 /**
-* Human vs Computer
+* Human vs Computer Level I
 **/
 gameHumanVsComputer(Board, Pieces, PiecesBlack, Draw, GameEnd) :-
 	clearScreen,
@@ -125,7 +125,7 @@ gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd)
 	printInfoType(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
 	printBoardMain(Board), nl, sleep(2),
-	computerInput(Board, PiecesWhite, Letter, Rotation, NumRow, NumCol),
+	computerInput(Board, PiecesWhite, Letter, Rotation, NumRow, NumCol, 1),
 	addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoardAux), sleep(1),
 	removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 	NewColorPlayer is ColorPlayer + 1,
@@ -157,7 +157,7 @@ gameHumanVsComputer(Board, ColorPlayer, GameEnd) :-
 	ColorPlayer == 0, !,
 	printInfoColor(ColorPlayer), sleep(1),
 	printBoardMain(Board), sleep(2),
-	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer),
+	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, 1),
 	movePiece(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, NewBoardAux),
 	NewColorPlayer is ColorPlayer + 1,
 	% adicionar condição de ganhar jogo
@@ -180,9 +180,9 @@ gameHumanVsComputer(_Board, ColorPlayer, 1)  :-
 
 
 /**
-* Computer vs Computer
+* Computer vs Computer Level
 **/
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw, GameEnd) :-
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw, GameEnd, Level) :-
 	clearScreen,
 	ColorPlayer = 1,
 	printInfoColorComputer(ColorPlayer), sleep(1),
@@ -192,16 +192,16 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw, GameEnd) :-
 	printBoardMain(NewBoard), nl, sleep(3),
 	removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 	NewColorPlayer is ColorPlayer - 1,
-	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw, GameEnd).
+	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw, GameEnd, Level).
 
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, 
 	ColorPlayer == 1, !,
 	printInfoColorComputer(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, PiecesWhite]), sleep(1),
 	printBoardMain(Board), nl, sleep(3),
-	computerInput(Board, PiecesWhite, Letter, Rotation, NumRow, NumCol),
+	computerInput(Board, PiecesWhite, Letter, Rotation, NumRow, NumCol, Level),
 	addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoardAux), sleep(1),
 	removePiecePlayed(PiecesWhite, Letter, NewPiecesWhite),
 	NewColorPlayer is ColorPlayer - 1,
@@ -209,16 +209,16 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameE
 	checkGameEnd(NewBoardAux, NewInvalidPieces, NewGameEnd),
 	updateBoard(NewInvalidPieces, NewBoardAux, NewBoard),
 	vertifyDraw(NewPiecesWhite, PiecesBlack, NewDraw),
-	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
+	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd, Level).
 
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, 
 	ColorPlayer == 0, !,
 	printInfoColorComputer(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, PiecesBlack]), sleep(1),
 	printBoardMain(Board), nl, sleep(3),
-	computerInput(Board, PiecesBlack, Letter, Rotation, NumRow, NumCol),
+	computerInput(Board, PiecesBlack, Letter, Rotation, NumRow, NumCol, Level),
 	addPiece(Board, NumRow, NumCol, Letter, ColorPlayer, Rotation, NewBoardAux), sleep(1),
 	removePiecePlayed(PiecesBlack, Letter, NewPiecesBlack),
 	NewColorPlayer is ColorPlayer + 1, !,
@@ -226,35 +226,35 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameE
 	checkGameEnd(NewBoardAux, NewInvalidPieces, NewGameEnd),
 	updateBoard(NewInvalidPieces, NewBoardAux, NewBoard),
 	vertifyDraw(PiecesWhite, NewPiecesBlack, NewDraw), 
-	gameComputerVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
+	gameComputerVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd, Level).
 
 
 /* After Draw */
-gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd)  :- 
-	gameComputerVsComputer(Board, ColorPlayer, GameEnd).
+gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd, Level)  :- 
+	gameComputerVsComputer(Board, ColorPlayer, GameEnd, Level).
 
 gameComputerVsComputer(Board, ColorPlayer, GameEnd) :-
 	clearScreen,
 	GameEnd \== 1, 	
 	printInfoColor(ColorPlayer), sleep(1),
 	printBoardMain(Board), sleep(2),
-	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer),
+	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, Level),
 	movePiece(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, NewBoardAux),
 	NewColorPlayer is mod((ColorPlayer + 1), 2),
 	% adicionar condição de ganhar jogo
 	checkGameEnd(NewBoardAux, NewInvalidPieces, NewGameEnd),
 	updateBoard(NewInvalidPieces, NewBoardAux, NewBoard),
 	printBoardMain(NewBoard), nl, sleep(3),
-	gameComputerVsComputer(NewBoard, NewColorPlayer,NewGameEnd).
+	gameComputerVsComputer(NewBoard, NewColorPlayer,NewGameEnd,Level).
 
 
 /* End Game*/
-gameComputerVsComputer(_Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
+gameComputerVsComputer(_Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
 
-gameComputerVsComputer(_Board, ColorPlayer, 1)  :- 
+gameComputerVsComputer(_Board, ColorPlayer, 1, Level)  :- 
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
@@ -328,13 +328,18 @@ clearScreen,
 board1(Board),
 piecesBlack(PiecesBlack),
 piecesWhite(PiecesWhite),
-gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 0, 0),
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 0, 0, 1),
 ni_ju.
 
 initGame(Option):-
-Option == 5, 
+Option == 5, !,
 write('Option 5'), nl,
-write('Not Available!!!!'), nl.
+clearScreen,
+board1(Board),
+piecesBlack(PiecesBlack),
+piecesWhite(PiecesWhite),
+gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 0, 0, 2),
+ni_ju.
 
 
 
