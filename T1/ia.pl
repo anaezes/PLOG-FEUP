@@ -8,12 +8,7 @@ bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rota
 
 bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :- 
 	AuxVitory == 1, !,
-	Letter = BeforeLetter,
-	write('AuxVitory:' ), write(AuxVitory), nl,
-	write('Letter:' ), write(Letter), nl,
-	write('Rotation:' ), write(Rotation), nl,
-	write('Row:' ), write(Row), nl,
-	write('Col:' ), write(Col), nl.
+	Letter = BeforeLetter.
 
 
 bestValidMove(_, _, [], _, _, _, _, _, Vitory, AuxVitory).
@@ -41,24 +36,6 @@ bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux
 	Aux is Vitory,
 	Rotation is AuxRot - 1.
 
-%piecesWhite([a,c,d,e,f,g,h,j,k,l,m,n,q,r,s,t]).
-
-
-board5([
-	[nil, nil, nil, nil, nil, nil, nil],
-	[nil, nil, nil, nil, [s, 0, 0, 0], nil, nil],
-	[nil, nil, nil, nil, [j, 0, 0, 0], nil, nil],
-	[nil, [i, 0, 1, 0], [p, 0, 1, 0], [b, 0, 1, 1], [t, 0, 0, 0], [p, 0, 0, 0], nil],
-	[nil, nil, nil, [o, 0, 1, 0], nil, nil, nil],
-	[nil, nil, nil, nil, nil, nil, nil]	
-	]).
-
-boardP([
-	[nil, nil, nil ],
-	[nil, [j, 0, 1, 0], nil],
-	[nil, nil, nil]	
-	]). %[j, 0, 1, 0]
-
 
 /*
 testeRotation :- 
@@ -75,7 +52,7 @@ testeBestValidMove :-
 	bestValidMove(Board, j, ValidMoves, BeforeCords, 1, Rotation, Row, Col, Vitory, Aux),
 	write('Rotation:' ), write(Rotation), nl,
 	write('Row:' ), write(Row), nl,
-	write('Col:' ), write(Col), nl.    */    
+	write('Col:' ), write(Col), nl.       
 
 testeIA:- 
 	boardP(Board),
@@ -86,4 +63,4 @@ testeIA:-
 	write('Letter:' ), write(Letter), nl,
 	write('Rotation:' ), write(Rotation), nl,
 	write('Row:' ), write(Row), nl,
-	write('Col:' ), write(Col), nl.
+	write('Col:' ), write(Col), nl.*/

@@ -55,19 +55,36 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 2) :
 	write(NumRow), write(','), write(NumCol), write(')'), nl, nl,
 	write('Entrou opção que vai ganhar').
 
+%para alterar -> encontrar a melhor jogada possivel.
 computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 2) :- 
 	write('O jogo continua....'),
 	computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 1).
 
 
-/*vai ser para alterar - Encontrar a melhor jogada
+
+
+/*vai ser para alterar - Encontrar a melhor jogada:
+
 computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
 	write('computerInput 2 '),nl,
 	computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 1).*/
 
 
+% Level One
 computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, Level):-
-%	Level == 1, !,
+	Level == 1, !,
+	repeat, 
+	once(getPosition(Board, SourceRow, SourceColumn)),
+	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
+	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
+	once(getRotation(Rotation)),
+	once(getPosition(Board, DestRow, DestColumn)), %random positions
+	once(printInformation(SourceRow, SourceColumn, DestRow, DestColumn)).
+
+
+% Level Two
+%para alterar -> tirar a peça com menos peças a fazer match e colocar junto da que tem mais peças a fazer match ?
+computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, Level):-
 	repeat, 
 	once(getPosition(Board, SourceRow, SourceColumn)),
 	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
