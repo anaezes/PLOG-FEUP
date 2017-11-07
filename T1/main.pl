@@ -209,7 +209,7 @@ gameComputerVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	checkGameEnd(NewBoardAux, NewInvalidPieces, NewGameEnd),
 	updateBoard(NewInvalidPieces, NewBoardAux, NewBoard),
 	printBoardMain(NewBoard), nl, sleep(3),
-	gameComputerVsComputer(NewBoard, NewColorPlayer,NewGameEnd,Level).
+	gameComputerVsComputer(NewBoard, NewColorPlayer,  NewGameEnd, Level).
 
 
 /* End Game*/
@@ -245,8 +245,8 @@ printInfoGame1(Board, ColorPlayer, Pieces) :-
 	printBoardMain(Board), nl, sleep(3).
 
 printInfoGame2(Board, ColorPlayer) :- 
-	printInfoColorComputer(ColorPlayer), sleep(1),
-	printBoardMain(Board), nl, sleep(3).
+	printInfoColorComputer(ColorPlayer), sleep(1).
+	%printBoardMain(Board), nl, sleep(3).
 
 
 

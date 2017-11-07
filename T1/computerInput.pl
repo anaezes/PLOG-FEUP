@@ -14,7 +14,7 @@ getPieceLetter(Pieces, Letter) :-
 getRotation(Rotation) :-
 	random(0, 3, Rotation).
 
-getPosition(Board, NumRow, NumCol) :-
+getValidPosition(Board, NumRow, NumCol) :-
 	getValidMoves(Board, ValidMoves),
 	length(ValidMoves, NumValidMoves),
 	random(0, NumValidMoves, ValidMovePos),
@@ -28,7 +28,13 @@ computerInput(_Board, Pieces, Letter, Rotation) :-
 	once(getRotation(Rotation)), nl,
 	write('-> Computer played piece '), write(Letter), nl, nl.
 
-
+getPosition([H|T], NumRow, NumCol) :-
+	length([H|T], AuxNumRows),
+	NumRows is AuxNumRows - 1,
+	random(0, NumRows, NumRow),
+	length(H, AuxNumCols),
+	NumCols is AuxNumCols - 1,
+	random(0, NumCols, NumCol).
 
 
 /**
@@ -39,7 +45,7 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 	repeat,
 	once(getPieceLetter(Pieces, Letter)),
 	once(getRotation(Rotation)),
-	once(getPosition(Board, NumRow, NumCol)), %random positions
+	once(getValidPosition(Board, NumRow, NumCol)), %random positions
 	write('-> Computer played piece '), write(Letter), write(' in ('),
 	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
 
@@ -78,7 +84,7 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
 	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
 	once(getRotation(Rotation)),
-	once(getPosition(Board, DestRow, DestColumn)), %random positions
+	once(getValidPosition(Board, DestRow, DestColumn)), %random positions
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestColumn)).
 
 
@@ -90,5 +96,5 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
 	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
 	once(getRotation(Rotation)),
-	once(getPosition(Board, DestRow, DestColumn)), %random positions
+	once(getValidPosition(Board, DestRow, DestColumn)), %random positions
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestColumn)).
