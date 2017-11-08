@@ -199,14 +199,13 @@ updateBoard(InvalidPieces, Board, NewBoard):-
 updateBoard(_InvalidPieces, Board, NewBoard):-
 	copyList(Board, NewBoard).
 
-board([
-	[nil, nil, nil, nil, nil, nil, nil],
-	[nil, nil, nil, nil, [s, 0, 0, 0], nil, nil],
-	[nil, [j, 0, 1, 0], nil, nil, [j, 0, 0, 0], nil, nil],
-	[nil, [i, 0, 1, 0], [p, 0, 1, 0], [b, 0, 1, 1], [t, 0, 0, 0], [p, 0, 0, 0], nil],
-	[nil, nil, nil, [o, 0, 1, 0], nil, nil, nil],
-	[nil, nil, nil, nil, nil, nil, nil]	
-	]). %[j, 0, 1, 0]
+board([[nil,nil,nil,nil,nil,nil,nil],
+	[nil,nil,nil,[r,0,0,1],[e,1,1,0],nil,nil],
+	[nil,[l,2,0,1],[r,0,1,1],[c,2,1,1],[h,2,0,1],[j,2,1,1],nil],
+	[nil,nil,nil,[f,0,0,1],[k,1,1,1],[a,1,0,0],nil],
+	[nil,[q,2,1,1],[i,1,1,1],[g,2,0,1],nil,nil,nil],
+	[nil,nil,[o,0,0,1],nil,nil,nil,nil],
+	[nil,nil,nil,nil,nil,nil,nil]]). %[p,1,1,0] (3,2)
 
 boardP([
 	[nil, nil, nil ],
@@ -215,7 +214,7 @@ boardP([
 	]). %[j, 0, 1, 0]
 
 teste8:- 
-	boardP(Board), 
+	board(Board), 
 	checkGameEnd(Board, Board, _InvalidPieces, FinalInvalidPieces, 0, GameEnd), 
 	updateBoard(FinalInvalidPieces, Board, NewBoard),
 	write(GameEnd),nl, 

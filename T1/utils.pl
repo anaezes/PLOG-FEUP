@@ -78,3 +78,14 @@ clearScreen :- write('\33\[2J').
 
 getValidMoves(Board, ValidMoves) :-
 	setof([X,Y], validMove(Board, X, Y), ValidMoves).
+
+/*
+:- dynamic seed/1.
+ 
+seed(13).
+
+random(R,N):-
+	%retract(seed(S)), 
+	N is (S mod R) + 1,
+	NewSeed is (125 * S + 1) mod 4096,
+	asserta(seed(NewSeed)), !.*/

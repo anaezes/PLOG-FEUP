@@ -52,7 +52,7 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 /**
 * Level two AI
 **/
-computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 2) :-
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
 	getValidMoves(Board, ValidMoves),
 	once(bestMoveVitory(Board, Pieces, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, NumRow, NumCol, Vitory, Aux)),
 	write('Aux:' ), write(Aux), nl,
@@ -62,9 +62,14 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 2) :
 	write('Entrou opção que vai ganhar').
 
 %para alterar -> encontrar a melhor jogada possivel.
-computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 2) :- 
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :- 
 	write('O jogo continua....'),
-	computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 1).
+	repeat,
+	once(getPieceLetter(Pieces, Letter)),
+	once(getRotation(Rotation)),
+	once(getValidPosition(Board, NumRow, NumCol)), %random positions
+	write('-> Computer played piece '), write(Letter), write(' in ('),
+	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
 
 
 
