@@ -1,15 +1,20 @@
 
 
+
 /************************************
 **** FUNCTIONS OF COMPUTER INPUT ****
 ************************************/
 
 
 getPieceLetter(Pieces, Letter) :- 	
-	length(Pieces, AuxNumPieces),
-	NumPieces is AuxNumPieces - 1,
+	length(Pieces, NumPieces),
+	%NumPieces is AuxNumPieces - 1,
+	NumPieces \== 0, !,
 	random(0, NumPieces, PosPiece),
 	nth0(PosPiece, Pieces, Letter).
+
+getPieceLetter(Pieces, Letter) :-
+	nth0(0, Pieces, Letter).
 
 getRotation(Rotation) :-
 	random(0, 3, Rotation).
@@ -74,8 +79,7 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 
 
 
-/*vai ser para alterar - Encontrar a melhor jogada:
-
+/*TODO : Encontrar a melhor jogada:
 computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
 	write('computerInput 2 '),nl,
 	computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, 1).*/
@@ -86,7 +90,7 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 	Level == 1, !,
 	repeat, 
 	once(getPosition(Board, SourceRow, SourceColumn)),
-	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
+	once(getValidPostionToRemove(Board, SourceRow, SourceColumn)),
 	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
 	once(getRotation(Rotation)),
 	once(getValidPosition(Board, DestRow, DestColumn)), %random positions
@@ -94,12 +98,104 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 
 
 % Level Two
-%para alterar -> tirar a peça com menos peças a fazer match e colocar junto da que tem mais peças a fazer match ?
-computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, ColorPlayer, Level):-
+computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, Level):-
+	once(getPositionsToRemovePiece(Board, PositionsToRemove)),
+	write('PositionsToRemove: '), write(PositionsToRemove), nl,
+	once(getColorPieces(Board, ColorPlayer, ListPiecesPlayer)),
+	write('ListPiecesPlayer: '), write(ListPiecesPlayer), nl,
+	once(inter(PositionsToRemove, ListPiecesPlayer, FinalListToRemove)),
+	write('FinalListToRemove: '), write(FinalListToRemove), nl,
+	once(getLetters(Board, FinalListToRemove, LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux)),
+	write('LettersAvailable: '), write(LettersAvailableAux), nl,
+	once(getValidMoves(Board, ValidMoves)),
+	once(bestMoveVitory(Board, LettersAvailableAux, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, DestRow, DestCol, Vitory, Aux)),
+	Aux == 1, !,
+	write(Letter), nl, 
+	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn).
+
+
+
+% Level Two
+% TODO - tirar a peça com menos peças a fazer match e colocar junto da que tem mais peças a fazer match ?
+computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, Level):-
 	repeat, 
 	once(getPosition(Board, SourceRow, SourceColumn)),
-	once(checkIfRemovePieceIsValid(Board, SourceRow, SourceColumn)),
+	once(getValidPostionToRemove(Board, SourceRow, SourceColumn)),
 	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
 	once(getRotation(Rotation)),
-	once(getValidPosition(Board, DestRow, DestColumn)), %random positions
-	once(printInformation(SourceRow, SourceColumn, DestRow, DestColumn)).
+	once(getValidPosition(Board, DestRow, DestCol)), %random positions
+	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
+
+
+getCoordinates(_, [], _, _).
+getCoordinates(Letter, [H | T], SourceRow, SourceColumn) :-
+	nth0(0, H, LetterAux),
+	LetterAux == Letter,
+	nth0(1, H, SourceRow),
+	nth0(2, H, SourceColumn).
+getCoordinates(Letter, [H | T], SourceRow, SourceColumn) :-
+	getCoordinates(Letter, T, SourceRow, SourceColumn).
+
+
+getLetters(_Board, [], LettersPositions, LettersPositions, LettersAvailable, LettersAvailable).
+getLetters(Board, [H | T], LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux) :-
+	length(LettersAvailable, Aux),
+	aux \== 0, !,
+	nth0(0, H, Row), 
+	nth0(1, H, Col), 
+	getPiece(Board, Row, Col, Piece),
+	nth0(0, Piece, Letter),
+	append([Letter], H, LetterPos),
+	append(LettersPositions, [LetterPos], NewLettersPositions),
+	append([Letter], LettersAvailable , NewLettersAvailable),
+	getLetters(Board, T, NewLettersPositions, LettersPositionsAux, NewLettersAvailable, LettersAvailableAux).
+getLetters(Board, [H | T], LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux) :-
+	nth0(0, H, Row), 
+	nth0(1, H, Col), 
+	getPiece(Board, Row, Col, Piece),
+	nth0(0, Piece, Letter),
+	append([Letter], H, LetterPos),
+	append(LettersPositions, [LetterPos], NewLettersPositions),
+	getLetters(Board, T, NewLettersPositions, LettersPositionsAux, [Letter], LettersAvailableAux).
+
+
+getColorPieces(Board, ColorPlayer, ListPiecesPlayer) :-
+	setof([X,Y], checkColorPiece(Board, X, Y, ColorPlayer), ListPiecesPlayer).
+
+getPositionsToRemovePiece(Board, PositionsToRemove) :-
+	setof([X,Y], getValidPostionToRemove(Board, X, Y), PositionsToRemove).
+
+getPiece(Board, Row, Col, Piece) :-
+	nth0(Row, Board, RowBoard),
+	nth0(Col, RowBoard, Piece).
+
+
+%intercepção de duas listas
+inter([], _, []).
+inter([H1|T1], L2, [H1|Res]) :-
+    member(H1, L2),
+    inter(T1, L2, Res).
+inter([_|T1], L2, Res) :-
+    inter(T1, L2, Res).
+
+
+
+
+
+
+
+
+testeMove :- 
+	board(Board), 
+	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, 1, 2),
+	write('SourceRow'), write(SourceRow),nl, 
+	write('SourceColumn'), write(SourceColumn),nl, 
+	write('Rotation'), write(Rotation),nl, 
+	write('DestRow'), write(DestRow),nl, 
+	write('DestColumn'), write(DestColumn),nl.
+
+positions([[1,4],[2,2],[2,5],[4,1]]).
+
+teste9 :- board(Board), positions(Positions),
+			getLetters(Board, Positions, LettersPositions, LettersAvailable),
+			write(LettersPositions), nl, write(LettersAvailable), nl.
