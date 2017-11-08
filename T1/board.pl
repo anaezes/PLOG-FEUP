@@ -226,7 +226,7 @@ validMove(Board, NumRow, NumCol):-
 
 /* Remove a piece */
 
-checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen \== nil, % cell is not free
@@ -237,7 +237,7 @@ checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
 	nth0(NumCol, RowBefore, CellBefore),
 	CellBefore == nil.
 
-checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen \== nil, % cell is free
@@ -248,7 +248,7 @@ checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
 	nth0(NumCol, RowAfter, CellAfter),
 	CellAfter == nil.
 
-checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen \== nil, % cell is free
@@ -259,7 +259,7 @@ checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
 	nth0(BeforeNumColumn, Row, CellBefore),
 	CellBefore == nil.
 
-checkIfRemovePieceIsValid(Board, NumRow, NumCol):-
+getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
 	CellChosen \== nil, % cell is free
