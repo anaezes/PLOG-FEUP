@@ -60,12 +60,14 @@ game2Players(Board, ColorPlayer, GameEnd) :-
 	game2Players(NewBoard, NewColorPlayer, NewGameEnd).
 
 /* End Game */
-game2Players(_Board, ColorPlayer, 1)  :- 
+game2Players(Board, ColorPlayer, 1)  :- 
+	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
 
-game2Players(_Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
+game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
+	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
@@ -141,12 +143,14 @@ gameHumanVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 
 
 /* End Game */
-gameHumanVsComputer(_Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
+gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
+	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getTypePlayer(WinColorPlayer, Type),
 	printInfoWinGameType(Type).
 
-gameHumanVsComputer(_Board, ColorPlayer, 1, Level)  :- 
+gameHumanVsComputer(Board, ColorPlayer, 1, Level)  :- 
+	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getTypePlayer(WinColorPlayer, Type),
 	printInfoWinGameType(Type).
@@ -213,12 +217,14 @@ gameComputerVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 
 
 /* End Game*/
-gameComputerVsComputer(_Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
+gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
+	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
 
-gameComputerVsComputer(_Board, ColorPlayer, 1, Level)  :- 
+gameComputerVsComputer(Board, ColorPlayer, 1, Level)  :- 
+	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
@@ -261,6 +267,8 @@ piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 options([1, 2, 3, 4, 5]).
 
 ni_ju :- 
+now(X),
+setrand(X),
 clearScreen,
 printMenuScreen,
 options(Options),
