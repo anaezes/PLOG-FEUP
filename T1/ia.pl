@@ -36,22 +36,57 @@ bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux
 	Rotation is AuxRot - 1.
 
 
-/*
-testeRotation :- 
-	board5(Board),
-	bestRotation(Board, j, 2, 1, 1, 0, Rotation, Vitory, Aux), 
-	write('Aux:' ), write(Aux), nl,
-	write('Rotation:' ), write(Rotation), nl.
+/*    FIND THE MOVE WITH THE BEST PONTUATION */
+checkAroundScore([], _Valid, _ColorPlayer, _Board, _PieceRow, _Row, _Col, Count, LastFinalCount):- LastFinalCount is Count.
+checkAroundScore([Head | Tail], Valid, ColorPlayer, Board, PieceRow, Row, Col, Count, LastFinalCount):-
+	checkRow(Head, ColorPlayer, Valid, Board, PieceRow, 0, Row, Col, Count, FinalCount),
+	NewPieceRow is PieceRow + 1,
+	NewCountPiecesAround is FinalCount,
+	checkAroundScore(Tail, Valid, ColorPlayer, Board, NewPieceRow, Row, Col, NewCountPiecesAround, LastFinalCount).
 
-testeBestValidMove :- 
-	board5(Board),
-	write(Board),
+getPositionScore(_Board, [], _Position, _Rotation, _ColorPlayer, PositionMoves, AllPositionMoves):-
+	copyList(PositionMoves, AllPositionMoves).
+getPositionScore(Board, [Head | Tail], 4, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
+	getPositionScore(Board, Tail, 0, Position, ColorPlayer, PositionMoves, AllPositionMoves).
+getPositionScore(Board, [Head | Tail], Rotation, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
+	getPiece([Head, Rotation, ColorPlayer, 0], Pattern),
+	nth0(0, Position, Row),
+	nth0(1, Position, Col),
+	checkAroundScore(Pattern, Valid, ColorPlayer, Board, 0, Row, Col, 0, LastFinalCount),
+	LastFinalCount \== 0, Valid \== 1, !,
+	append(PositionMoves, [[LastFinalCount, Row, Col, [Head, Rotation, ColorPlayer, 0]]], NewPositionMoves),
+	NewRotation is Rotation + 1,
+	getPositionScore(Board, [Head | Tail], NewRotation, Position, ColorPlayer, NewPositionMoves, AllPositionMoves).
+getPositionScore(Board, [Head | Tail], Rotation, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
+	NewRotation is Rotation + 1,
+	getPositionScore(Board, [Head | Tail], NewRotation, Position, ColorPlayer, PositionMoves, AllPositionMoves).
+
+getSecondBestMove(_Board, _AvailablePieces, [], _ColorPlayer, PossibleMoves, FinalPossibleMoves):- 
+	sort(PossibleMoves, FinalPossibleMoves).
+getSecondBestMove(Board, AvailablePieces, [Head | Tail], ColorPlayer, PossibleMoves, FinalPossibleMoves):-
+	getPositionScore(Board, AvailablePieces, 0, Head, ColorPlayer, NewPositionMoves, AllPositionMoves),
+	append(PossibleMoves, AllPositionMoves, NewPossibleMoves),
+	getSecondBestMove(Board, AvailablePieces, Tail, ColorPlayer, NewPossibleMoves, FinalPossibleMoves). 
+
+playSecondBestMove(ColorPlayer, PossibleMoves, Board, NewBoard):-
+	last(PossibleMoves, BestMove),
+	nth0(1, BestMove, Row),
+	nth0(2, BestMove, Col),
+	nth0(3, BestMove, [Letter, Rotation, ColorPlayer, Valid]),
+	addPiece(Board, Row, Col, Letter, ColorPlayer, Rotation, NewBoard).
+
+
+pieces2([a,b,c,d,e]).
+teste20:-
+	board(Board),
+	pieces2(PiecesWhite),
 	getValidMoves(Board, ValidMoves),
-	write(ValidMoves), nl, 
-	bestValidMove(Board, j, ValidMoves, BeforeCords, 1, Rotation, Row, Col, Vitory, Aux),
-	write('Rotation:' ), write(Rotation), nl,
-	write('Row:' ), write(Row), nl,
-	write('Col:' ), write(Col), nl.       */
+	getSecondBestMove(Board, PiecesWhite, ValidMoves, 1, PossibleMoves, FinalPossibleMoves),
+	write(FinalPossibleMoves),nl,
+	printBoardMain(Board),
+	playSecondBestMove(1, FinalPossibleMoves, Board, NewBoard),
+	printBoardMain(NewBoard).
+
 
 pieces([p,q]).
 
