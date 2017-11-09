@@ -1,12 +1,15 @@
-
 :-include('utils.pl').
 
 
+/***********************
+**** MAIN FUNCTIONS ****
+************************/
 
 
 /**
-* Human vs Human
+* Game cycle - Human vs Human mode
 **/
+% First move - White player
 game2Players(Board, PiecesWhite, PiecesBlack, Draw, GameEnd) :-
 	clearScreen,
 	ColorPlayer = 1,
@@ -18,6 +21,7 @@ game2Players(Board, PiecesWhite, PiecesBlack, Draw, GameEnd) :-
 	NewColorPlayer is ColorPlayer - 1,
 	game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw, GameEnd).
 
+% Following movements - White player
 game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, ColorPlayer == 1, !,
@@ -31,6 +35,7 @@ game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	vertifyDraw(NewPiecesWhite, PiecesBlack, NewDraw),
 	game2Players(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
+% Following movements - Black player
 game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, 
@@ -45,10 +50,11 @@ game2Players(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd) :-
 	game2Players(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd).
 
 
-/* After Draw */
+% After draw moves
 game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd)  :- 
 	game2Players(Board, ColorPlayer, GameEnd).
 
+% Game cycle to move pieces
 game2Players(Board, ColorPlayer, GameEnd) :-
 	clearScreen, GameEnd \== 1,
 	printInfoGame2(Board, ColorPlayer),
@@ -59,13 +65,12 @@ game2Players(Board, ColorPlayer, GameEnd) :-
 	updateBoard(NewInvalidPieces, NewBoardAux, NewBoard),
 	game2Players(NewBoard, NewColorPlayer, NewGameEnd).
 
-/* End Game */
+% End Game 
 game2Players(Board, ColorPlayer, 1)  :- 
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
-
 game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
@@ -77,8 +82,9 @@ game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :-
 
 
 /**
-* Human vs Computer Level I
+* Game cycle - Human vs Computer mode
 **/
+% First move - Human player (white pieces).
 gameHumanVsComputer(Board, Pieces, PiecesBlack, Draw, GameEnd, Level) :-
 	clearScreen,
 	Draw == 0, ColorPlayer = 1,
@@ -90,6 +96,7 @@ gameHumanVsComputer(Board, Pieces, PiecesBlack, Draw, GameEnd, Level) :-
 	NewColorPlayer is ColorPlayer - 1,
 	gameHumanVsComputer(NewBoard, NewListAvailablePieces, PiecesBlack, NewColorPlayer, Draw, GameEnd, Level).
 
+% Following movements - Human player (white pieces).
 gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, ColorPlayer == 1, !,
@@ -103,6 +110,7 @@ gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd,
 	vertifyDraw(NewPiecesWhite, PiecesBlack, NewDraw),
 	gameHumanVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd, Level).
 
+% Following movements - Computer player (black pieces).
 gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, ColorPlayer == 0, !,
@@ -116,9 +124,11 @@ gameHumanVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd,
 	vertifyDraw(PiecesWhite, NewPiecesBlack, NewDraw),
 	gameHumanVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd, Level).
 
-/* After Draw */
+% After Draw
 gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd, Level)  :- 
 	gameHumanVsComputer(Board, ColorPlayer, GameEnd, Level).
+
+% Game cycle to move pieces	- human player
 gameHumanVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, ColorPlayer == 1, !,
@@ -130,6 +140,7 @@ gameHumanVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	updateBoard(NewInvalidPieces, NewBoardAux, NewBoard),
 	gameHumanVsComputer(NewBoard, NewColorPlayer, NewGameEnd,Level).
 
+% Game cycle to move pieces	- computer player
 gameHumanVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, ColorPlayer == 0, !,
@@ -142,13 +153,12 @@ gameHumanVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	gameHumanVsComputer(NewBoard, NewColorPlayer, GameEnd, NewGameEnd, Level).
 
 
-/* End Game */
+% End Game
 gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getTypePlayer(WinColorPlayer, Type),
 	printInfoWinGameType(Type).
-
 gameHumanVsComputer(Board, ColorPlayer, 1, Level)  :- 
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
@@ -157,9 +167,12 @@ gameHumanVsComputer(Board, ColorPlayer, 1, Level)  :-
 
 
 
+
+
 /**
-* Computer vs Computer Level
+* Game cycle - Computer vs Computer mode
 **/
+% First move - white player.
 gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw, GameEnd, Level) :-
 	clearScreen,
 	ColorPlayer = 1,
@@ -172,6 +185,7 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, Draw, GameEnd, Level) :-
 	NewColorPlayer is ColorPlayer - 1,
 	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, Draw, GameEnd, Level).
 
+% Following movements - White player
 gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, ColorPlayer == 1, !,
@@ -185,6 +199,7 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameE
 	vertifyDraw(NewPiecesWhite, PiecesBlack, NewDraw),
 	gameComputerVsComputer(NewBoard, NewPiecesWhite, PiecesBlack, NewColorPlayer, NewDraw, NewGameEnd, Level).
 
+% Following movements - Black player
 gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, Draw == 0, ColorPlayer == 0, !,
@@ -198,11 +213,11 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, ColorPlayer, Draw, GameE
 	vertifyDraw(PiecesWhite, NewPiecesBlack, NewDraw), 
 	gameComputerVsComputer(NewBoard, PiecesWhite, NewPiecesBlack, NewColorPlayer, NewDraw, NewGameEnd, Level).
 
-
-/* After Draw */
+% After Draw
 gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, 1, GameEnd, Level)  :- 
 	gameComputerVsComputer(Board, ColorPlayer, GameEnd, Level).
 
+% Game cycle to move pieces
 gameComputerVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	clearScreen,
 	GameEnd \== 1, 	
@@ -216,13 +231,12 @@ gameComputerVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	gameComputerVsComputer(NewBoard, NewColorPlayer,  NewGameEnd, Level).
 
 
-/* End Game*/
+% End Game
 gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
-
 gameComputerVsComputer(Board, ColorPlayer, 1, Level)  :- 
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
@@ -230,29 +244,6 @@ gameComputerVsComputer(Board, ColorPlayer, 1, Level)  :-
 	printInfoWinGame(Color).
 
 
-/* Verify Draw */
-vertifyDraw(PiecesWhite, PiecesBlack, NewDraw) :-
-	length(PiecesBlack, NumPiecesBlack),
-	length(PiecesWhite, NumPiecesWhite),
-	NumPiecesWhite == 0,
-	NumPiecesBlack == 0, !,
-	NewDraw = 1.
-
-vertifyDraw(_PiecesWhite, _PiecesBlack, NewDraw) :- 
-	!, NewDraw = 0.
-
-
-removePiecePlayed(ListAvailablePieces, PieceCode, NewListAvailablePieces):-
-delete(ListAvailablePieces, PieceCode, NewListAvailablePieces).
-
-printInfoGame1(Board, ColorPlayer, Pieces) :- 
-	printInfoColorComputer(ColorPlayer), sleep(1),
-	printAvailablePieces(0, [ColorPlayer, Pieces]), sleep(1),
-	printBoardMain(Board), nl, sleep(3).
-
-printInfoGame2(Board, ColorPlayer) :- 
-	printInfoColorComputer(ColorPlayer), sleep(1).
-	%printBoardMain(Board), nl, sleep(3).
 
 
 
@@ -260,11 +251,17 @@ printInfoGame2(Board, ColorPlayer) :-
 ******** MAIN GAME *********
 ***************************/
 
+% Init board
 board1([nil]).
+
+% Init pieces
 piecesWhite([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 
-options([1, 2, 3, 4, 5]).
+% Options to menu
+options([1, 2, 3, 4, 5, 6]).
+
+
 
 ni_ju :- 
 now(X),
@@ -315,6 +312,8 @@ clearScreen,
 gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 0, 0, 2),
 ni_ju.
 
+initGame(Option, Board, PiecesWhite, PiecesBlack).
+
 
 
 
@@ -322,7 +321,7 @@ ni_ju.
 /****************
 **** TESTING ****
 *****************/
-
+/*
 board2([
 	[nil, nil, nil],
 	[nil, [a, 3, 0, 0], nil],
@@ -347,4 +346,4 @@ board4([
 testeMove :- board3(Board), printBoardMain(Board),
 	movePiece(Board, 1, 4, 3, 1, 1, NewBoard), printBoardMain(NewBoard).
 
-testeCheck(X,Y) :- board3(Board), validMove(Board, X, Y).
+testeCheck(X,Y) :- board3(Board), validMove(Board, X, Y).*/

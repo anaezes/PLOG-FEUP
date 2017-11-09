@@ -12,7 +12,11 @@
 
 :-style_check(-discontiguous).
 
-% Dictionary of pieces
+
+/**
+* Dictionary of pieces
+**/
+% Get pattern of piece
 patternLetter(a, [[1,1,1],[0,0,1],[0,0,0]]).
 patternLetter(b, [[1,1,1],[0,0,0],[0,0,1]]).
 patternLetter(c, [[1,1,1],[0,0,0],[0,1,0]]).
@@ -34,11 +38,14 @@ patternLetter(r, [[1,0,0],[1,0,1],[0,1,0]]).
 patternLetter(s, [[0,1,0],[1,0,1],[0,1,0]]).
 patternLetter(t, [[1,0,1],[0,0,0],[1,0,1]]).
 
-getSymbol(0, 0, 178). % peça preta sem quadrado
-getSymbol(1, 0, 254). % peça preta com quadrado
-getSymbol(0, 1, 176). % peça branca sem quadrado
-getSymbol(1, 1, 254). % peça branca com quadrado
 
+% Get symbols to print patterns of pieces
+getSymbol(0, 0, 178). % black piece without square 
+getSymbol(1, 0, 254). % black piece with square 
+getSymbol(0, 1, 176). % white piece without square 
+getSymbol(1, 1, 254). % white piece with square 
+
+% Get code of piece
 getCode(a,97).
 getCode(b,98).
 getCode(c,99).
@@ -60,10 +67,12 @@ getCode(r,114).
 getCode(s,115).
 getCode(t,116).
 
+% Get valid symbol
 validSymbol(0, 'V'). % válida
 validSymbol(1, 'I'). % inválida
 validSymbol([Head | _], Valid):- validSymbol(Head, Valid).
 
+% Get color Player
 getColorPlayer(1,'WHITE').
 getColorPlayer(0,'BLACK').
 getTypePlayer(1, ' HUMAN  ').
@@ -74,18 +83,12 @@ copyList(L,R) :- accCp(L,R).
 accCp([],[]).
 accCp([H|T1],[H|T2]) :- accCp(T1,T2).
 
+% Interception of two lists
+inter([], _, []).
+inter([H1|T1], L2, [H1|Res]) :-
+    member(H1, L2),
+    inter(T1, L2, Res).
+inter([_|T1], L2, Res) :-
+    inter(T1, L2, Res).
+
 clearScreen :- write('\33\[2J').
-
-getValidMoves(Board, ValidMoves) :-
-	setof([X,Y], validMove(Board, X, Y), ValidMoves).
-
-/*
-:- dynamic seed/1.
- 
-seed(13).
-
-random(R,N):-
-	%retract(seed(S)), 
-	N is (S mod R) + 1,
-	NewSeed is (125 * S + 1) mod 4096,
-	asserta(seed(NewSeed)), !.*/

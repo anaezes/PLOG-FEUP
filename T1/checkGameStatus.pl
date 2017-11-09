@@ -1,3 +1,26 @@
+
+/*****************************************
+****  FUNCTIONS TO CHECK GAME STATUS  ****
+*****************************************/
+
+
+
+/**
+* Verify Draw.
+**/
+vertifyDraw(PiecesWhite, PiecesBlack, NewDraw) :-
+	length(PiecesBlack, NumPiecesBlack),
+	length(PiecesWhite, NumPiecesWhite),
+	NumPiecesWhite == 0,
+	NumPiecesBlack == 0, !,
+	NewDraw = 1.
+vertifyDraw(_PiecesWhite, _PiecesBlack, NewDraw) :- 
+	!, NewDraw = 0.
+	
+
+/**
+* Check Color of Piece.
+**/
 checkColorPiece(Piece, Color, Count, NewCount, _Valid):-
 	nth0(2, Piece, ColorCell),
 	ColorCell == Color, !,
@@ -6,7 +29,10 @@ checkColorPiece(_Piece, _Color, Count, NewCount, Valid):-
 	NewCount is Count, 
 	Valid is 1.
 
-% Each case of each row of the pattern of piece
+
+/**
+* Each case of each row of the pattern of piece.
+**/
 %row 0, col 0
 checkRow([Head | Tail], Color, Valid, Board, 0, 0, Row, Col, Count, FinalCount):-
 	Head == 1,
@@ -113,7 +139,10 @@ checkRow([_Head | Tail], _Color, Valid, _Board, 2, 2, _Row, _Col, Count, FinalCo
 
 checkRow([], _, _Valid, _, _, _, _, _, Count, FinalCount):- FinalCount is Count.
 
-% Goes throught the piece pattern and checks each row of it
+
+/**
+* Goes throught the piece pattern and checks each row of it.
+**/
 checkAroundPiece([], _, _, _, _, _, _, CountPiecesAround, GameEnd):- CountPiecesAround == 4, !, GameEnd is 1.
 checkAroundPiece([], _, _, _, _, _, _, _, _).
 checkAroundPiece([Head | Tail], Color, Valid, Board, PieceRow, Row, Col, CountPiecesAround, GameEnd):-
@@ -122,7 +151,10 @@ checkAroundPiece([Head | Tail], Color, Valid, Board, PieceRow, Row, Col, CountPi
 	NewCountPiecesAround is FinalCount,
 	checkAroundPiece(Tail, Color, Valid, Board, NewPieceRow, Row, Col, NewCountPiecesAround, GameEnd).
 
-% Gets the pattern of the piece and checks if it is valid
+
+/**
+* Gets the pattern of the piece and checks if it is valid.
+**/
 checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col, GameEnd):-
 	Valid \== 1,
 	getPiece([Letter, Rotation, Color, Valid], Pattern),
@@ -137,7 +169,10 @@ checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col
 	append(_, [Row, Col], InvalidPiece).
 checkPieceStatus([_, _, _, _], _, _, _, _, _).
 
-% Appends the new Invalid Pieces to the others
+
+/**
+* Appends the new Invalid Pieces to the others.
+**/
 aggregateInvalidPieces(OldInvalidPieces, NewInvalidPieces, AllInvalidPieces):-
 	is_list(OldInvalidPieces),
 	is_list(NewInvalidPieces),!,
@@ -150,7 +185,10 @@ aggregateInvalidPieces(_OldInvalidPieces, NewInvalidPieces, AllInvalidPieces):-
 	copyList(NewInvalidPieces, AllInvalidPieces).
 aggregateInvalidPieces(_OldInvalidPieces, _NewInvalidPieces, _AllInvalidPieces).
 
-% Goes through the row of the board and finds a Piece
+
+/**
+* Goes through the row of the board and finds a Piece.
+**/
 findPiece([], _, InvalidPieces, NewInvalidPieces, _, _, _):-
 	copyList(InvalidPieces, NewInvalidPieces).
 findPiece([_ | _], _, _, _, _, _, GameEnd):- GameEnd == 1, !.
@@ -166,24 +204,29 @@ findPiece([Head | Tail], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameE
 	aggregateInvalidPieces(InvalidPieces, NewInvalidPiece, RowInvalidPieces),
 	findPiece(Tail, Board, RowInvalidPieces, NewInvalidPieces, Row, NewCol, GameEnd).
 
-% Goes through the rows of the board
+
+/**
+* Goes through the rows of the board.
+**/
 checkGameEnd(Board, NewInvalidPieces, GameEnd):- 
 	checkGameEnd(Board, Board, InvalidPieces, NewInvalidPieces, 0, GameEnd).
-
 checkGameEnd([],_,InvalidPieces, FinalInvalidPieces,_,_):- 
-	copyList(InvalidPieces, FinalInvalidPieces),
-	write('Game continues!'),nl.
+	copyList(InvalidPieces, FinalInvalidPieces).
+	%write('Game continues!'),nl.
 checkGameEnd([_ | _],_,_,_,_,GameEnd):- 
-	GameEnd == 1, !,
-	write('The Game has ended!'),nl.
+	GameEnd == 1, !.
+	%write('The Game has ended!'),nl.
 checkGameEnd([Head | Tail], Board, InvalidPieces, FinalInvalidPieces, Row, GameEnd):-
 	findPiece(Head, Board, _RowInvalidPieces, ResultInvalidPieces, Row, 0, GameEnd),
 	NewRow is Row + 1,
 	aggregateInvalidPieces(InvalidPieces, ResultInvalidPieces, NewInvalidPieces),
-	write('checkGameEnd: '), write(NewInvalidPieces),nl,
+	%write('checkGameEnd: '), write(NewInvalidPieces),nl,
 	checkGameEnd(Tail, Board, NewInvalidPieces, FinalInvalidPieces, NewRow, GameEnd).
 
-% Goes through the invalid pieces and updates the board
+
+/**
+* Goes through the invalid pieces and updates the board.
+**/
 updateBoardAux([], Board, NewBoard):-
 	copyList(Board, NewBoard).
 	%write('Board Updated'),nl.
@@ -198,28 +241,3 @@ updateBoard(InvalidPieces, Board, NewBoard):-
 	updateBoardAux(InvalidPieces, Board, NewBoard).
 updateBoard(_InvalidPieces, Board, NewBoard):-
 	copyList(Board, NewBoard).
-
-board([[nil,nil,nil,nil,nil,nil,nil],
-	[nil,nil,nil,[r,0,0,1],[e,1,1,0],nil,nil],
-	[nil,[l,2,0,1],[r,0,1,1],[c,2,1,1],[h,2,0,1],[j,2,1,1],nil],
-	[nil,nil,nil,[f,0,0,1],[k,1,1,1],[a,1,0,0],nil],
-	[nil,[q,2,1,1],[i,1,1,1],[g,2,0,1],nil,nil,nil],
-	[nil,nil,[o,0,0,1],nil,nil,nil,nil],
-	[nil,nil,nil,nil,nil,nil,nil]]). %[p,1,1,0] (3,2)
-
-boardP([
-	[nil, nil, nil ],
-	[nil, [j, 0, 1, 0], nil],
-	[nil, nil, nil]	
-	]). %[j, 0, 1, 0]
-
-teste8:- 
-	board(Board), 
-	checkGameEnd(Board, Board, _InvalidPieces, FinalInvalidPieces, 0, GameEnd), 
-	updateBoard(FinalInvalidPieces, Board, NewBoard),
-	write(GameEnd),nl, 
-	write(NewBoard),nl, 
-	printBoardMain(NewBoard).
-
-
-

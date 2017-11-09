@@ -1,6 +1,14 @@
 
+/************************
+**** FUNCTIONS OF AI ****
+*************************/
 
-bestMoveVitory(_, [], _, _, _, _, _, _, _,_, _ ) :- write('SAIU CASO BASE bestMove'), nl.
+	
+/**
+* Against the valid plays, choose the letter that guarantees victory.
+**/
+bestMoveVitory(_, [], _, _, _, _, _, _, _,_, _ ).
+
 bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :- 
 	AuxVitory \== 1, 
 	bestValidMove(Board, H, ValidMoves, BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory),
@@ -11,7 +19,11 @@ bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rota
 	Letter = BeforeLetter.
 
 
+/**
+* Choose the place that guarantees victory.
+**/
 bestValidMove(_, _, [], _, _, _, _, _, Vitory, AuxVitory).
+
 bestValidMove(Board, Letter, [H|T], BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory) :-
 	AuxVitory \== 1, !,
 	nth0(0, H, X), nth0(1, H, Y),
@@ -23,6 +35,10 @@ AuxVitory == 1, !,
 	nth0(0, BeforeCords, X), Row = X,
 	nth0(1, BeforeCords, Y), Col = Y.
 
+
+/**
+* Choose the rotation that guarantees victory.
+**/
 bestRotation(_, _, _, _, _, 4, _, _, _). % Not vitory
 bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux) :- 
 	Vitory \== 1, !,
@@ -36,9 +52,9 @@ bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux
 	Rotation is AuxRot - 1.
 
 
-
-
-/*    FIND THE MOVE WITH THE BEST PONTUATION */
+/**
+* Find the move with the best pontuation.
+**/
 checkNextCell([Letter, Rotation, Color, Valid], ColorPiece, True, PieceRow, PieceCol):-
 	getPiece([Letter, Rotation, Color, Valid], Pattern),
 	nth0(PieceRow, Pattern, Row),
@@ -50,6 +66,10 @@ checkNextCell([Letter, Rotation, Color, Valid], ColorPiece, True, PieceRow, Piec
 checkNextCell(_Piece, _ColorPiece, True, _PieceRow, _PieceCol):-
 	True is 0.
 
+
+/**
+* Check color of a piece.
+**/
 checkColorPiece(Piece, Color, Count, NewCount, _Valid, PieceRow, PieceCol):-
 	checkNextCell(Piece, Color, True, PieceRow, PieceCol),
 	True == 1,!,
@@ -62,7 +82,10 @@ checkColorPiece(_Piece, _Color, Count, NewCount, Valid, _PieceRow, _PieceCol):-
 	NewCount is Count, 
 	Valid is 1.
 
-% Each case of each row of the pattern of piece
+
+/**
+* Each case of each row of the pattern of piece.
+**/
 %row 0, col 0
 checkRowScore([Head | Tail], Color, Valid, Board, 0, 0, Row, Col, Count, FinalCount):-
 	Head == 1,
@@ -170,7 +193,9 @@ checkRowScore([_Head | Tail], _Color, Valid, _Board, 2, 2, _Row, _Col, Count, Fi
 checkRowScore([], _, _Valid, _, _, _, _, _, Count, FinalCount):- FinalCount is Count.
 
 
-
+/**
+* Calculates the score according to the pieces around.
+**/
 checkAroundScore([], _Valid, _ColorPlayer, _Board, _PieceRow, _Row, _Col, Count, LastFinalCount):- LastFinalCount is Count.
 checkAroundScore([Head | Tail], Valid, ColorPlayer, Board, PieceRow, Row, Col, Count, LastFinalCount):-
 	checkRowScore(Head, ColorPlayer, Valid, Board, PieceRow, 0, Row, Col, Count, FinalCount),
@@ -178,10 +203,16 @@ checkAroundScore([Head | Tail], Valid, ColorPlayer, Board, PieceRow, Row, Col, C
 	NewCountPiecesAround is FinalCount,
 	checkAroundScore(Tail, Valid, ColorPlayer, Board, NewPieceRow, Row, Col, NewCountPiecesAround, LastFinalCount).
 
+
+/**
+* Get the score of each valid position to play.
+**/
 getPositionScore(_Board, [], _Position, _Rotation, _ColorPlayer, PositionMoves, AllPositionMoves):-
 	copyList(PositionMoves, AllPositionMoves).
+
 getPositionScore(Board, [Head | Tail], 4, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
 	getPositionScore(Board, Tail, 0, Position, ColorPlayer, PositionMoves, AllPositionMoves).
+
 getPositionScore(Board, [Head | Tail], Rotation, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
 	getPiece([Head, Rotation, ColorPlayer, 0], Pattern),
 	nth0(0, Position, Row),
@@ -191,48 +222,36 @@ getPositionScore(Board, [Head | Tail], Rotation, Position, ColorPlayer, Position
 	append(PositionMoves, [[LastFinalCount, Row, Col, [Head, Rotation, ColorPlayer, 0]]], NewPositionMoves),
 	NewRotation is Rotation + 1,
 	getPositionScore(Board, [Head | Tail], NewRotation, Position, ColorPlayer, NewPositionMoves, AllPositionMoves).
+
 getPositionScore(Board, [Head | Tail], Rotation, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
 	NewRotation is Rotation + 1,
 	getPositionScore(Board, [Head | Tail], NewRotation, Position, ColorPlayer, PositionMoves, AllPositionMoves).
 
+
+/**
+* Get de second best move.
+**/
 getSecondBestMove(_Board, _AvailablePieces, [], _ColorPlayer, PossibleMoves, FinalPossibleMoves):- 
 	sort(PossibleMoves, FinalPossibleMoves).
+
 getSecondBestMove(Board, AvailablePieces, [Head | Tail], ColorPlayer, PossibleMoves, FinalPossibleMoves):-
 	getPositionScore(Board, AvailablePieces, 0, Head, ColorPlayer, NewPositionMoves, AllPositionMoves),
 	append(PossibleMoves, AllPositionMoves, NewPossibleMoves),
 	getSecondBestMove(Board, AvailablePieces, Tail, ColorPlayer, NewPossibleMoves, FinalPossibleMoves). 
 
+
+/**
+* Play the second best towards the possible moves.
+**/
 playSecondBestMove(PossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCol):-
 	length(PossibleMoves, ListSize),
 	ListSize == 0,!,
 	once(getPieceLetter(Pieces, Letter)),
 	once(getRotation(Rotation)),
 	once(getValidPosition(Board, NumRow, NumCol)).
+
 playSecondBestMove(PossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCol):-
 	last(PossibleMoves, BestMove),
 	nth0(1, BestMove, NumRow),
 	nth0(2, BestMove, NumCol),
 	nth0(3, BestMove, [Letter, Rotation, _Color, _Valid]).
-
-pieces2([a,b,c,d,e]).
-teste20:-
-	board3(Board),
-	pieces2(PiecesWhite),
-	getValidMoves(Board, ValidMoves),
-	getSecondBestMove(Board, PiecesWhite, ValidMoves, 1, PossibleMoves, FinalPossibleMoves),
-	write(FinalPossibleMoves),nl,
-	printBoardMain(Board),
-	playSecondBestMove(FinalPossibleMoves, PiecesWhite, Board, Letter, Rotation, NumRow, NumCol).
-
-pieces([p,q]).
-
-testeIA:- 
-	board(Board),
-	pieces(PiecesWhite),
-	getValidMoves(Board, ValidMoves),
-	bestMoveVitory(Board, PiecesWhite, BeforeLetter, ValidMoves, 1, Letter, Rotation, Row, Col, Vitory, AuxVitory),
-	write('AuxVitory:' ), write(AuxVitory), nl,
-	write('Letter:' ), write(Letter), nl,
-	write('Rotation:' ), write(Rotation), nl,
-	write('Row:' ), write(Row), nl,
-	write('Col:' ), write(Col), nl.

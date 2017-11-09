@@ -219,6 +219,16 @@ printSpace(Value):-
 	printSpace(NewValue).
 
 
+printInfoGame1(Board, ColorPlayer, Pieces) :- 
+	printInfoColorComputer(ColorPlayer), sleep(1),
+	printAvailablePieces(0, [ColorPlayer, Pieces]), sleep(1),
+	printBoardMain(Board), nl, sleep(3).
+
+printInfoGame2(Board, ColorPlayer) :- 
+	printInfoColorComputer(ColorPlayer), sleep(1).
+	printBoardMain(Board), nl, sleep(3).
+
+
 printMenuScreen :- nl, nl,
 	printSpace(20), write('          ********************************************************************'),nl,
 	printSpace(20), write('          *  ______________________________________________________________  *'),nl,
@@ -232,21 +242,22 @@ printMenuScreen :- nl, nl,
 	printSpace(20), write('          * |                                                              | *'),nl,
 	printSpace(20), write('          * |                      **** WELCOME ! ****                     | *'),nl,
 	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                        Human vs Human:                       | *'),nl,
+	printSpace(20), write('          * |                      Human vs Human:                         | *'),nl,
 	printSpace(20), write('          * |                         1.  Level I                          | *'),nl,
 	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                        Human vs Computer:                    | *'),nl,
+	printSpace(20), write('          * |                      Human vs Computer:                      | *'),nl,
 	printSpace(20), write('          * |                         2.  Level I                          | *'),nl,
 	printSpace(20), write('          * |                         3.  Level II                         | *'),nl,
 	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                     Computer vs Computer:                    | *'),nl,
+	printSpace(20), write('          * |                   Computer vs Computer:                      | *'),nl,
 	printSpace(20), write('          * |                         4.  Level I                          | *'),nl,
 	printSpace(20), write('          * |                         5.  Level II                         | *'),nl,
 	printSpace(20), write('          * |                                                              | *'),nl,
+	printSpace(20), write('          * |                         6.  Exit                             | *'),nl,
 	printSpace(20), write('          * |                                                              | *'),nl,
 	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                     Ana Santos up200700742                   | *'),nl,
-	printSpace(20), write('          * |                  Margarida Silva up201505505                 | *'),nl,
+	printSpace(20), write('          * |                    Ana Santos up200700742                    | *'),nl,
+	printSpace(20), write('          * |                 Margarida Silva up201505505                  | *'),nl,
 	printSpace(20), write('          * |______________________________________________________________| *'),nl,
 	printSpace(20), write('          *                                                                  *'),nl,
 	printSpace(20), write('          ********************************************************************'),nl.
