@@ -71,7 +71,7 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 	getValidMoves(Board, ValidMoves),
 	once(getSecondBestMove(Board, Pieces, ValidMoves, ColorPlayer, PossibleMoves, FinalPossibleMoves)),
 	write(FinalPossibleMoves),nl,
-	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, NewBoard, Letter, Rotation, NumRow, NumCol)),
+	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCol)),
 	write('-> Computer played piece '), write(Letter), write(' in ('),
 	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
 	/*write('O jogo continua....'),
