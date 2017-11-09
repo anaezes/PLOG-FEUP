@@ -68,13 +68,17 @@ getSecondBestMove(Board, AvailablePieces, [Head | Tail], ColorPlayer, PossibleMo
 	append(PossibleMoves, AllPositionMoves, NewPossibleMoves),
 	getSecondBestMove(Board, AvailablePieces, Tail, ColorPlayer, NewPossibleMoves, FinalPossibleMoves). 
 
-playSecondBestMove(ColorPlayer, PossibleMoves, Board, NewBoard):-
+playSecondBestMove(PossibleMoves, Pieces, Board, NewBoard, Letter, Rotation, NumRow, NumCol):-
+	length(PossibleMoves, ListSize),
+	ListSize == 0,!,
+	once(getPieceLetter(Pieces, Letter)),
+	once(getRotation(Rotation)),
+	once(getValidPosition(Board, NumRow, NumCol)).
+playSecondBestMove(PossibleMoves, Pieces, Board, NewBoard, Letter, Rotation, NumRow, NumCol):-
 	last(PossibleMoves, BestMove),
-	nth0(1, BestMove, Row),
-	nth0(2, BestMove, Col),
-	nth0(3, BestMove, [Letter, Rotation, ColorPlayer, Valid]),
-	addPiece(Board, Row, Col, Letter, ColorPlayer, Rotation, NewBoard).
-
+	nth0(1, BestMove, NumRow),
+	nth0(2, BestMove, NumCol),
+	nth0(3, BestMove, [Letter, Rotation, _Color, _Valid]).
 
 pieces2([a,b,c,d,e]).
 teste20:-
@@ -84,7 +88,7 @@ teste20:-
 	getSecondBestMove(Board, PiecesWhite, ValidMoves, 1, PossibleMoves, FinalPossibleMoves),
 	write(FinalPossibleMoves),nl,
 	printBoardMain(Board),
-	playSecondBestMove(1, FinalPossibleMoves, Board, NewBoard),
+	playSecondBestMove(FinalPossibleMoves, PiecesWhite, Board, NewBoard, Letter, Rotation, NumRow, NumCol),
 	printBoardMain(NewBoard).
 
 

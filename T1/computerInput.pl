@@ -68,13 +68,19 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 
 %para alterar -> encontrar a melhor jogada possivel.
 computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :- 
-	write('O jogo continua....'),
-	repeat,
-	once(getPieceLetter(Pieces, Letter)),
+	getValidMoves(Board, ValidMoves),
+	once(getSecondBestMove(Board, Pieces, ValidMoves, ColorPlayer, PossibleMoves, FinalPossibleMoves)),
+	write(FinalPossibleMoves),nl,
+	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, NewBoard, Letter, Rotation, NumRow, NumCol)),
+	write('-> Computer played piece '), write(Letter), write(' in ('),
+	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
+	/*write('O jogo continua....'),
+	repeat,*/
+	/*once(getPieceLetter(Pieces, Letter)),
 	once(getRotation(Rotation)),
 	once(getValidPosition(Board, NumRow, NumCol)), %random positions
 	write('-> Computer played piece '), write(Letter), write(' in ('),
-	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
+	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.*/
 
 
 
