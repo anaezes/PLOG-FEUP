@@ -211,6 +211,14 @@ validMove(Board, NumRow, NumCol):-
 	CellAfter \== nil.
 
 
+
+/**
+* Get the positions of the pieces that are available to be moved.
+**/
+getPositionsToRemovePiece(Board, PositionsToRemove) :-
+	setof([X,Y], getValidPostionToRemove(Board, X, Y), PositionsToRemove).
+
+
 /**
 * Remove a piece - ensures that the position is occupied and has a free seat next to it.
 **/

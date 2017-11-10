@@ -27,8 +27,9 @@ bestValidMove(_, _, [], _, _, _, _, _, Vitory, AuxVitory).
 bestValidMove(Board, Letter, [H|T], BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory) :-
 	AuxVitory \== 1, !,
 	nth0(0, H, X), nth0(1, H, Y),
-	bestRotation(Board, Letter, X, Y, ColorPlayer, 0, Rotation, 0, AuxVitory),
-	bestValidMove(Board, Letter, T, H, ColorPlayer, Rotation, Row, Col, NewVitory, AuxVitory).
+	replace(Board, X, Y, nil, NewBoard),
+	bestRotation(NewBoard, Letter, X, Y, ColorPlayer, 0, Rotation, 0, AuxVitory),
+	bestValidMove(NewBoard, Letter, T, H, ColorPlayer, Rotation, Row, Col, NewVitory, AuxVitory).
 
 bestValidMove(Board, _, _, BeforeCords, _, Rotation, Row, Col, Vitory, AuxVitory) :-
 AuxVitory == 1, !,

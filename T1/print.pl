@@ -4,7 +4,7 @@
 **************************/
 
 % Get Rotation
-rotatePattern(0, OldPattern, OldPattern). 
+rotatePattern(0, OldPattern, OldPattern).
 rotatePattern(1, OldPattern, NewPattern):- % 90 degrees
 	transpose(OldPattern, TempPattern),
 	maplist(reverse, TempPattern, NewPattern).
@@ -57,7 +57,7 @@ printPieceSymbols(PieceNum, Pattern, Color, Valid):-
 
 % Main function for print Pieces
 printPiece([], _, _).
-printPiece(nil, _, _) :- 
+printPiece(nil, _, _) :-
 	write('|   |').
 printPiece([_Letter, _Rotation | Tail], Pattern, PieceNum):-
 	getPieceInfo(Tail, Color, Valid),
@@ -108,7 +108,7 @@ printBoard([Head | Tail], RowCount) :-
 	printBoard(Tail, NewRowCount).
 
 % Board numbers and separators
-printTopNumbers(_, 0). 
+printTopNumbers(_, 0).
 printTopNumbers(Count, ColumnsNum):-
 	Count == 0,
 	write(' | '), write(Count), write(' |'),
@@ -144,69 +144,83 @@ printBoardMain([Head | Tail]):-
 /** PRINT AVAILABLE PIECES **/
 
 printAvailablePiecesRow(_, [_ , []]).
-printAvailablePiecesRow(PieceRow, [Head , [Head2 | Tail] ]):- 
+printAvailablePiecesRow(PieceRow, [Head , [Head2 | Tail] ]):-
 	write(' |'),
 	Valid = '0',
-	printPieceSymbols(PieceRow, Head2, Head, Valid), 
+	printPieceSymbols(PieceRow, Head2, Head, Valid),
 	write('| '),
 	printAvailablePiecesRow(PieceRow, [Head, Tail]).
 
 printAvailablePiecesAux(3, _).
-printAvailablePiecesAux(PieceRow, List):- 
+printAvailablePiecesAux(PieceRow, List):-
 	copyList(List, AuxList),
 	printAvailablePiecesRow(PieceRow, List),
 	NewPieceRow is PieceRow + 1, nl,
 	printAvailablePiecesAux(NewPieceRow, AuxList).
 
 prepareLegendsPieces([]).
-prepareLegendsPieces([Head|Tail]):- 
+prepareLegendsPieces([Head|Tail]):-
 	getCode(Head, Code),
 	put_code(Code),
 	write('      '),
 	prepareLegendsPieces(Tail).
 
-printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):- 
+printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):-
 	write('  Available pieces: '), nl, nl,
 	write('   '),
 	copyList([Head2 | Tail], AuxTail),
 	prepareLegendsPieces(AuxTail), nl,
 	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
+
 printInfoColor(Player):-
-	getColorPlayer(Player, Color), nl,
-	printSpace(20),write('**************************'), nl,
-	printSpace(20),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
-	printSpace(20),write('**************************'), nl, nl.
+	Player == 0, !,
+	printSpace(20),write('    _                ___           '), nl,
+	printSpace(20),write('   |_) |  _.  _ |     |     ._ ._  '), nl,
+	printSpace(20),write('   |_) | (_| (_ |<    | |_| |  | | '), nl, nl, nl.
 
-printInfoType(Player):-
-	getTypePlayer(Player, Color), nl,
-	printSpace(20), write('*****************************'), nl,
-	printSpace(20),write('******  '), write(Color), write(' TURN'), write('  ******'), nl, 
-	printSpace(20),write('*****************************'), nl, nl.
+printInfoColor(Player):-
+		printSpace(20),write('                          ___           '), nl,
+		printSpace(20),write('   \\    /  |_  o _|_  _    |     ._ ._  '), nl,
+		printSpace(20),write('    \\/\\/   | | |  |_ (/_   | |_| |  | | '), nl, nl, nl.
 
-printInfoColorComputer(Player):-
-	getColorPlayer(Player, Color), nl,
-	printSpace(20), write('***********************************'), nl,
-	printSpace(20), write('******  '), write('COMPUTER '), write(Color), write(' TURN'), write('  ******'), nl, 
-	printSpace(20),write('***********************************'), nl, nl.
 
 printInfoDraw :- nl,
-	printSpace(20), write('********************************************************************'), nl,
-	printSpace(20), write('******  '), write('Oh no! They ran out of pieces ... time to move them!'), write('  ******'), nl, 
-	printSpace(20), write('********************************************************************'), nl, nl, sleep(4).
+	printSpace(5), write(' _              |    ___                                         _    _                                                                                   | '), nl,
+	printSpace(5), write('/ \\|_    __  _  |     | |_  _  \\/    __ _ __     _    _|_    _ _|_   |_) o  _  _  _  _                _|_ o __  _    _|_ _    __  _     _    _|_|_  _ __  | '), nl,
+	printSpace(5), write('\\_/| |   | |(_) o     | | |(/_ /     | (_|| |   (_)|_| |_   (_) |    |   | (/_(_ (/__>     o  o  o     |_ | |||(/_    |_(_)   |||(_)\\_/(/_    |_| |(/_||| o '), nl, nl, sleep(4).
 
 printInfoWinGame(Color):- nl,
-	printSpace(20), write('*******************************************************'), nl,
-	printSpace(20), write('******  '), write('The player with the pieces '), write(Color), write(' WINS!!!'), write('  ******'), nl, 
-	printSpace(20), write('*******************************************************'), nl, nl, sleep(4).
+	Player == 0, !,
+	printSpace(5), write('  _                                                 '), nl,
+	printSpace(5), write(' |_)  |   _.   _  |     \\    /  o  ._    _  |  |  | '), nl,
+	printSpace(5), write(' |_)  |  (_|  (_  |<     \\/\\/   |  | |  _>  o  o  o '), nl, nl, sleep(4).
+
+printInfoWinGame(Color):- nl,
+	printSpace(5), write(' \\    /  |_   o  _|_   _     \\    /  o  ._    _  |  |  | '), nl,
+	printSpace(5), write('  \\/\\/   | |  |   |_  (/_     \\/\\/   |  | |  _>  o  o  o '), nl, nl, sleep(4).
+
 
 printInfoWinGameType(Type):- nl,
-	printSpace(20), write('************************************'), nl,
-	printSpace(20), write('******  '), write('The '), write(Type), write(' WINS!!!'),write('  ******'), nl, 
-	printSpace(20), write('************************************'), nl, nl, sleep(4).
+	Type == 0, !,
+	printSpace(5), write('  _                                                                    '), nl,
+	printSpace(5), write(' /    _   ._ _   ._        _|_   _   ._    \\    /  o  ._    _  |  |  | '), nl,
+	printSpace(5), write(' \\_  (_)  | | |  |_)  |_|   |_  (/_  |      \\/\\/   |  | |  _>  o  o  o '), nl,
+	printSpace(5), write('                 |                                                     '), nl, nl, sleep(4).
+
+printInfoWinGameType(Type):- nl,
+	printSpace(5), write(' |_|       ._ _    _.  ._     \\    /  o  ._    _  |  |  | '), nl,
+	printSpace(5), write(' | |  |_|  | | |  (_|  | |     \\/\\/   |  | |  _>  o  o  o '), nl, nl, sleep(4).
 
 
-printInformation(SourceRow, SourceColumn, DestRow, DestColumn) :- 
+printInformation(Letter) :-
+	write('-> Computer played piece '), write(Letter), nl, nl.
+
+printInformation(NumRow, NumCol, Letter) :-
+	write('-> Computer played piece '), write(Letter), write(' in ('),
+	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
+
+printInformation(SourceRow, SourceColumn, DestRow, DestColumn) :-
 	write('-> Computer removes piece from position ('),
 	write(SourceRow), write(','), write(SourceColumn), write(')'), sleep(2),
 	write('... and puts it'), write(' in position ('),
@@ -219,13 +233,13 @@ printSpace(Value):-
 	printSpace(NewValue).
 
 
-printInfoGame1(Board, ColorPlayer, Pieces) :- 
-	printInfoColorComputer(ColorPlayer), sleep(1),
+printInfoGame1(Board, ColorPlayer, Pieces) :-
+	printInfoColor(ColorPlayer), sleep(1),
 	printAvailablePieces(0, [ColorPlayer, Pieces]), sleep(1),
 	printBoardMain(Board), nl, sleep(3).
 
-printInfoGame2(Board, ColorPlayer) :- 
-	printInfoColorComputer(ColorPlayer), sleep(1).
+printInfoGame2(Board, ColorPlayer) :-
+	printInfoColor(ColorPlayer), sleep(1).
 	printBoardMain(Board), nl, sleep(3).
 
 

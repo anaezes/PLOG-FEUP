@@ -12,7 +12,7 @@ computerInput(_Board, Pieces, Letter, Rotation) :-
 	repeat,
 	once(getPieceLetter(Pieces, Letter)),
 	once(getRotation(Rotation)), nl,
-	write('-> Computer played piece '), write(Letter), nl, nl.
+	printInformation(Letter).
 
 
 /**
@@ -24,8 +24,7 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 	once(getPieceLetter(Pieces, Letter)),
 	once(getRotation(Rotation)),
 	once(getValidPosition(Board, NumRow, NumCol)), %random positions
-	write('-> Computer played piece '), write(Letter), write(' in ('),
-	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
+	printInformation(NumRow, NumCol, Letter).
 
 /**
 * Level two AI - find the piece that guarantees victory.
@@ -34,9 +33,7 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 	getValidMoves(Board, ValidMoves),
 	once(bestMoveVitory(Board, Pieces, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, NumRow, NumCol, Vitory, Aux)),
 	Aux == 1, !,
-	write('-> Computer played piece '), write(Letter), write(' in ('),
-	write(NumRow), write(','), write(NumCol), write(')'), nl, nl,
-	write('Entrou opção que vai ganhar').
+	printInformation(NumRow, NumCol, Letter).
 
 /**
 * Level two AI - find the best possible move.
@@ -46,8 +43,7 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 	once(getSecondBestMove(Board, Pieces, ValidMoves, ColorPlayer, PossibleMoves, FinalPossibleMoves)),
 	%write(FinalPossibleMoves),nl,
 	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCol)),
-	write('-> Computer played piece '), write(Letter), write(' in ('),
-	write(NumRow), write(','), write(NumCol), write(')'), nl, nl.
+	printInformation(NumRow, NumCol, Letter).
 
 
 /**
@@ -75,19 +71,22 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, Co
 	once(getValidMoves(Board, ValidMoves)),
 	once(bestMoveVitory(Board, LettersAvailableAux, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, DestRow, DestCol, Vitory, Aux)),
 	Aux == 1, !,
-	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn).
+	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn),
+	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
 
 
 /**
 * Level two AI - TODO: tirar a peça com menos peças a fazer match e colocar junto da que tem mais peças a fazer match ?
 **/
 computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, Level):-
-	repeat, 
-	once(getPosition(Board, SourceRow, SourceColumn)),
-	once(getValidPostionToRemove(Board, SourceRow, SourceColumn)),
-	once(checkColorPiece(Board, SourceRow, SourceColumn, ColorPlayer)),
-	once(getRotation(Rotation)),
-	once(getValidPosition(Board, DestRow, DestCol)), 
+	once(getPositionsToRemovePiece(Board, PositionsToRemove)),
+	once(getColorPieces(Board, ColorPlayer, ListPiecesPlayer)),
+	once(inter(PositionsToRemove, ListPiecesPlayer, FinalListToRemove)),
+	once(getLetters(Board, FinalListToRemove, LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux)),
+	getValidMoves(Board, ValidMoves),
+	once(getSecondBestMove(Board, LettersAvailableAux, ValidMoves, ColorPlayer, PossibleMoves, FinalPossibleMoves)),
+	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, Letter, Rotation, DestRow, DestCol)),
+	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn),
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
 
 
@@ -136,13 +135,6 @@ getPosition([H|T], NumRow, NumCol) :-
 **/
 getColorPieces(Board, ColorPlayer, ListPiecesPlayer) :-
 	setof([X,Y], checkColorPiece(Board, X, Y, ColorPlayer), ListPiecesPlayer).
-
-
-/**
-* Get the positions of the pieces that are available to be moved.
-**/
-getPositionsToRemovePiece(Board, PositionsToRemove) :-
-	setof([X,Y], getValidPostionToRemove(Board, X, Y), PositionsToRemove).
 
 
 /**
