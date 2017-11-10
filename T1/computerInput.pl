@@ -12,7 +12,7 @@ computerInput(_Board, Pieces, Letter, Rotation) :-
 /**
 * Level one AI - random add piece.
 **/
-computerInput(Board, Pieces, _ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
+computerInput(Board, Pieces, _AdversaryPieces, _ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
 	Level == 1, !,
 	repeat,
 	once(getPieceLetter(Pieces, Letter)),
@@ -23,16 +23,27 @@ computerInput(Board, Pieces, _ColorPlayer, Letter, Rotation, NumRow, NumCol, Lev
 /**
 * Level two AI - find the piece that guarantees victory.
 **/
-computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :-
+computerInput(Board, Pieces, _AdversaryPieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :-
 	getValidMoves(Board, ValidMoves),
 	once(bestMoveVitory(Board, Pieces, _BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, NumRow, NumCol, Vitory)),
 	Vitory == 1, !,
 	printInformation(NumRow, NumCol, Letter).
 
 /**
+* Level two AI - block opponent
+**/
+computerInput(Board, Pieces, AdversaryPieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :-
+	getValidMoves(Board, ValidMoves),
+	AdversaryColorPlayer is mod((ColorPlayer + 1), 2),
+	once(bestMoveVitory(Board, AdversaryPieces, _BeforeLetter, ValidMoves, AdversaryColorPlayer, _AuxLetter, Rotation, NumRow, NumCol, Vitory)),
+	Vitory == 1, !,
+	getPieceLetter(Pieces, Letter), 
+	printInformation(NumRow, NumCol, Letter).
+
+/**
 * Level two AI - find the best possible move.
 **/
-computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :- 
+computerInput(Board, Pieces, _AdversaryPieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :- 
 	getValidMoves(Board, ValidMoves),
 	once(getSecondBestMove(Board, Pieces, ValidMoves, ColorPlayer, _PossibleMoves, FinalPossibleMoves)),
 	%write(FinalPossibleMoves),nl,
@@ -69,6 +80,28 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, Co
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
 
 
+/**
+* Level two AI - block opponent
+**/
+computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, _Level):-
+	once(getPositionsToRemovePiece(Board, PositionsToRemove)),
+	AdversaryColorPlayer is mod((ColorPlayer + 1), 2),
+	once(getColorPieces(Board, AdversaryColorPlayer, ListPiecesAdvPlayer)),
+	once(inter(PositionsToRemove, ListPiecesAdvPlayer, FinalListToRemoveAdv)),
+	once(getLetters(Board, FinalListToRemoveAdv, _LettersPositions, _LettersPositionsAux2, _LettersAvailable, LettersAvailableAux2)),
+	once(getValidMoves(Board, ValidMoves)),
+	once(bestMoveVitory(Board, LettersAvailableAux2, _BeforeLetter, ValidMoves, AdversaryColorPlayer, _AuxLetter, Rotation, DestRow, DestCol, Vitory)),
+	Vitory == 1, !,
+	once(getColorPieces(Board, ColorPlayer, ListPiecesPlayer)),
+	once(inter(PositionsToRemove, ListPiecesPlayer, FinalListToRemove)),
+	once(getLetters(Board, FinalListToRemove, _LettersPositions, LettersPositionsAux, _LettersAvailable, LettersAvailableAux)),
+	getPieceLetter(LettersAvailableAux, Letter), 
+	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn),
+	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
+
+/**
+* Level two AI - find the best possible move.
+**/
 computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, _Level):-
 	once(getPositionsToRemovePiece(Board, PositionsToRemove)),
 	once(getColorPieces(Board, ColorPlayer, ListPiecesPlayer)),
