@@ -155,16 +155,16 @@ checkAroundPiece([Head | Tail], Color, Valid, Board, PieceRow, Row, Col, CountPi
 /**
 * Gets the pattern of the piece and checks if it is valid.
 **/
-checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col, GameEnd):-
+checkPieceStatus([Letter, Rotation, Color, Valid], Board, _InvalidPiece, Row, Col, GameEnd):-
 	Valid \== 1,
 	getPiece([Letter, Rotation, Color, Valid], Pattern),
-	checkAroundPiece(Pattern, Color, NewValid, Board, 0, Row, Col, 0, NewGameEnd),
+	checkAroundPiece(Pattern, Color, _NewValid, Board, 0, Row, Col, 0, NewGameEnd),
 	NewGameEnd == 1,!,
 	GameEnd is 1.
-checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col, GameEnd):-
+checkPieceStatus([Letter, Rotation, Color, Valid], Board, InvalidPiece, Row, Col, _GameEnd):-
 	Valid \== 1,
 	getPiece([Letter, Rotation, Color, Valid], Pattern),
-	checkAroundPiece(Pattern, Color, NewValid, Board, 0, Row, Col, 0, NewGameEnd),
+	checkAroundPiece(Pattern, Color, NewValid, Board, 0, Row, Col, 0, _NewGameEnd),
 	NewValid == 1,!,
 	append(_, [Row, Col], InvalidPiece).
 checkPieceStatus([_, _, _, _], _, _, _, _, _).
@@ -209,7 +209,7 @@ findPiece([Head | Tail], Board, InvalidPieces, NewInvalidPieces, Row, Col, GameE
 * Goes through the rows of the board.
 **/
 checkGameEnd(Board, NewInvalidPieces, GameEnd):- 
-	checkGameEnd(Board, Board, InvalidPieces, NewInvalidPieces, 0, GameEnd).
+	checkGameEnd(Board, Board, _InvalidPieces, NewInvalidPieces, 0, GameEnd).
 checkGameEnd([],_,InvalidPieces, FinalInvalidPieces,_,_):- 
 	copyList(InvalidPieces, FinalInvalidPieces).
 	%write('Game continues!'),nl.

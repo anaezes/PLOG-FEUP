@@ -10,8 +10,7 @@
 :-include('checkGameStatus.pl').
 :-include('ia.pl').
 
-:-style_check(-discontiguous).
-
+:- discontiguous game2Players/6, gameHumanVsComputer/4, gameHumanVsComputer/7, game2Players/6, gameComputerVsComputer/7, gameComputerVsComputer/4.
 
 /**
 * Dictionary of pieces

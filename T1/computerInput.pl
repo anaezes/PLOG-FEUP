@@ -18,7 +18,7 @@ computerInput(_Board, Pieces, Letter, Rotation) :-
 /**
 * Level one AI - random add piece.
 **/
-computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
+computerInput(Board, Pieces, _ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
 	Level == 1, !,
 	repeat,
 	once(getPieceLetter(Pieces, Letter)),
@@ -29,18 +29,18 @@ computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Leve
 /**
 * Level two AI - find the piece that guarantees victory.
 **/
-computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :-
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :-
 	getValidMoves(Board, ValidMoves),
-	once(bestMoveVitory(Board, Pieces, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, NumRow, NumCol, Vitory, Aux)),
-	Aux == 1, !,
+	once(bestMoveVitory(Board, Pieces, _BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, NumRow, NumCol, Vitory)),
+	Vitory == 1, !,
 	printInformation(NumRow, NumCol, Letter).
 
 /**
 * Level two AI - find the best possible move.
 **/
-computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, Level) :- 
+computerInput(Board, Pieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :- 
 	getValidMoves(Board, ValidMoves),
-	once(getSecondBestMove(Board, Pieces, ValidMoves, ColorPlayer, PossibleMoves, FinalPossibleMoves)),
+	once(getSecondBestMove(Board, Pieces, ValidMoves, ColorPlayer, _PossibleMoves, FinalPossibleMoves)),
 	%write(FinalPossibleMoves),nl,
 	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCol)),
 	printInformation(NumRow, NumCol, Letter).
@@ -63,14 +63,14 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn,
 /**
 * Level two AI - Find on the board the piece that guarantees victory and moves it to the right place.
 **/
-computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, Level):-
+computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, _Level):-
 	once(getPositionsToRemovePiece(Board, PositionsToRemove)),
 	once(getColorPieces(Board, ColorPlayer, ListPiecesPlayer)),
 	once(inter(PositionsToRemove, ListPiecesPlayer, FinalListToRemove)),
-	once(getLetters(Board, FinalListToRemove, LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux)),
+	once(getLetters(Board, FinalListToRemove, _LettersPositions, LettersPositionsAux, _LettersAvailable, LettersAvailableAux)),
 	once(getValidMoves(Board, ValidMoves)),
-	once(bestMoveVitory(Board, LettersAvailableAux, BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, DestRow, DestCol, Vitory, Aux)),
-	Aux == 1, !,
+	once(bestMoveVitory(Board, LettersAvailableAux, _BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, DestRow, DestCol, Vitory)),
+	Vitory == 1, !,
 	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn),
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
 
@@ -78,14 +78,14 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, Co
 /**
 * Level two AI - TODO: tirar a peça com menos peças a fazer match e colocar junto da que tem mais peças a fazer match ?
 **/
-computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, Level):-
+computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, _Level):-
 	once(getPositionsToRemovePiece(Board, PositionsToRemove)),
 	once(getColorPieces(Board, ColorPlayer, ListPiecesPlayer)),
 	once(inter(PositionsToRemove, ListPiecesPlayer, FinalListToRemove)),
-	once(getLetters(Board, FinalListToRemove, LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux)),
+	once(getLetters(Board, FinalListToRemove, _LettersPositions, LettersPositionsAux, _LettersAvailable, LettersAvailableAux)),
 	getValidMoves(Board, ValidMoves),
-	once(getSecondBestMove(Board, LettersAvailableAux, ValidMoves, ColorPlayer, PossibleMoves, FinalPossibleMoves)),
-	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, Letter, Rotation, DestRow, DestCol)),
+	once(getSecondBestMove(Board, LettersAvailableAux, ValidMoves, ColorPlayer, _PossibleMoves, FinalPossibleMoves)),
+	once(playSecondBestMove(FinalPossibleMoves, LettersAvailableAux, Board, Letter, Rotation, DestRow, DestCol)),
 	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn),
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
 
@@ -149,12 +149,12 @@ getPiece(Board, Row, Col, Piece) :-
 * Get coordinates of Piece from a list of pieces.
 **/
 getCoordinates(_, [], _, _).
-getCoordinates(Letter, [H | T], SourceRow, SourceColumn) :-
+getCoordinates(Letter, [H | _T], SourceRow, SourceColumn) :-
 	nth0(0, H, LetterAux),
-	LetterAux == Letter,
+	LetterAux == Letter, !,
 	nth0(1, H, SourceRow),
 	nth0(2, H, SourceColumn).
-getCoordinates(Letter, [H | T], SourceRow, SourceColumn) :-
+getCoordinates(Letter, [_H | T], SourceRow, SourceColumn) :-
 	getCoordinates(Letter, T, SourceRow, SourceColumn).
 
 
@@ -164,7 +164,7 @@ getCoordinates(Letter, [H | T], SourceRow, SourceColumn) :-
 getLetters(_Board, [], LettersPositions, LettersPositions, LettersAvailable, LettersAvailable).
 getLetters(Board, [H | T], LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux) :-
 	length(LettersAvailable, Aux),
-	aux \== 0, !,
+	Aux \== 0, !,
 	nth0(0, H, Row), 
 	nth0(1, H, Col), 
 	getPiece(Board, Row, Col, Piece),
@@ -173,7 +173,7 @@ getLetters(Board, [H | T], LettersPositions, LettersPositionsAux, LettersAvailab
 	append(LettersPositions, [LetterPos], NewLettersPositions),
 	append([Letter], LettersAvailable , NewLettersAvailable),
 	getLetters(Board, T, NewLettersPositions, LettersPositionsAux, NewLettersAvailable, LettersAvailableAux).
-getLetters(Board, [H | T], LettersPositions, LettersPositionsAux, LettersAvailable, LettersAvailableAux) :-
+getLetters(Board, [H | T], LettersPositions, LettersPositionsAux, _LettersAvailable, LettersAvailableAux) :-
 	nth0(0, H, Row), 
 	nth0(1, H, Col), 
 	getPiece(Board, Row, Col, Piece),

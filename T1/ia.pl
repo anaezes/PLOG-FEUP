@@ -7,32 +7,32 @@
 /**
 * Against the valid plays, choose the letter that guarantees victory.
 **/
-bestMoveVitory(_, [], _, _, _, _, _, _, _,_, _ ).
+bestMoveVitory(_, [], _, _, _, _, _, _, _, _).
 
-bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :- 
-	AuxVitory \== 1, 
-	bestValidMove(Board, H, ValidMoves, BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory),
-	bestMoveVitory(Board, T, H, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory).
+bestMoveVitory(Board, [H|T], _BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory) :- 
+	Vitory \== 1, 
+	bestValidMove(Board, H, ValidMoves, _BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory),
+	bestMoveVitory(Board, T, H, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory).
 
-bestMoveVitory(Board, [H|T], BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory, AuxVitory) :-
-	AuxVitory == 1, !,
+bestMoveVitory(_Board, [_H|_T], BeforeLetter, _ValidMoves, _ColorPlayer, Letter, _Rotation, _Row, _Col, Vitory) :-
+	Vitory == 1, !,
 	Letter = BeforeLetter.
 
 
 /**
 * Choose the place that guarantees victory.
 **/
-bestValidMove(_, _, [], _, _, _, _, _, Vitory, AuxVitory).
+bestValidMove(_, _, [], _, _, _, _, _, _).
 
-bestValidMove(Board, Letter, [H|T], BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory, AuxVitory) :-
-	AuxVitory \== 1, !,
+bestValidMove(Board, Letter, [H|T], _BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory) :-
+	Vitory \== 1, !,
 	nth0(0, H, X), nth0(1, H, Y),
 	replace(Board, X, Y, nil, NewBoard),
-	bestRotation(NewBoard, Letter, X, Y, ColorPlayer, 0, Rotation, 0, AuxVitory),
-	bestValidMove(NewBoard, Letter, T, H, ColorPlayer, Rotation, Row, Col, NewVitory, AuxVitory).
+	bestRotation(NewBoard, Letter, X, Y, ColorPlayer, 0, Rotation, 0, Vitory),
+	bestValidMove(NewBoard, Letter, T, H, ColorPlayer, Rotation, Row, Col, Vitory).
 
-bestValidMove(Board, _, _, BeforeCords, _, Rotation, Row, Col, Vitory, AuxVitory) :-
-AuxVitory == 1, !,
+bestValidMove(_Board, _, _, BeforeCords, _, _Rotation, Row, Col, Vitory) :-
+	Vitory == 1, !,
 	nth0(0, BeforeCords, X), Row = X,
 	nth0(1, BeforeCords, Y), Col = Y.
 
@@ -48,7 +48,7 @@ bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux
 	NewAuxRot is AuxRot + 1,
 	bestRotation(Board, Letter, Row, Col, ColorPlayer, NewAuxRot, Rotation, NewVitory, Aux).
 
-bestRotation(Board, Letter, Row, Col, ColorPlayer, AuxRot, Rotation, Vitory, Aux) :- 
+bestRotation(_Board, _Letter, _Row, _Col, _ColorPlayer, AuxRot, Rotation, Vitory, Aux) :- 
 	Aux is Vitory,
 	Rotation is AuxRot - 1.
 
@@ -75,7 +75,7 @@ checkColorPiece(Piece, Color, Count, NewCount, _Valid, PieceRow, PieceCol):-
 	checkNextCell(Piece, Color, True, PieceRow, PieceCol),
 	True == 1,!,
 	NewCount is Count + 2.
-checkColorPiece(Piece, Color, Count, NewCount, _Valid, PieceRow, PieceCol):-
+checkColorPiece(Piece, Color, Count, NewCount, _Valid, _PieceRow, _PieceCol):-
 	nth0(2, Piece, ColorCell),
 	ColorCell == Color, !,
 	NewCount is Count + 1.
@@ -211,7 +211,7 @@ checkAroundScore([Head | Tail], Valid, ColorPlayer, Board, PieceRow, Row, Col, C
 getPositionScore(_Board, [], _Position, _Rotation, _ColorPlayer, PositionMoves, AllPositionMoves):-
 	copyList(PositionMoves, AllPositionMoves).
 
-getPositionScore(Board, [Head | Tail], 4, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
+getPositionScore(Board, [_Head | Tail], 4, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
 	getPositionScore(Board, Tail, 0, Position, ColorPlayer, PositionMoves, AllPositionMoves).
 
 getPositionScore(Board, [Head | Tail], Rotation, Position, ColorPlayer, PositionMoves, AllPositionMoves):-
@@ -236,7 +236,7 @@ getSecondBestMove(_Board, _AvailablePieces, [], _ColorPlayer, PossibleMoves, Fin
 	sort(PossibleMoves, FinalPossibleMoves).
 
 getSecondBestMove(Board, AvailablePieces, [Head | Tail], ColorPlayer, PossibleMoves, FinalPossibleMoves):-
-	getPositionScore(Board, AvailablePieces, 0, Head, ColorPlayer, NewPositionMoves, AllPositionMoves),
+	getPositionScore(Board, AvailablePieces, 0, Head, ColorPlayer, _NewPositionMoves, AllPositionMoves),
 	append(PossibleMoves, AllPositionMoves, NewPossibleMoves),
 	getSecondBestMove(Board, AvailablePieces, Tail, ColorPlayer, NewPossibleMoves, FinalPossibleMoves). 
 
@@ -251,7 +251,7 @@ playSecondBestMove(PossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCo
 	once(getRotation(Rotation)),
 	once(getValidPosition(Board, NumRow, NumCol)).
 
-playSecondBestMove(PossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCol):-
+playSecondBestMove(PossibleMoves, _Pieces, _Board, Letter, Rotation, NumRow, NumCol):-
 	last(PossibleMoves, BestMove),
 	nth0(1, BestMove, NumRow),
 	nth0(2, BestMove, NumCol),
