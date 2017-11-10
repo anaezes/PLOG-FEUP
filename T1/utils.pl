@@ -7,8 +7,8 @@
 :-include('humanInput.pl').
 :-include('computerInput.pl').
 :-include('board.pl').
-:-include('checkGameStatus.pl').
-:-include('ia.pl').
+:-include('gameStatus.pl').
+:-include('ai.pl').
 
 :- discontiguous game2Players/6, gameHumanVsComputer/4, gameHumanVsComputer/7, game2Players/6, gameComputerVsComputer/7, gameComputerVsComputer/4.
 

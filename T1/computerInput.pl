@@ -1,10 +1,4 @@
 
-
-/************************************
-**** FUNCTIONS OF COMPUTER INPUT ****
-************************************/
-
-
 /**
 * Level one/two AI - first move.
 **/
@@ -75,9 +69,6 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, Co
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
 
 
-/**
-* Level two AI - TODO: tirar a peça com menos peças a fazer match e colocar junto da que tem mais peças a fazer match ?
-**/
 computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, ColorPlayer, _Level):-
 	once(getPositionsToRemovePiece(Board, PositionsToRemove)),
 	once(getColorPieces(Board, ColorPlayer, ListPiecesPlayer)),
@@ -181,31 +172,3 @@ getLetters(Board, [H | T], LettersPositions, LettersPositionsAux, _LettersAvaila
 	append([Letter], H, LetterPos),
 	append(LettersPositions, [LetterPos], NewLettersPositions),
 	getLetters(Board, T, NewLettersPositions, LettersPositionsAux, [Letter], LettersAvailableAux).
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-testeMove :- 
-	board(Board), 
-	computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestColumn, 1, 2),
-	write('SourceRow'), write(SourceRow),nl, 
-	write('SourceColumn'), write(SourceColumn),nl, 
-	write('Rotation'), write(Rotation),nl, 
-	write('DestRow'), write(DestRow),nl, 
-	write('DestColumn'), write(DestColumn),nl.
-
-positions([[1,4],[2,2],[2,5],[4,1]]).
-
-teste9 :- board(Board), positions(Positions),
-			getLetters(Board, Positions, LettersPositions, LettersAvailable),
-			write(LettersPositions), nl, write(LettersAvailable), nl.*/

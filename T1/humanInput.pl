@@ -1,8 +1,3 @@
-
-/*********************************
-**** FUNCTIONS OF HUMAN INPUT ****
-*********************************/
-
 	
 /**
 * Verify if a number is between the interval

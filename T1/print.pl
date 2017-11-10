@@ -1,13 +1,4 @@
 
-/**************************
-**** FUNCTIONS TO PRINT ****
-**************************/
-
-
-% PRINT BOARD
-
-
-
 /**
 * Get Rotation
 **/
@@ -183,13 +174,6 @@ printBoardMain([Head | Tail]):-
 	printBoard([Head | Tail], 0), nl.
 
 
-
-
-
-
-% PRINT AVAILABLE PIECES 
-
-
 /**
 * Prints row's of available pieces
 **/
@@ -235,12 +219,6 @@ printAvailablePieces(PieceRow,  [Head , [Head2 | Tail]]):-
 	printAvailablePiecesAux(PieceRow, [Head , [Head2 | Tail]]).
 
 
-
-
-% PRINT INFORMATIONS OF GAME 
-
-
-
 /**
 * Print the black pieces turn
 **/
@@ -278,7 +256,7 @@ printInfoWinGame(Player):- nl,
 	printSpace(5), write(' |_)  |   _.   _  |     \\    /  o  ._    _  |  |  | '), nl,
 	printSpace(5), write(' |_)  |  (_|  (_  |<     \\/\\/   |  | |  _>  o  o  o '), nl, nl, sleep(4).
 
-printInfoWinGame(Player):- nl,
+printInfoWinGame(_Player):- nl,
 	printSpace(5), write(' \\    /  |_   o  _|_   _     \\    /  o  ._    _  |  |  | '), nl,
 	printSpace(5), write('  \\/\\/   | |  |   |_  (/_     \\/\\/   |  | |  _>  o  o  o '), nl, nl, sleep(4).
 

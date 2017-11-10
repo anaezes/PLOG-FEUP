@@ -1,8 +1,3 @@
-
-/************************
-**** FUNCTIONS OF AI ****
-*************************/
-
 	
 /**
 * Against the valid plays, choose the letter that guarantees victory.

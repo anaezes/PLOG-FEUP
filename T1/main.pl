@@ -1,11 +1,6 @@
 :-include('utils.pl').
 
 
-/***********************
-**** MAIN FUNCTIONS ****
-************************/
-
-
 /**
 * Game cycle - Human vs Human mode
 **/
@@ -168,9 +163,6 @@ gameHumanVsComputer(Board, ColorPlayer, 1, _Level)  :-
 	printInfoWinGame2(Type).
 
 
-
-
-
 /**
 * Game cycle - Computer vs Computer mode
 **/
@@ -247,9 +239,6 @@ gameComputerVsComputer(Board, ColorPlayer, 1, _Level)  :-
 	printInfoWinGame(Color).
 
 
-
-
-
 /***************************
 ******** MAIN GAME *********
 ***************************/
@@ -317,37 +306,3 @@ gameComputerVsComputer(Board, PiecesWhite, PiecesBlack, 0, 0, 2),
 ni_ju.
 
 initGame(_Option, _Board, _PiecesWhite, _PiecesBlack).
-
-
-
-
-
-/****************
-**** TESTING ****
-*****************/
-/*
-board2([
-	[nil, nil, nil],
-	[nil, [a, 3, 0, 0], nil],
-	[nil, nil, nil ]
-	]).
-
-board3([
-	[nil, nil, nil, nil, nil, nil, nil],
-	[nil, nil, nil, nil, [s, 0, 0, 0], nil, nil],
-	[nil, [j, 0, 1, 0], nil, nil, [j, 0, 0, 0], nil, nil],
-	[nil, [i, 0, 1, 0], [p, 0, 1, 0], [b, 0, 1, 1], [t, 0, 0, 0], [p, 0, 0, 0], nil],
-	[nil, nil, nil, nil, [o, 0, 1, 0], nil, nil],
-	[nil, nil, nil, nil, nil, nil, nil]
-	]).
-
-board4([
-	[nil, nil, nil],
-	[nil, [a, 3, 0, 0], nil],
-	[nil, nil, nil ]
-	]).
-
-testeMove :- board3(Board), printBoardMain(Board),
-	movePiece(Board, 1, 4, 3, 1, 1, NewBoard), printBoardMain(NewBoard).
-
-testeCheck(X,Y) :- board3(Board), validMove(Board, X, Y).*/
