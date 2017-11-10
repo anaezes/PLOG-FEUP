@@ -46,7 +46,6 @@ computerInput(Board, Pieces, AdversaryPieces, ColorPlayer, Letter, Rotation, Num
 computerInput(Board, Pieces, _AdversaryPieces, ColorPlayer, Letter, Rotation, NumRow, NumCol, _Level) :- 
 	getValidMoves(Board, ValidMoves),
 	once(getSecondBestMove(Board, Pieces, ValidMoves, ColorPlayer, _PossibleMoves, FinalPossibleMoves)),
-	%write(FinalPossibleMoves),nl,
 	once(playSecondBestMove(FinalPossibleMoves, Pieces, Board, Letter, Rotation, NumRow, NumCol)),
 	printInformation(NumRow, NumCol, Letter).
 
@@ -97,6 +96,7 @@ computerInputMove(Board, SourceRow, SourceColumn, Rotation, DestRow, DestCol, Co
 	once(getLetters(Board, FinalListToRemove, _LettersPositions, LettersPositionsAux, _LettersAvailable, LettersAvailableAux)),
 	getPieceLetter(LettersAvailableAux, Letter), 
 	getCoordinates(Letter, LettersPositionsAux, SourceRow, SourceColumn),
+
 	once(printInformation(SourceRow, SourceColumn, DestRow, DestCol)).
 
 /**

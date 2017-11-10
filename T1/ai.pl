@@ -3,12 +3,11 @@
 * Against the valid plays, choose the letter that guarantees victory.
 **/
 bestMoveVitory(_, [], _, _, _, _, _, _, _, _).
-
 bestMoveVitory(Board, [H|T], _BeforeLetter, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory) :- 
 	Vitory \== 1, 
-	bestValidMove(Board, H, ValidMoves, _BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory),
+	nth0(0, ValidMoves, BeforeCords),
+	bestValidMove(Board, H, ValidMoves, BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory),
 	bestMoveVitory(Board, T, H, ValidMoves, ColorPlayer, Letter, Rotation, Row, Col, Vitory).
-
 bestMoveVitory(_Board, [_H|_T], BeforeLetter, _ValidMoves, _ColorPlayer, Letter, _Rotation, _Row, _Col, Vitory) :-
 	Vitory == 1, !,
 	Letter = BeforeLetter.
@@ -17,19 +16,21 @@ bestMoveVitory(_Board, [_H|_T], BeforeLetter, _ValidMoves, _ColorPlayer, Letter,
 /**
 * Choose the place that guarantees victory.
 **/
+bestValidMove(_, _, [], BeforeCords, _, _, Row, Col, Vitory):-
+    Vitory == 1,!,
+    nth0(0, BeforeCords, X), Row is X,
+    nth0(1, BeforeCords, Y), Col is Y.
 bestValidMove(_, _, [], _, _, _, _, _, _).
-
+bestValidMove(_Board, _, [_|_], BeforeCords, _, _Rotation, Row, Col, Vitory) :-
+    Vitory == 1, !,
+    nth0(0, BeforeCords, X), Row is X,
+    nth0(1, BeforeCords, Y), Col is Y.
 bestValidMove(Board, Letter, [H|T], _BeforeCords, ColorPlayer, Rotation, Row, Col, Vitory) :-
-	Vitory \== 1, !,
-	nth0(0, H, X), nth0(1, H, Y),
-	replace(Board, X, Y, nil, NewBoard),
-	bestRotation(NewBoard, Letter, X, Y, ColorPlayer, 0, Rotation, 0, Vitory),
-	bestValidMove(NewBoard, Letter, T, H, ColorPlayer, Rotation, Row, Col, Vitory).
-
-bestValidMove(_Board, _, _, BeforeCords, _, _Rotation, Row, Col, Vitory) :-
-	Vitory == 1, !,
-	nth0(0, BeforeCords, X), Row = X,
-	nth0(1, BeforeCords, Y), Col = Y.
+    Vitory \== 1, !,
+    nth0(0, H, X), nth0(1, H, Y),
+    replace(Board, X, Y, nil, NewBoard),
+    bestRotation(NewBoard, Letter, X, Y, ColorPlayer, 0, Rotation, 0, Vitory),
+    bestValidMove(NewBoard, Letter, T, H, ColorPlayer, Rotation, Row, Col, Vitory).
 
 
 /**
