@@ -61,13 +61,23 @@ game2Players(Board, ColorPlayer, GameEnd) :-
 	updateBoard(NewInvalidPieces, NewBoardAux, NewBoard),
 	game2Players(NewBoard, NewColorPlayer, NewGameEnd).
 
+<<<<<<< Updated upstream
 % End Game
 game2Players(Board, ColorPlayer, 1)  :-
+=======
+/* End Game */
+game2Players(Board, ColorPlayer, 1)  :- 
+>>>>>>> Stashed changes
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
+<<<<<<< Updated upstream
 game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :-
+=======
+
+game2Players(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1)  :- 
+>>>>>>> Stashed changes
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
@@ -150,6 +160,7 @@ gameHumanVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	gameHumanVsComputer(NewBoard, NewColorPlayer, GameEnd, NewGameEnd, Level).
 
 
+<<<<<<< Updated upstream
 % End Game
 gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, _Level)  :-
 	printBoardMain(Board),
@@ -157,6 +168,16 @@ gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, _L
 	getTypePlayer(WinColorPlayer, Type),
 	printInfoWinGame2(Type).
 gameHumanVsComputer(Board, ColorPlayer, 1, _Level)  :-
+=======
+/* End Game */
+gameHumanVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
+	printBoardMain(Board),
+	WinColorPlayer is mod((ColorPlayer + 1), 2),
+	getTypePlayer(WinColorPlayer, Type),
+	printInfoWinGameType(Type).
+
+gameHumanVsComputer(Board, ColorPlayer, 1, Level)  :- 
+>>>>>>> Stashed changes
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getTypePlayer(WinColorPlayer, Type),
@@ -226,13 +247,23 @@ gameComputerVsComputer(Board, ColorPlayer, GameEnd, Level) :-
 	gameComputerVsComputer(NewBoard, NewColorPlayer,  NewGameEnd, Level).
 
 
+<<<<<<< Updated upstream
 % End Game
 gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, _Level)  :-
+=======
+/* End Game*/
+gameComputerVsComputer(Board, _PiecesWhite, _PiecesBlack, ColorPlayer, _Draw, 1, Level)  :- 
+>>>>>>> Stashed changes
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
 	printInfoWinGame(Color).
+<<<<<<< Updated upstream
 gameComputerVsComputer(Board, ColorPlayer, 1, _Level)  :-
+=======
+
+gameComputerVsComputer(Board, ColorPlayer, 1, Level)  :- 
+>>>>>>> Stashed changes
 	printBoardMain(Board),
 	WinColorPlayer is mod((ColorPlayer + 1), 2),
 	getColorPlayer(WinColorPlayer, Color),
@@ -254,11 +285,17 @@ piecesBlack([a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t]).
 options([1, 2, 3, 4, 5, 6]).
 
 
+<<<<<<< Updated upstream
 
 ni_ju :-
 now(X),
 setrand(X),
 printLoad,
+=======
+ni_ju :- 
+now(X),
+setrand(X),
+>>>>>>> Stashed changes
 clearScreen,
 printMenuScreen,
 options(Options),
