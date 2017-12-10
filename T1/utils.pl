@@ -82,7 +82,6 @@ copyList(L,R) :- accCp(L,R).
 accCp([],[]).
 accCp([H|T1],[H|T2]) :- accCp(T1,T2).
 
-<<<<<<< Updated upstream
 % Interception of two lists
 inter([], _, []).
 inter([H1|T1], L2, [H1|Res]) :-
@@ -90,19 +89,5 @@ inter([H1|T1], L2, [H1|Res]) :-
     inter(T1, L2, Res).
 inter([_|T1], L2, Res) :-
     inter(T1, L2, Res).
-=======
-clearScreen :- write('\33\[2J').
-
-getValidMoves(Board, ValidMoves) :-
-	setof([X,Y], validMove(Board, X, Y), ValidMoves).
-
-
-
-
-/*
-:- dynamic seed/1.
- 
-seed(13).
->>>>>>> Stashed changes
 
 clearScreen :- write('\33\[2J').

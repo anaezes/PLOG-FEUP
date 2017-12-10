@@ -214,13 +214,10 @@ getPositionsToRemovePiece(Board, PositionsToRemove) :-
 	setof([X,Y], getValidPostionToRemove(Board, X, Y), PositionsToRemove).
 
 
-<<<<<<< Updated upstream
 /**
 * Remove a piece - ensures that the position is occupied and has a free seat next to it.
 **/
 % Check if there isn't  a piece in the row before.
-=======
->>>>>>> Stashed changes
 getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
@@ -231,10 +228,7 @@ getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumCol, RowBefore, CellBefore),
 	CellBefore == nil.
 
-<<<<<<< Updated upstream
 % Check if there isn't  a piece in the row after.
-=======
->>>>>>> Stashed changes
 getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
@@ -245,10 +239,7 @@ getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumCol, RowAfter, CellAfter),
 	CellAfter == nil.
 
-<<<<<<< Updated upstream
 % Check if there isn't  a piece in the column before.
-=======
->>>>>>> Stashed changes
 getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),
@@ -259,10 +250,7 @@ getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(BeforeNumColumn, Row, CellBefore),
 	CellBefore == nil.
 
-<<<<<<< Updated upstream
 % Check if there isn't a piece in the column after.
-=======
->>>>>>> Stashed changes
 getValidPostionToRemove(Board, NumRow, NumCol):-
 	nth0(NumRow, Board, RowChosen),
 	nth0(NumCol, RowChosen, CellChosen),

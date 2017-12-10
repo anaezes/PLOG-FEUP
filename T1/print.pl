@@ -317,7 +317,6 @@ printInfoGame(Board, ColorPlayer) :-
 * Prints the game menu
 **/
 printMenuScreen :- nl, nl,
-<<<<<<< Updated upstream
 	printSpace(20), write('********************************************************************'),nl,
 	printSpace(20), write('*  ______________________________________________________________  *'),nl,
 	printSpace(20), write('* |                                                              | *'),nl,
@@ -367,35 +366,3 @@ printLoad :-
 	printSpace(10), write('[========================================          ]  80 %'), nl, nl, sleep(0.2), clearScreen,
 	printSpace(10), write('[=============================================     ]  90 %'), nl, nl, sleep(0.2), clearScreen,
 	printSpace(10), write('[==================================================] 100 %'), nl, nl, sleep(0.5).
-=======
-	printSpace(20), write('          ********************************************************************'),nl,
-	printSpace(20), write('          *  ______________________________________________________________  *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |         .__   __.  __                  __   __    __         | *'),nl,
-	printSpace(20), write('          * |         |  \\ |  | |  |                |  | |  |  |  |        | *'),nl,
-	printSpace(20), write('          * |         |   \\|  | |  |  ______        |  | |  |  |  |        | *'),nl,
-	printSpace(20), write('          * |         |  . `  | |  | |______| .--.  |  | |  |  |  |        | *'),nl,
-	printSpace(20), write('          * |         |  |\\   | |  |          |  `--\'  | |  \`--\'  |        | *'),nl,
-	printSpace(20), write('          * |         |__| \\__| |__|           \\______/   \\______/         | *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                      **** WELCOME ! ****                     | *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                        Human vs Human:                       | *'),nl,
-	printSpace(20), write('          * |                         1.  Level I                          | *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                        Human vs Computer:                    | *'),nl,
-	printSpace(20), write('          * |                         2.  Level I                          | *'),nl,
-	printSpace(20), write('          * |                         3.  Level II                         | *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                     Computer vs Computer:                    | *'),nl,
-	printSpace(20), write('          * |                         4.  Level I                          | *'),nl,
-	printSpace(20), write('          * |                         5.  Level II                         | *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                                                              | *'),nl,
-	printSpace(20), write('          * |                     Ana Santos up200700742                   | *'),nl,
-	printSpace(20), write('          * |                  Margarida Silva up201505505                 | *'),nl,
-	printSpace(20), write('          * |______________________________________________________________| *'),nl,
-	printSpace(20), write('          *                                                                  *'),nl,
-	printSpace(20), write('          ********************************************************************'),nl.
->>>>>>> Stashed changes
