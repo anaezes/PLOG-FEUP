@@ -175,7 +175,6 @@ getSubList(Pos, PuzzleF, [Head|Tail], N, Aux):-
 	getSubList(NewPos, PuzzleF, Tail, N, Aux1).
 
 cycle([], _, _).
-
 cycle([Num-Pos | T], PuzzleF, N):-
 	getSubListLastRow([Num-Pos], PuzzleF, List, N),
 	cycle(T, PuzzleF, N).
@@ -208,12 +207,6 @@ cycle([Num-Pos | T], PuzzleF, N):-
 	paintWay(List, Num, 5),
 	cycle(T, PuzzleF, N).
 
-/*
-count(_, [], 0).
-count(Val, [H | T], Cnt):-
-	(Val #= H) #<=> B,
-	count(Val, T, Cnt2),
-	Cnt #= Cnt2 + B.*/
 /**
 	Corner Top Left
 */
@@ -322,6 +315,7 @@ restrictionClosure(_, L, _, L).
 restrictionClosure(PuzzleF, Pos, N, L):-
 	element(Pos, PuzzleF, Cell),
 	Cell #= 1,!,
+	write(Pos), write(' '), write(Cell), nl,
 	getClosure(PuzzleF, Pos, N),
 	NewPos is Pos + 1,
 	restrictionClosure(PuzzleF, NewPos, N, L).
@@ -332,12 +326,12 @@ restrictionClosure(PuzzleF, Pos, N, L):-
 teste(PuzzleF):-
 	puzzle6(Puzzle),
 	numbers6(Numbers),
-	length(PuzzleF, 36),
 	N is 6, %side of matrix
 	L is N*N,
+	length(PuzzleF, L),
 	domain(PuzzleF, 0, 1),
 	cycle(Numbers, PuzzleF, N),
-	restrictionClosure(PuzzleF, 1, N, L),
+	%restrictionClosure(PuzzleF, 1, N, L),
 	labeling([], PuzzleF),
 	write(PuzzleF), nl,
 	printPuzzle(PuzzleF, Puzzle, N, 1).
