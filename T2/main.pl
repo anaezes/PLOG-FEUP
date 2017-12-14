@@ -331,7 +331,7 @@ teste(PuzzleF):-
 	length(PuzzleF, L),
 	domain(PuzzleF, 0, 1),
 	cycle(Numbers, PuzzleF, N),
-	%restrictionClosure(PuzzleF, 1, N, L),
+	restrictionClosure(PuzzleF, 1, N, L),
 	labeling([], PuzzleF),
 	write(PuzzleF), nl,
 	printPuzzle(PuzzleF, Puzzle, N, 1).
