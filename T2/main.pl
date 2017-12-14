@@ -174,7 +174,6 @@ getSubList(Pos, PuzzleF, [Head|Tail], N, Aux):-
 	NewPos is  Pos + 1,
 	getSubList(NewPos, PuzzleF, Tail, N, Aux1).
 
-
 cycle([], _, _).
 
 cycle([Num-Pos | T], PuzzleF, N):-
@@ -209,13 +208,136 @@ cycle([Num-Pos | T], PuzzleF, N):-
 	paintWay(List, Num, 5),
 	cycle(T, PuzzleF, N).
 
+/*
+count(_, [], 0).
+count(Val, [H | T], Cnt):-
+	(Val #= H) #<=> B,
+	count(Val, T, Cnt2),
+	Cnt #= Cnt2 + B.*/
+/**
+	Corner Top Left
+*/
+getClosure(PuzzleF, Pos, N):-
+	Pos == 1,!,
+	RigthPos is Pos + 1,
+	nth1(RightPos, PuzzleF, Right),
+	UnderPos is N + 1,
+	nth1(UnderPos, PuzzleF, Under),
+	global_cardinality([Right, Under], [1-2,0-0]).
+/**
+	Corner Top Right
+*/
+getClosure(PuzzleF, Pos, N):-
+	Pos == N,!,
+	LeftPos is Pos - 1,
+	nth1(LeftPos, PuzzleF, Left),
+	UnderPos is Pos + N,
+	nth1(UnderPos, PuzzleF, Under),
+	global_cardinality([Left | [Under]], [1-2,0-0]).
+/**
+	Corner Bottom Left
+*/
+getClosure(PuzzleF, Pos, N):-
+	Pos == N*N - N + 1,!,
+	RigthPos is Pos + 1,
+	nth1(RightPos, PuzzleF, Right),
+	AbovePos is Pos - N,
+	nth1(AbovePos, PuzzleF, Above),
+	global_cardinality([Right | [Above]], [1-2,0-0]).
+/**
+	Corner Bottom Right
+*/
+getClosure(PuzzleF, Pos, N):-
+	Pos == N*N,!,
+	LeftPos is Pos - 1,
+	nth1(LeftPos, PuzzleF, Left),
+	AbovePos is Pos - N,
+	nth1(AbovePos, PuzzleF, Above),
+	global_cardinality([Left | [Above]], [1-2,0-0]).
+/**
+	First Row
+*/
+getClosure(PuzzleF, Pos, N):-
+	Pos > 1, Pos < N,!,
+	LeftPos is Pos - 1,
+	RightPos is Pos + 1,
+	UnderPos is Pos + N,
+	nth1(LeftPos, PuzzleF, Left),
+	nth1(RightPos, PuzzleF, Right),
+	nth1(UnderPos, PuzzleF, Under),
+	global_cardinality([Left | [Right | [Under]]], [1-2, 0-1]).
+/**
+	Last Row
+*/
+getClosure(PuzzleF, Pos, N):-
+	Pos > N*N - N, Pos < N*N,!,
+	LeftPos is Pos - 1,
+	RightPos is Pos + 1,
+	AbovePos is Pos - N,
+	nth1(LeftPos, PuzzleF, Left),
+	nth1(RightPos, PuzzleF, Right),
+	nth1(AbovePos, PuzzleF, Above),
+	global_cardinality([Left | [Right | [Above]]], [1-2, 0-1]).
+/**
+	First Col
+*/
+getClosure(PuzzleF, Pos, N):-
+	Aux is mod(Pos, N),
+	Aux == 1, !,	
+	AbovePos is Pos - N,
+	RightPos is Pos + 1,
+	UnderPos is Pos + N,
+	nth1(AbovePos, PuzzleF, Above),
+	nth1(RightPos, PuzzleF, Right),
+	nth1(UnderPos, PuzzleF, Under),
+	global_cardinality([Above | [Right | [Under]]], [1-2, 0-1]).
+/**
+	Last Col
+*/
+getClosure(PuzzleF, Pos, N):-
+	Aux is mod(Pos, N),
+	Aux == 0, !,	
+	AbovePos is Pos - N,
+	LeftPos is Pos - 1,
+	UnderPos is Pos + N,
+	nth1(AbovePos, PuzzleF, Above),
+	nth1(LeftPos, PuzzleF, Left),
+	nth1(UnderPos, PuzzleF, Under),
+	global_cardinality([Above | [Left | [Under]]], [1-2, 0-1]).
+/**
+	Middle
+*/	
+getClosure(PuzzleF, Pos, N):-
+	AbovePos is Pos - N,
+	LeftPos is Pos - 1,
+	RightPos is Pos + 1,
+	UnderPos is Pos + N,
+	nth1(AbovePos, PuzzleF, Above),
+	nth1(LeftPos, PuzzleF, Left),
+	nth1(RightPos, PuzzleF, Right),
+	nth1(UnderPos, PuzzleF, Under),
+	global_cardinality([Above | [Left | [Right |[Under]]]], [1-2, 0-2]).
+	
+restrictionClosure(_, L, _, L).
+restrictionClosure(PuzzleF, Pos, N, L):-
+	element(Pos, PuzzleF, Cell),
+	Cell #= 1,!,
+	getClosure(PuzzleF, Pos, N),
+	NewPos is Pos + 1,
+	restrictionClosure(PuzzleF, NewPos, N, L).
+restrictionClosure(PuzzleF, Pos, N, L):-
+	NewPos is Pos + 1,
+	restrictionClosure(PuzzleF, NewPos, N, L).
+
 teste(PuzzleF):-
 	puzzle6(Puzzle),
 	numbers6(Numbers),
 	length(PuzzleF, 36),
 	N is 6, %side of matrix
+	L is N*N,
 	domain(PuzzleF, 0, 1),
 	cycle(Numbers, PuzzleF, N),
+	restrictionClosure(PuzzleF, 1, N, L),
 	labeling([], PuzzleF),
 	write(PuzzleF), nl,
 	printPuzzle(PuzzleF, Puzzle, N, 1).
