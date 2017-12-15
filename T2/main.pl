@@ -175,21 +175,17 @@ getSubList(Pos, PuzzleF, [Head|Tail], N, Aux):-
 	getSubList(NewPos, PuzzleF, Tail, N, Aux1).
 
 cycle([], _, _).
+
 cycle([Num-Pos | T], PuzzleF, N):-
-	write('HERE'),nl,
+	getSubListCorners([Num-Pos], PuzzleF, List, N),
+	cycle(T, PuzzleF, N).
+
+cycle([Num-Pos | T], PuzzleF, N):-
 	getSubListLastRow([Num-Pos], PuzzleF, List, N),
 	cycle(T, PuzzleF, N).
 
 cycle([Num-Pos | T], PuzzleF, N):-
-	getSubListLastCol([Num-Pos], PuzzleF, List, N),
-	cycle(T, PuzzleF, N).
-
-cycle([Num-Pos | T], PuzzleF, N):-
 	getSubListFirstRow([Num-Pos], PuzzleF, List, N),
-	cycle(T, PuzzleF, N).
-
-cycle([Num-Pos | T], PuzzleF, N):-
-	getSubListCorners([Num-Pos], PuzzleF, List, N),
 	cycle(T, PuzzleF, N).
 
 cycle([Num-Pos | T], PuzzleF, N):-
@@ -202,71 +198,60 @@ cycle([Num-Pos | T], PuzzleF, N):-
 	paintWay(List, Num, 4),
 	cycle(T, PuzzleF, N).
 
+
+/* Central */
 cycle([Num-Pos | T], PuzzleF, N):-
 	LeftTopPos is Pos - N - 1,
 	getSubList(LeftTopPos, PuzzleF, List, N, 1),
 	paintWay(List, Num, 5),
 	cycle(T, PuzzleF, N).
 
-/**
-	Corner Top Left
-*/
+
+
+
+
 getClosure(PuzzleF, Pos, N):-
 	Pos == 1,!,
 	RightPos is Pos + 1,
 	nth1(RightPos, PuzzleF, Right),
 	UnderPos is Pos + N,
 	nth1(UnderPos, PuzzleF, Under),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\ Right #= 1 #/\ Under #= 1) #\/ Cell #= 0).
 
-	/*DiagonalPos is Pos + N + 1,
-	element(DiagonalPos, PuzzleF, 0),*/
 
-	global_cardinality([Right | [Under]], [1-2]).
-/**
-	Corner Top Right
-*/
 getClosure(PuzzleF, Pos, N):-
 	Pos == N,!,
 	LeftPos is Pos - 1,
 	nth1(LeftPos, PuzzleF, Left),
 	UnderPos is Pos + N,
 	nth1(UnderPos, PuzzleF, Under),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\ Left #= 1 #/\ Under #= 1) #\/ Cell #= 0).
 
-	/*DiagonalPos is Pos + N - 1,
-	element(DiagonalPos, PuzzleF, 0),*/
 
-	global_cardinality([Left | [Under]], [1-2]).
-/**
-	Corner Bottom Left
-*/
+
 getClosure(PuzzleF, Pos, N):-
-	Pos == N*N - N + 1,!,
+	Aux is N*N - N + 1,
+	Pos == Aux,!,
 	RightPos is Pos + 1,
 	nth1(RightPos, PuzzleF, Right),
 	AbovePos is Pos - N,
 	nth1(AbovePos, PuzzleF, Above),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\ Right #= 1 #/\ Above #= 1 )#\/ Cell #= 0).
 
-	/*DiagonalPos is Pos - N + 1,
-	element(DiagonalPos, PuzzleF, 0),*/
 
-	global_cardinality([Right | [Above]], [1-2]).
-/**
-	Corner Bottom Right
-*/
 getClosure(PuzzleF, Pos, N):-
-	Pos == N*N,!,
+	Aux is N*N,
+	Pos == Aux,!,
 	LeftPos is Pos - 1,
 	nth1(LeftPos, PuzzleF, Left),
 	AbovePos is Pos - N,
 	nth1(AbovePos, PuzzleF, Above),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\  Left #= 1 #/\ Above #= 1 ) #\/ Cell #= 0).
 
-	/*DiagonalPos is Pos - N - 1,
-	element(DiagonalPos, PuzzleF, 0),*/
-
-	global_cardinality([Left | [Above]], [1-2]).
-/**
-	First Row
-*/
 getClosure(PuzzleF, Pos, N):-
 	Pos > 1, Pos < N,!,
 	LeftPos is Pos - 1,
@@ -275,34 +260,30 @@ getClosure(PuzzleF, Pos, N):-
 	nth1(LeftPos, PuzzleF, Left),
 	nth1(RightPos, PuzzleF, Right),
 	nth1(UnderPos, PuzzleF, Under),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Under #= 0) #\/ 
+		(Left #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
+		(Under #= 1 #/\ Right #= 1 #/\ Left #= 0))) 
+		#\/ Cell #= 0).
 
-	/*DiagonalPos1 is Pos + N - 1,
-	element(DiagonalPos1, PuzzleF, 0),
-	DiagonalPos2 is Pos + N + 1,
-	element(DiagonalPos2, PuzzleF, 0),*/
 
-	global_cardinality([Left | [Right | [Under]]], [1-2, 0-1]).
-/**
-	Last Row
-*/
 getClosure(PuzzleF, Pos, N):-
-	Pos > N*N - N + 1, Pos < N*N,!,
+	Aux is N*N - N + 1,
+	Aux2 is N*N,
+	Pos > Aux, Pos < Aux2, !,
 	LeftPos is Pos - 1,
 	RightPos is Pos + 1,
 	AbovePos is Pos - N,
 	nth1(LeftPos, PuzzleF, Left),
 	nth1(RightPos, PuzzleF, Right),
 	nth1(AbovePos, PuzzleF, Above),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Above #= 0) #\/ 
+		(Left #= 1 #/\ Above #= 1 #/\ Right #= 0) #\/
+		(Above #= 1 #/\ Right #= 1 #/\ Left #= 0))) 
+		#\/ Cell #= 0).
 
-	/*DiagonalPos1 is Pos - N - 1,
-	element(DiagonalPos1, PuzzleF, 0),
-	DiagonalPos2 is Pos - N + 1,
-	element(DiagonalPos2, PuzzleF, 0),*/
 
-	global_cardinality([Left | [Right | [Above]]], [1-2, 0-1]).
-/**
-	First Col
-*/
 getClosure(PuzzleF, Pos, N):-
 	Aux is mod(Pos, N),
 	Aux == 1, !,	
@@ -312,16 +293,13 @@ getClosure(PuzzleF, Pos, N):-
 	nth1(AbovePos, PuzzleF, Above),
 	nth1(RightPos, PuzzleF, Right),
 	nth1(UnderPos, PuzzleF, Under),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\ ((Above #= 1 #/\ Right #= 1 #/\ Under #= 0) #\/ 
+		(Above #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
+		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0))) #\/ 
+		Cell #= 0).
 
-	/*DiagonalPos1 is Pos - N + 1,
-	element(DiagonalPos1, PuzzleF, 0),
-	DiagonalPos2 is Pos + N + 1,
-	element(DiagonalPos2, PuzzleF, 0),*/
 
-	global_cardinality([Above | [Right | [Under]]], [1-2, 0-1]).
-/**
-	Last Col
-*/
 getClosure(PuzzleF, Pos, N):-
 	Aux is mod(Pos, N),
 	Aux == 0, !,	
@@ -331,16 +309,13 @@ getClosure(PuzzleF, Pos, N):-
 	nth1(AbovePos, PuzzleF, Above),
 	nth1(LeftPos, PuzzleF, Left),
 	nth1(UnderPos, PuzzleF, Under),
+	element(Pos, PuzzleF, Cell),
+	((Cell #= 1 #/\ ((Left #= 1 #/\ Above #= 1 #/\ Under #= 0) #\/ 
+		(Left #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
+		( Under #= 1 #/\ Above #= 1 #/\ Left #= 0))) 
+		#\/	Cell #= 0).
 
-	/*DiagonalPos1 is Pos - N - 1,
-	element(DiagonalPos1, PuzzleF, 0),
-	DiagonalPos2 is Pos + N - 1,
-	element(DiagonalPos2, PuzzleF, 0),*/
 
-	global_cardinality([Above | [Left | [Under]]], [1-2, 0-1]).
-/**
-	Middle
-*/	
 getClosure(PuzzleF, Pos, N):-
 	AbovePos is Pos - N,
 	LeftPos is Pos - 1,
@@ -350,39 +325,35 @@ getClosure(PuzzleF, Pos, N):-
 	nth1(LeftPos, PuzzleF, Left),
 	nth1(RightPos, PuzzleF, Right),
 	nth1(UnderPos, PuzzleF, Under),
-
-	/*DiagonalPos1 is Pos - N - 1,
-	element(DiagonalPos1, PuzzleF, 0),
-	DiagonalPos2 is Pos - N + 1,
-	element(DiagonalPos2, PuzzleF, 0),
-	DiagonalPos3 is Pos + N - 1,
-	element(DiagonalPos3, PuzzleF, 0),
-	DiagonalPos4 is Pos + N + 1,
-	element(DiagonalPos4, PuzzleF, 0),*/
-
-	global_cardinality([Above | [Left | [Right |[Under]]]], [1-2, 0-2]).
-	
-restrictionClosure(_, L, _, L):-write('Here'),nl.
-restrictionClosure(PuzzleF, Pos, N, L):-
 	element(Pos, PuzzleF, Cell),
-	Cell #= 1,!,
-	write(Pos),nl,
+	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Under #= 0) 
+		#\/ (Left #= 1 #/\ Under #= 1 #/\ Above #= 0 #/\ Right #= 0) #\/
+		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Left #= 0) #\/ 
+		(Above #= 1 #/\ Right #= 1 #/\ Under #= 0 #/\ Left #= 0) #\/ 
+		(Above #= 1 #/\ Left #= 1 #/\ Under #= 0 #/\ Right #= 0) #\/ 
+		(Above #= 1 #/\ Under #= 1 #/\ Left #= 0 #/\ Right #= 0)))	#\/ 
+		Cell #= 0).
+
+
+restrictionClosure(_, L, _, L):-write('Here'),nl.
+restrictionClosure(PuzzleF, Pos, N, L) :- 
 	getClosure(PuzzleF, Pos, N),
-	NewPos is Pos + 1,
-	restrictionClosure(PuzzleF, NewPos, N, L).
-restrictionClosure(PuzzleF, Pos, N, L):-
 	NewPos is Pos + 1,
 	restrictionClosure(PuzzleF, NewPos, N, L).
 
 teste(PuzzleF):-
-	puzzle3(Puzzle),
-	numbers3(Numbers),
-	N is 3, %side of matrix
+	puzzle10(Puzzle),
+	numbers10(Numbers),
+	N is 10, %side of matrix
 	L is N*N,
 	length(PuzzleF, L),
 	domain(PuzzleF, 0, 1),
 	cycle(Numbers, PuzzleF, N),
 	restrictionClosure(PuzzleF, 1, N, L),
 	labeling([], PuzzleF),
-	write(PuzzleF), nl,
-	printPuzzle(PuzzleF, Puzzle, N, 1).
+	write(PuzzleF), nl.
+	%printPuzzle(PuzzleF, Puzzle, N, 1).
+
+
+
+teste2 :- findall(P, teste(P), L), solution10(S), member(S,L).
