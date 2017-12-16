@@ -66,3 +66,12 @@ puzzle7([nil, nil, nil, nil, nil, nil, nil,
 		nil, nil, nil, nil, nil, 2, nil,
 		nil, nil, nil, nil, nil, nil, nil]).
 numbers7([5-9, 5-12, 3-17, 3-30, 2-41]). %num-pos
+
+puzzle_7([nil, nil, nil, nil, nil, nil, nil,
+		nil, 7, nil, 4, nil, 3, nil, 
+		nil, nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil,nil,
+		nil, nil, nil, nil, nil, nil, nil,
+		nil, nil, nil, nil, nil, nil, nil]).
+numbers_7([7-9, 4-11, 3-13]). %num-pos

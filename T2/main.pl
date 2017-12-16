@@ -210,28 +210,30 @@ cycle([Num-Pos | T], PuzzleF, N):-
 
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	Pos == 1,!,
 	RightPos is Pos + 1,
 	nth1(RightPos, PuzzleF, Right),
 	UnderPos is Pos + N,
 	nth1(UnderPos, PuzzleF, Under),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ Right #= 1 #/\ Under #= 1) #\/ Cell #= 0).
+	((Cell #= 1 #/\ Right #= 1 #/\ Under #= 1) #<=> V),
+		V #= 1 #\/ Cell #= 0. 
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	Pos == N,!,
 	LeftPos is Pos - 1,
 	nth1(LeftPos, PuzzleF, Left),
 	UnderPos is Pos + N,
 	nth1(UnderPos, PuzzleF, Under),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ Left #= 1 #/\ Under #= 1) #\/ Cell #= 0).
+	((Cell #= 1 #/\ Left #= 1 #/\ Under #= 1) #<=> V),
+		V #= 1 #\/ Cell #= 0. 
 
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is N*N - N + 1,
 	Pos == Aux,!,
 	RightPos is Pos + 1,
@@ -239,10 +241,11 @@ getClosure(PuzzleF, Pos, N):-
 	AbovePos is Pos - N,
 	nth1(AbovePos, PuzzleF, Above),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ Right #= 1 #/\ Above #= 1 )#\/ Cell #= 0).
+	((Cell #= 1 #/\ Right #= 1 #/\ Above #= 1 )#<=> V),
+		V #= 1 #\/ Cell #= 0. 
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is N*N,
 	Pos == Aux,!,
 	LeftPos is Pos - 1,
@@ -250,9 +253,10 @@ getClosure(PuzzleF, Pos, N):-
 	AbovePos is Pos - N,
 	nth1(AbovePos, PuzzleF, Above),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\  Left #= 1 #/\ Above #= 1 ) #\/ Cell #= 0).
+	((Cell #= 1 #/\  Left #= 1 #/\ Above #= 1 ) #<=> V),
+		V #= 1 #\/ Cell #= 0. 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	Pos > 1, Pos < N,!,
 	LeftPos is Pos - 1,
 	RightPos is Pos + 1,
@@ -263,11 +267,11 @@ getClosure(PuzzleF, Pos, N):-
 	element(Pos, PuzzleF, Cell),
 	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Under #= 0) #\/ 
 		(Left #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
-		(Under #= 1 #/\ Right #= 1 #/\ Left #= 0))) 
-		#\/ Cell #= 0).
+		(Under #= 1 #/\ Right #= 1 #/\ Left #= 0)))#<=> V),
+		V #= 1 #\/ Cell #= 0. 
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is N*N - N + 1,
 	Aux2 is N*N,
 	Pos > Aux, Pos < Aux2, !,
@@ -279,12 +283,12 @@ getClosure(PuzzleF, Pos, N):-
 	nth1(AbovePos, PuzzleF, Above),
 	element(Pos, PuzzleF, Cell),
 	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Above #= 0) #\/ 
-		(Left #= 1 #/\ Above #= 1 #/\ Right #= 0) #\/
-		(Above #= 1 #/\ Right #= 1 #/\ Left #= 0))) 
-		#\/ Cell #= 0).
+					(Left #= 1 #/\ Above #= 1 #/\ Right #= 0) #\/
+					(Above #= 1 #/\ Right #= 1 #/\ Left #= 0)))#<=> V),
+					V #= 1 #\/ Cell #= 0.
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is mod(Pos, N),
 	Aux == 1, !,	
 	AbovePos is Pos - N,
@@ -296,11 +300,11 @@ getClosure(PuzzleF, Pos, N):-
 	element(Pos, PuzzleF, Cell),
 	((Cell #= 1 #/\ ((Above #= 1 #/\ Right #= 1 #/\ Under #= 0) #\/ 
 		(Above #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
-		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0))) #\/ 
-		Cell #= 0).
+		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0))) #<=> V),
+		V #= 1 #\/ Cell #= 0.
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N,  V, Cell):-
 	Aux is mod(Pos, N),
 	Aux == 0, !,	
 	AbovePos is Pos - N,
@@ -312,11 +316,11 @@ getClosure(PuzzleF, Pos, N):-
 	element(Pos, PuzzleF, Cell),
 	((Cell #= 1 #/\ ((Left #= 1 #/\ Above #= 1 #/\ Under #= 0) #\/ 
 		(Left #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
-		( Under #= 1 #/\ Above #= 1 #/\ Left #= 0))) 
-		#\/	Cell #= 0).
+		( Under #= 1 #/\ Above #= 1 #/\ Left #= 0))) #<=> V),
+		V #= 1 #\/ Cell #= 0.
 
 
-getClosure(PuzzleF, Pos, N):-
+getClosure(PuzzleF, Pos, N, V, Cell):-
 	AbovePos is Pos - N,
 	LeftPos is Pos - 1,
 	RightPos is Pos + 1,
@@ -326,20 +330,25 @@ getClosure(PuzzleF, Pos, N):-
 	nth1(RightPos, PuzzleF, Right),
 	nth1(UnderPos, PuzzleF, Under),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Under #= 0) 
-		#\/ (Left #= 1 #/\ Under #= 1 #/\ Above #= 0 #/\ Right #= 0) #\/
+	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Under #= 0) #\/ 
+		(Left #= 1 #/\ Under #= 1 #/\ Above #= 0 #/\ Right #= 0) #\/
 		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Left #= 0) #\/ 
 		(Above #= 1 #/\ Right #= 1 #/\ Under #= 0 #/\ Left #= 0) #\/ 
 		(Above #= 1 #/\ Left #= 1 #/\ Under #= 0 #/\ Right #= 0) #\/ 
-		(Above #= 1 #/\ Under #= 1 #/\ Left #= 0 #/\ Right #= 0)))	#\/ 
-		Cell #= 0).
+		(Above #= 1 #/\ Under #= 1 #/\ Left #= 0 #/\ Right #= 0))) #<=> V),
+		V #= 1 #\/ Cell #= 0.
 
-
-restrictionClosure(_, L, _, L):-write('Here'),nl.
-restrictionClosure(PuzzleF, Pos, N, L) :- 
-	getClosure(PuzzleF, Pos, N),
+restrictionClosure(_, _, L, _, L):-write('List').
+restrictionClosure(PuzzleF, [Pos|T], Pos, N, L) :- 
+	getClosure(PuzzleF, Pos, N, V, Cell),
+	V == 1, !,
 	NewPos is Pos + 1,
-	restrictionClosure(PuzzleF, NewPos, N, L).
+	restrictionClosure(PuzzleF, T, NewPos, N, L).
+restrictionClosure(PuzzleF, List, Pos, N, L) :- 
+	getClosure(PuzzleF, Pos, N, V, Cell),
+	NewPos is Pos + 1,
+	restrictionClosure(PuzzleF, List, NewPos, N, L).
+
 
 teste(PuzzleF):-
 	puzzle10(Puzzle),
@@ -349,11 +358,55 @@ teste(PuzzleF):-
 	length(PuzzleF, L),
 	domain(PuzzleF, 0, 1),
 	cycle(Numbers, PuzzleF, N),
-	restrictionClosure(PuzzleF, 1, N, L),
+	restrictionClosure(PuzzleF, AuxList, 1, N, L),
+	%circuit(PuzzleF, adjacent(AuxList, N)), 
+	count(1,PuzzleF,#=,LengthCircuit),
 	labeling([], PuzzleF),
-	write(PuzzleF), nl.
-	%printPuzzle(PuzzleF, Puzzle, N, 1).
+	write('Puzzle:::'), write(PuzzleF), nl,
+	printPuzzle(PuzzleF, Puzzle, N, 1).
 
 
+adjacent(List, N) :- 
+	nth1(1, List, FirstBlackPos),
+	length(List, Size),
+	nth1(Size, List, LastBlackPos),
+	Above #= FirstBlackPos - N,
+	Under #= FirstBlackPos + N,
+	Left #= FirstBlackPos - 1,
+	Right #= FirstBlackPos + 1,
+	(LastBlackPos #= Above #\/ LastBlackPos #= Under #\/ LastBlackPos #= Right #\/ LastBlackPos #= Left).
+	 
 
-teste2 :- findall(P, teste(P), L), solution10(S), member(S,L).
+/*
+adjacent(_, NewPos, FirstBlackPos, [H|T], N) :- NewPos == BlackPos.
+adjacent(PuzzleF, NextPos, FirstBlackPos, [AbovePos|T], N) :-
+	AbovePos is NextPos + N,
+	element(AbovePos, PuzzleF, Above),
+	Above #<==> 1,
+	NewNextPos = AbovePos,
+	adjacent(PuzzleF, NewNextPos, FirstBlackPos, T, N).
+
+adjacent(PuzzleF, NextPos, FirstBlackPos, [LeftPos|T], N) :-
+	LeftPos is NextPos - 1,
+	element(LeftPos, PuzzleF, Left),
+	Left #<==> 1,
+	NewNextPos = LeftPos,
+	adjacent(PuzzleF, NewNextPos, FirstBlackPos, T, N).
+
+adjacent(PuzzleF, NextPos, FirstBlackPos, [UnderPos|T], N) :-
+	UnderPos is NextPos - N,
+	element(UnderPos, PuzzleF, Under),
+	Under #<==> 1,
+	NewNextPos = UnderPos,
+	adjacent(PuzzleF, NewNextPos, FirstBlackPos, T, N).
+
+adjacent(PuzzleF, NextPos, FirstBlackPos, [RightPos|T], N) :-
+	RightPos is NextPos + 1,
+	element(RightPos, PuzzleF, Right),
+	Right #<==> 1,
+	NewNextPos = RightPos,
+	adjacent(PuzzleF, NewNextPos, FirstBlackPos, T, N).*/
+
+%[minimize(Count)]
+
+teste2 :- findall(P-C, teste(P,C) , L), solution10(S), member(S-K,L), write(K).
