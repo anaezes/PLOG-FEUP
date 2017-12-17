@@ -279,13 +279,8 @@ getClosure(PuzzleF, Pos, N, V, Cell):-
 	nth1(LeftPos, PuzzleF, Left),
 	nth1(RightPos, PuzzleF, Right),
 	nth1(UnderPos, PuzzleF, Under),
-	DiagonalPosLeft is Pos + N - 1,
-	DiagonalPosRight is Pos + N + 1,
-	nth1(DiagonalPosLeft, PuzzleF, DiagonalLeft),
-	nth1(DiagonalPosRight, PuzzleF, DiagonalRight),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ DiagonalRight #= 0 #/\ DiagonalLeft #= 0 #/\ 
-		((Left #= 1 #/\ Right #= 1 #/\ Under #= 0) #\/ 
+	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Under #= 0) #\/ 
 		(Left #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
 		(Under #= 1 #/\ Right #= 1 #/\ Left #= 0)))#<=> V),
 		V #= 1 #\/ Cell #= 0. 
@@ -303,13 +298,8 @@ getClosure(PuzzleF, Pos, N, V, Cell):-
 	nth1(LeftPos, PuzzleF, Left),
 	nth1(RightPos, PuzzleF, Right),
 	nth1(AbovePos, PuzzleF, Above),
-	DiagonalPosLeft is Pos - N - 1,
-	DiagonalPosRight is Pos - N + 1,
-	nth1(DiagonalPosLeft, PuzzleF, DiagonalLeft),
-	nth1(DiagonalPosRight, PuzzleF, DiagonalRight),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ DiagonalRight #= 0 #/\ DiagonalLeft #= 0 #/\ 
-					((Left #= 1 #/\ Right #= 1 #/\ Above #= 0) #\/ 
+	((Cell #= 1 #/\ ((Left #= 1 #/\ Right #= 1 #/\ Above #= 0) #\/ 
 					(Left #= 1 #/\ Above #= 1 #/\ Right #= 0) #\/
 					(Above #= 1 #/\ Right #= 1 #/\ Left #= 0)))#<=> V),
 					V #= 1 #\/ Cell #= 0.
@@ -326,12 +316,8 @@ getClosure(PuzzleF, Pos, N, V, Cell):-
 	nth1(AbovePos, PuzzleF, Above),
 	nth1(RightPos, PuzzleF, Right),
 	nth1(UnderPos, PuzzleF, Under),
-	DiagonalPosUp is Pos - N + 1,
-	DiagonalPosDown is Pos + N + 1,
-	nth1(DiagonalPosUp, PuzzleF, DiagonalUp),
-	nth1(DiagonalPosDown, PuzzleF, DiagonalDown),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ DiagonalUp #= 0 #/\ DiagonalDown #= 0 #/\ 
+	((Cell #= 1 #/\ 
 		((Above #= 1 #/\ Right #= 1 #/\ Under #= 0) #\/ 
 		(Above #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
 		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0))) #<=> V),
@@ -349,15 +335,11 @@ getClosure(PuzzleF, Pos, N,  V, Cell):-
 	nth1(AbovePos, PuzzleF, Above),
 	nth1(LeftPos, PuzzleF, Left),
 	nth1(UnderPos, PuzzleF, Under),
-	DiagonalPosUp is Pos - N - 1,
-	DiagonalPosDown is Pos + N - 1,
-	nth1(DiagonalPosUp, PuzzleF, DiagonalUp),
-	nth1(DiagonalPosDown, PuzzleF, DiagonalDown),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ DiagonalUp #= 0 #/\ DiagonalDown #= 0 #/\ 
+	((Cell #= 1 #/\ 
 		((Left #= 1 #/\ Above #= 1 #/\ Under #= 0) #\/ 
-		(Left #= 1 #/\ Under #= 1 #/\ Right #= 0) #\/
-		( Under #= 1 #/\ Above #= 1 #/\ Left #= 0))) #<=> V),
+		(Left #= 1 #/\ Under #= 1 #/\ Above #= 0) #\/
+		(Under #= 1 #/\ Above #= 1 #/\ Left #= 0))) #<=> V),
 		V #= 1 #\/ Cell #= 0.
 
 /**
@@ -381,13 +363,12 @@ getClosure(PuzzleF, Pos, N, V, Cell):-
 	nth1(DiagonalPosDownLeft, PuzzleF, DiagonalDownLeft),
 	nth1(DiagonalPosDownRight, PuzzleF, DiagonalDownRight),
 	element(Pos, PuzzleF, Cell),
-	((Cell #= 1 #/\ DiagonalUpLeft #= 0 #/\ DiagonalUpRight #= 0 #/\
-		DiagonalDownLeft #= 0 #/\ DiagonalDownRight #= 0 #/\
+	((Cell #= 1 #/\
 		((Left #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Under #= 0) #\/ 
-		(Left #= 1 #/\ Under #= 1 #/\ Above #= 0 #/\ Right #= 0) #\/
-		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Left #= 0) #\/ 
-		(Above #= 1 #/\ Right #= 1 #/\ Under #= 0 #/\ Left #= 0) #\/ 
-		(Above #= 1 #/\ Left #= 1 #/\ Under #= 0 #/\ Right #= 0) #\/ 
+		(Left #= 1 #/\ Under #= 1 #/\ Above #= 0 #/\ Right #= 0 #/\ DiagonalUpRight #= 0) #\/
+		(Under #= 1 #/\ Right #= 1 #/\ Above #= 0 #/\ Left #= 0 #/\ DiagonalUpLeft #= 0) #\/ 
+		(Above #= 1 #/\ Right #= 1 #/\ Under #= 0 #/\ Left #= 0 #/\ DiagonalDownLeft #= 0) #\/ 
+		(Above #= 1 #/\ Left #= 1 #/\ Under #= 0 #/\ Right #= 0 #/\ DiagonalDownRight #= 0) #\/ 
 		(Above #= 1 #/\ Under #= 1 #/\ Left #= 0 #/\ Right #= 0))) #<=> V),
 		V #= 1 #\/ Cell #= 0.
 
@@ -412,7 +393,7 @@ getNumbers([H | T], Pos, Numbers):-
 	getNumbers(T, NewPos, Numbers).
 
 teste(PuzzleF):-
-    puzzle10(Puzzle),
+    puzzle_10(Puzzle),
     getNumbers(Puzzle, 1, Numbers),
     N is 10, L is N*N,
     length(PuzzleF, L),
