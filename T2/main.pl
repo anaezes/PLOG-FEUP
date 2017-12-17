@@ -1,23 +1,9 @@
 :-use_module(library(clpfd)).
 :-use_module(library(lists)).
+:-use_module(library(statistics)).
 
 :-include('puzzles.pl').
-
-printPuzzle([], [], _, _).
-printPuzzle([H|T], [H2|T2], N, 	Count) :-
-	Count > N, !, nl,
-	printPuzzle([H|T], [H2|T2], N, 	1).
-
-printPuzzle([H|T], [H2|T2], N, Count) :-
-	H2 \== nil,
-	write(H2), write('|'),
-	NewCount is Count + 1,
-	printPuzzle(T, T2, N, NewCount).
-
-printPuzzle([H|T], [H2|T2], N, Count) :-
-	write(H), write('|'),
-	NewCount is Count + 1,
-	printPuzzle(T, T2, N, NewCount).
+:-include('utils.pl').
 
 paintWay(List, Num, Pos):-
 	length(List, L),
@@ -372,7 +358,7 @@ getClosure(PuzzleF, Pos, N, V, Cell):-
 		(Above #= 1 #/\ Under #= 1 #/\ Left #= 0 #/\ Right #= 0))) #<=> V),
 		V #= 1 #\/ Cell #= 0.
 
-restrictionClosure(_, _, L, _, L):-write('List').
+restrictionClosure(_, _, L, _, L).
 restrictionClosure(PuzzleF, [Pos|T], Pos, N, L) :- 
 	getClosure(PuzzleF, Pos, N, V, Cell),
 	V == 1, !,
@@ -392,11 +378,8 @@ getNumbers([H | T], Pos, Numbers):-
 	NewPos is Pos + 1,
 	getNumbers(T, NewPos, Numbers).
 
-teste(PuzzleF):-
-    puzzle_10(Puzzle),
-    getNumbers(Puzzle, 1, Numbers),
-    N is 10, L is N*N,
-    length(PuzzleF, L),
+solvePuzzle(Puzzle, N, L, Numbers, PuzzleF) :-
+	length(PuzzleF, L),
     domain(PuzzleF, 0, 1),
     count(1,PuzzleF,#=, LengthCircuit),
     length(AuxList, LengthCircuit),
@@ -406,9 +389,21 @@ teste(PuzzleF):-
     %write(AuxList),
     %nth1(1, AuxList, FistBlackPos),
     %auxAdjacente(PuzzleF, FistBlackPos, N, LengthCircuit),
-    labeling([], PuzzleF),
-    write('Puzzle:::'), write(PuzzleF), nl,
-    printPuzzle(PuzzleF, Puzzle, N, 1).
+    labeling([minimize(LengthCircuit)], PuzzleF).
+
+puzzle(N):-
+	getPuzzle(N, Puzzle),
+	printInitial(Puzzle, N),
+    getNumbers(Puzzle, 1, Numbers),
+    L is N*N,
+	statistics(walltime, [TimeSinceStart | [TimeSinceLastCall]]),
+    solvePuzzle(Puzzle, N, L, Numbers, PuzzleF),
+    statistics(walltime, [NewTimeSinceStart | [ExecutionTime]]),
+    printSolution(PuzzleF, Puzzle, N), nl, nl,
+    write('Execution took: '), write(ExecutionTime), write(' ms.'), nl.
+
+
+
 /*
 teste(PuzzleF):-
 	puzzle10(Puzzle),
@@ -423,5 +418,5 @@ teste(PuzzleF):-
 	write('Puzzle:::'), write(PuzzleF), nl,
 	printPuzzle(PuzzleF, Puzzle, N, 1).*/
 
-
+reload :- reconsult(main).
 %teste2 :- findall(P-C, teste(P,C) , L), solution10(S), member(S-K,L), write(K).
