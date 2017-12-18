@@ -160,42 +160,42 @@ Aux1 is Aux + 1,
 NewPos is  Pos + 1,
 getSubList(NewPos, PuzzleF, Tail, N, Aux1).
 
-cycle([], _, _).
+constraintAreaNumbers([], _, _).
 
-cycle([Num-Pos | T], PuzzleF, N):-
+constraintAreaNumbers([Num-Pos | T], PuzzleF, N):-
 getSubListCorners([Num-Pos], PuzzleF, List, N),
-cycle(T, PuzzleF, N).
+constraintAreaNumbers(T, PuzzleF, N).
 
-cycle([Num-Pos | T], PuzzleF, N):-
+constraintAreaNumbers([Num-Pos | T], PuzzleF, N):-
 getSubListLastRow([Num-Pos], PuzzleF, List, N),
-cycle(T, PuzzleF, N).
+constraintAreaNumbers(T, PuzzleF, N).
 
-cycle([Num-Pos | T], PuzzleF, N):-
+constraintAreaNumbers([Num-Pos | T], PuzzleF, N):-
 getSubListFirstRow([Num-Pos], PuzzleF, List, N),
-cycle(T, PuzzleF, N).
+constraintAreaNumbers(T, PuzzleF, N).
 
-cycle([Num-Pos | T], PuzzleF, N):-
+constraintAreaNumbers([Num-Pos | T], PuzzleF, N):-
 getSubListFirstCol([Num-Pos], PuzzleF, List, N),
 paintWay(List, Num, 3),
-cycle(T, PuzzleF,N).
+constraintAreaNumbers(T, PuzzleF,N).
 
-cycle([Num-Pos | T], PuzzleF, N):-
+constraintAreaNumbers([Num-Pos | T], PuzzleF, N):-
 getSubListLastCol([Num-Pos], PuzzleF, List, N),
 paintWay(List, Num, 4),
-cycle(T, PuzzleF, N).
+constraintAreaNumbers(T, PuzzleF, N).
 
 
 /* Central */
-cycle([Num-Pos | T], PuzzleF, N):-
+constraintAreaNumbers([Num-Pos | T], PuzzleF, N):-
 LeftTopPos is Pos - N - 1,
 getSubList(LeftTopPos, PuzzleF, List, N, 1),
 paintWay(List, Num, 5),
-cycle(T, PuzzleF, N).
+constraintAreaNumbers(T, PuzzleF, N).
 
 /**
 	Top Left Corner
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	Pos == 1,!,
 	RightPos is Pos + 1,
 	nth1(RightPos, PuzzleF, Right),
@@ -210,7 +210,7 @@ cycle(T, PuzzleF, N).
 /**
 	Top Right Corner
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	Pos == N,!,
 	LeftPos is Pos - 1,
 	nth1(LeftPos, PuzzleF, Left),
@@ -225,7 +225,7 @@ cycle(T, PuzzleF, N).
 /**
 	Bottom Left Corner
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is N*N - N + 1,
 	Pos == Aux,!,
 	RightPos is Pos + 1,
@@ -241,7 +241,7 @@ cycle(T, PuzzleF, N).
 /**
 	Bottom Right Corner
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is N*N,
 	Pos == Aux,!,
 	LeftPos is Pos - 1,
@@ -257,7 +257,7 @@ cycle(T, PuzzleF, N).
 /**
 	First Row
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	Pos > 1, Pos < N,!,
 	LeftPos is Pos - 1,
 	RightPos is Pos + 1,
@@ -274,7 +274,7 @@ cycle(T, PuzzleF, N).
 /**
 	Last Row
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is N*N - N + 1,
 	Aux2 is N*N,
 	Pos > Aux, Pos < Aux2, !,
@@ -293,7 +293,7 @@ cycle(T, PuzzleF, N).
 /**
 	First Col
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	Aux is mod(Pos, N),
 	Aux == 1, !,	
 	AbovePos is Pos - N,
@@ -312,7 +312,7 @@ cycle(T, PuzzleF, N).
 /**
 	Last Col
 	*/
-	getClosure(PuzzleF, Pos, N,  V, Cell):-
+	constraintClosure(PuzzleF, Pos, N,  V, Cell):-
 	Aux is mod(Pos, N),
 	Aux == 0, !,	
 	AbovePos is Pos - N,
@@ -331,7 +331,7 @@ cycle(T, PuzzleF, N).
 /**
 	Middle
 	*/
-	getClosure(PuzzleF, Pos, N, V, Cell):-
+	constraintClosure(PuzzleF, Pos, N, V, Cell):-
 	AbovePos is Pos - N,
 	LeftPos is Pos - 1,
 	RightPos is Pos + 1,
@@ -360,12 +360,12 @@ cycle(T, PuzzleF, N).
 
 	restrictionClosure(_, _, L, _, L).
 	restrictionClosure(PuzzleF, [Pos|T], Pos, N, L) :- 
-	getClosure(PuzzleF, Pos, N, V, Cell),
+	constraintClosure(PuzzleF, Pos, N, V, Cell),
 	V == 1, !,
 	NewPos is Pos + 1,
 	restrictionClosure(PuzzleF, T, NewPos, N, L).
 	restrictionClosure(PuzzleF, List, Pos, N, L) :- 
-	getClosure(PuzzleF, Pos, N, V, Cell),
+	constraintClosure(PuzzleF, Pos, N, V, Cell),
 	NewPos is Pos + 1,
 	restrictionClosure(PuzzleF, List, NewPos, N, L).
 
@@ -384,7 +384,7 @@ solvePuzzle(Puzzle, N, L, Numbers, PuzzleF) :-
 	count(1,PuzzleF,#=, LengthCircuit),
 	length(AuxList, LengthCircuit),
 	domain(AuxList, 1, L),
-	cycle(Numbers, PuzzleF, N),
+	constraintAreaNumbers(Numbers, PuzzleF, N),
 	restrictionClosure(PuzzleF, AuxList, 1, N, L),
 	%nth1(1, AuxList, FistBlackPos),
 	%adjacent(PuzzleF, FistBlackPos, [], N, LengthCircuit),
@@ -423,7 +423,7 @@ teste(PuzzleF):-
 	L is N*N,
 	length(PuzzleF, L),
 	domain(PuzzleF, 0, 1),
-	cycle(Numbers, PuzzleF, N),
+	constraintAreaNumbers(Numbers, PuzzleF, N),
 	restrictionClosure(PuzzleF, AuxList, 1, N, L),
 	labeling([], PuzzleF),
 	write('Puzzle:::'), write(PuzzleF), nl,
