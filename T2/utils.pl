@@ -1,3 +1,10 @@
+:-use_module(library(clpfd)).
+:-use_module(library(lists)).
+:-use_module(library(statistics)).
+
+:-include('puzzles.pl').
+:-include('menu.pl').
+
 
 /*********************************
 ****** FUNTIONS TO PRINT  ********
@@ -6,19 +13,19 @@
 
 printSolution(PuzzleF, Puzzle, N) :-
     nl, nl,
-    write(':::::::::: SOLUTION ::::::::::'), nl,
-    printSpace(5), write('_'), printChar(N,'_'), nl,
-    printSpace(5), write('|'),
+    write('     :::::::::: SOLUTION ::::::::::'), nl,
+    printSpace(10), write('_'), printChar(N,'_'), nl,
+    printSpace(10), write('|'),
     printPuzzle(PuzzleF, Puzzle, N, 1), nl,
-	printSpace(5), write('-'), printChar(N,'-'), nl.
+	printSpace(10), write('-'), printChar(N,'-'), nl.
 
 printInitial(Puzzle, N) :-
 	nl, nl, nl,
-	write('::::: BOSNIAN ROAD PUZZLE :::::'), nl,
-	printSpace(5), write('_'), printChar(N,'_'), nl,
-	printSpace(5), write('|'),
+	write('     ::::: BOSNIAN ROAD PUZZLE :::::'), nl,
+	printSpace(10), write('_'), printChar(N,'_'), nl,
+	printSpace(10), write('|'),
 	printPuzzle(Puzzle, N, 1), nl,
-	printSpace(5), write('-'), printChar(N,'-'), nl, nl.
+	printSpace(10), write('-'), printChar(N,'-'), nl, nl.
 
 printChar(0, Char).
 printChar(Value, Char):-
@@ -35,7 +42,7 @@ printSpace(Value):-
 printPuzzle([], _, _).
 printPuzzle([H|T], N, Count) :-
 	Count > N, !, nl,
-	printSpace(5), write('|'),
+	printSpace(10), write('|'),
 	printPuzzle([H|T], N, 	1).
 
 printPuzzle([H|T], N, Count) :-
@@ -53,7 +60,7 @@ printPuzzle([H|T], N, Count) :-
 printPuzzle([], [], _, _).
 printPuzzle([H|T], [H2|T2], N, 	Count) :-
 	Count > N, !, nl,
-	printSpace(5), write('|'),
+	printSpace(10), write('|'),
 	printPuzzle([H|T], [H2|T2], N, 	1).
 
 printPuzzle([H|T], [H2|T2], N, Count) :-
@@ -66,3 +73,5 @@ printPuzzle([H|T], [H2|T2], N, Count) :-
 	write(H), write('|'),
 	NewCount is Count + 1,
 	printPuzzle(T, T2, N, NewCount).
+
+clearScreen :- write('\33\[2J').
