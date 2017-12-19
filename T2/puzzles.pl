@@ -71,16 +71,16 @@ getPuzzle(11,[nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
              nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
              nil,7,  nil,nil,nil,nil,nil,nil,nil,6,  nil,
              nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]).
-
-getPuzzle(12,[nil,4,  nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
+/*
+getPuzzle(12,[nil,4, nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
              nil,nil,nil,nil,nil,nil,5,  nil,nil,nil,nil,nil,
-             nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,1,  nil,
+             nil,nil,nil,2,  nil,nil,nil,nil,nil,nil,1,  nil,
              nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
              nil,nil,nil,nil,nil,nil,nil,nil,7,  nil,nil,nil,
              nil,2,  nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
              nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
              nil,nil,nil,nil,3,  nil,nil,nil,nil,nil,nil,nil,
              nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
-             nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,3,  nil,
-             nil,7,  nil,nil,nil,nil,4,  nil,nil,nil,nil,nil,
-             nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]).
+             nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,
+             nil,7,  nil,nil,nil,nil,4,  nil,nil,nil,5,  nil,
+             nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]).*/

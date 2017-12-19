@@ -14,7 +14,7 @@ askMenuInput(Options, Option):-
 	member(Option, Options).
 
 askPuzzle(Options, Option):-
-	nl, write('     Choose a puzzle side size (from 4x4 to 12x12)'),
+	nl, write('     Choose a puzzle side size (from 4x4 to 11x11)'),
 	read(Option),
 	member(Option, Options).
 
@@ -29,7 +29,7 @@ rulesPuzzle :-
 	write('     even diagonally. It does not go through clue cells. The clues indicate how many '),nl,
 	write('     of the 8 (or less for edges and corners) cells around the clue cell the loop passes'), nl,
 	write('     through. This does not necessarily imply that all these cells have to be passed'), nl,
-	write('     through at once, they can be broken up too (similar to Minesweeper-like clues)'), nl, nl, nl.
+	write('     through at once, they can be broken up too (similar to Minesweeper-like clues).'), nl, nl, nl.
 
 % Options to menu
 options([1, 2, 3]).

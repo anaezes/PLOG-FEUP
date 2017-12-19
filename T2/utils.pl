@@ -9,7 +9,9 @@
 /*********************************
 ****** FUNTIONS TO PRINT  ********
 **********************************/
-
+% Get symbols to print patterns of pieces
+getCode(0, 176). % white 
+getCode(1, 254). % black
 
 printSolution(PuzzleF, Puzzle, N) :-
     nl, nl,
@@ -52,7 +54,7 @@ printPuzzle([H|T], N, Count) :-
 	printPuzzle(T, N, NewCount).
 
 printPuzzle([H|T], N, Count) :-
-	write(' |'),
+	put_code(176), write('|'),
 	NewCount is Count + 1,
 	printPuzzle(T, N, NewCount).
 
@@ -70,7 +72,8 @@ printPuzzle([H|T], [H2|T2], N, Count) :-
 	printPuzzle(T, T2, N, NewCount).
 
 printPuzzle([H|T], [H2|T2], N, Count) :-
-	write(H), write('|'),
+	getCode(H, Code),
+	put_code(Code), write('|'),
 	NewCount is Count + 1,
 	printPuzzle(T, T2, N, NewCount).
 
