@@ -11,7 +11,7 @@
 **********************************/
 % Get symbols to print patterns of pieces
 getCode(0, 176). % white 
-getCode(1, 254). % black
+getCode(1, 178). % black
 
 printSolution(PuzzleF, Puzzle, N) :-
     nl, nl,
